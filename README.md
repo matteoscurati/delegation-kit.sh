@@ -50,40 +50,35 @@ commit, push. Pushing `main` deploys.
 
 ## Deploy
 
-Production runs on **Cloudflare Workers with Static Assets**, connected to
-this repository. First-time setup:
+Production runs on **Cloudflare Workers with Static Assets**, configured in
+`wrangler.jsonc` (Worker `delegation-kit-sh`, assets from `dist/`, custom
+domain `delegation-kit.sh`). Two ways to deploy, same result:
 
-1. Push the repo: `gh repo create matteoscurati/delegation-kit.sh --public --source=. --push`
-2. dash.cloudflare.com → Workers & Pages → Create → Connect to Git → pick
-   `matteoscurati/delegation-kit.sh`. Worker name: `delegation-kit-sh`.
-3. Build settings: framework preset **Astro**, build command `npm run build`,
-   output directory `dist`, root directory empty. `.nvmrc` pins Node 20;
-   `public/_headers` sets cache rules.
-4. Save and Deploy. Every push to `main` deploys; PRs get preview URLs.
-5. Custom domain: Worker → Settings → Domains & Routes → Add Custom Domain →
-   `delegation-kit.sh` (and `www` as a redirect).
-
-Any other static host works with the same build/output.
+- **From CI** — `.github/workflows/deploy.yml` builds and runs `wrangler
+  deploy` on every push to `main`. It needs the repository secrets
+  `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit + Workers Routes:Edit) and
+  `CLOUDFLARE_ACCOUNT_ID`, and the optional variable `PUBLIC_CF_BEACON_TOKEN`.
+- **From a machine** — `npx wrangler login` once, then
+  `npm run build && npx wrangler deploy`.
 
 ## Analytics
 
-Umami Cloud, EU region, through the first-party proxy in `worker/`
-(`analytics.delegation-kit.sh`). Off unless `PUBLIC_UMAMI_WEBSITE_ID` and
-`PUBLIC_UMAMI_SCRIPT_URL` are set as build variables; see `.env.example` and
-`/privacy`.
+Cloudflare Web Analytics, through `src/components/CloudflareAnalytics.astro`.
+Off unless `PUBLIC_CF_BEACON_TOKEN` is set at build time; see `.env.example`
+and `/privacy`.
 
 ## Layout
 
 ```
 src/
-  components/   CodeBlock, StatusPill, RoutingTable, LaneResolver, ResolvePanel, UmamiAnalytics
+  components/   CodeBlock, StatusPill, RoutingTable, LaneResolver, ResolvePanel, CloudflareAnalytics
   data/         kit.json, routing-table.json, resolve.json, contract.json  (generated)
   layouts/      BaseLayout, DocLayout
   pages/        index.astro, docs/*.md, changelog/index.md, privacy.md
   styles/       global.css (design tokens)
 scripts/        sync-kit.mjs, generate-og-image.mjs
 public/         favicon, og-image, prose.css, _headers, robots.txt
-worker/         Umami proxy Worker
+wrangler.jsonc  Workers Static Assets config
 ```
 
 ## License

@@ -1,0 +1,41 @@
+name: Deploy
+
+# Deploys the built site to Cloudflare Workers (Static Assets) on every push
+# to main. Requires two repository secrets:
+#   CLOUDFLARE_API_TOKEN   an API token with Workers Scripts:Edit and
+#                          Workers Routes:Edit on the account and zone
+#   CLOUDFLARE_ACCOUNT_ID  the account id
+# and one optional repository variable:
+#   PUBLIC_CF_BEACON_TOKEN the Web Analytics site token (off when unset)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: wrangler deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          PUBLIC_CF_BEACON_TOKEN: ${{ vars.PUBLIC_CF_BEACON_TOKEN }}
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
