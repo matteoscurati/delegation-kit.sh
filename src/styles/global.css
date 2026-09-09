@@ -1,0 +1,134 @@
+@import 'tailwindcss';
+
+/* Design tokens.
+ *
+ * The palette is a dispatch board: cool panel grey, ink, hairline rules, and
+ * exactly three status colours that mean what the routing gates mean —
+ * qualified (may be chosen), explicit-only (needs your hand), blocked. No
+ * decorative accent exists; every colour on the page carries gate vocabulary.
+ */
+@theme {
+  --color-paper: #eef0f3;
+  --color-panel: #f7f8fa;
+  --color-ink: #10192b;
+  --color-ink-soft: #4a5568;
+  --color-line: #c9ced8;
+  --color-line-strong: #10192b;
+
+  --color-qualified: #1f8a5b;
+  --color-explicit: #d98e04;
+  --color-blocked: #b9382a;
+  --color-qualified-soft: #dff1e7;
+  --color-explicit-soft: #fbeed2;
+  --color-blocked-soft: #f6dcd7;
+
+  --font-display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-variation-settings:
+    'wdth' 90,
+    'opsz' 48;
+}
+
+code,
+pre,
+kbd,
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible + label,
+summary:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Full-bleed rule: sections are separated by one solid line, never by cards. */
+.rule {
+  border-top: 1px solid var(--color-line-strong);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* Status colours as background fills, not tinted text: a gate decision
+ * should be legible from across the room. */
+.status {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.4rem;
+  border-radius: 2px;
+  color: #fff;
+  white-space: nowrap;
+}
+.status-qualified {
+  background: var(--color-qualified);
+}
+.status-provisional,
+.status-manual-qualified {
+  background: var(--color-explicit);
+  color: var(--color-ink);
+}
+.status-candidate,
+.status-disabled,
+.status-blocked {
+  background: transparent;
+  color: var(--color-blocked);
+  box-shadow: inset 0 0 0 1px var(--color-blocked);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

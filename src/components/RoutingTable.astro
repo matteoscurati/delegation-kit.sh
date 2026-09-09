@@ -1,0 +1,87 @@
+---
+// The routing table, as `delegation-route table --json` returns it. One row
+// per (profile, lane) decision; the profile cell repeats only when the profile
+// changes, so the eye reads the gate as the router does: profile, then lanes.
+import table from '../data/routing-table.json';
+import StatusPill from './StatusPill.astro';
+
+interface Props {
+  /** Limit to these lanes; default shows every decision. */
+  lanes?: string[];
+}
+const { lanes } = Astro.props;
+const rows = (
+  lanes ? table.profiles.filter((r) => lanes.includes(r.lane)) : table.profiles
+) as Array<{
+  profile: string;
+  model: string;
+  family: string;
+  harness: string;
+  effort: string;
+  lane: string;
+  status: string;
+  selection: string;
+  exact_evidence_ids: string[];
+  context_evidence_ids: string[];
+  local_evaluation: { task_count?: number; confidence?: string } | null;
+  provider_fallback: { target_model: string; trigger: string } | null;
+  evidence_gap: string | null;
+}>;
+let previous = '';
+---
+
+<div class="overflow-x-auto -mx-6 px-6">
+  <table class="w-full text-[0.76rem] leading-snug border-collapse">
+    <thead>
+      <tr class="eyebrow text-left border-b border-[var(--color-line-strong)]">
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Profile</th>
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Model / harness / effort</th>
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Lane · evidence gap</th>
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Gate</th>
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Exact · context · local</th>
+        <th class="py-2 font-normal whitespace-nowrap">Fallback</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => {
+          const first = row.profile !== previous;
+          previous = row.profile;
+          return (
+            <tr
+              class:list={[
+                'border-b border-[var(--color-line)] hover:bg-[var(--color-panel)] align-top',
+                first && 'border-t border-t-[var(--color-line-strong)]'
+              ]}
+            >
+              <td class="py-1.5 pr-4 font-mono font-medium whitespace-nowrap">
+                {first ? row.profile : ''}
+              </td>
+              <td class="py-1.5 pr-4 font-mono text-[var(--color-ink-soft)] whitespace-nowrap">
+                {first ? `${row.model} / ${row.harness} / ${row.effort}` : ''}
+              </td>
+              <td class="py-1.5 pr-4 min-w-[14rem] max-w-[26rem]">
+                {row.lane}
+                {row.evidence_gap && (
+                  <span class="block text-[0.7rem] leading-tight text-[var(--color-ink-soft)] mt-0.5">
+                    {row.evidence_gap}
+                  </span>
+                )}
+              </td>
+              <td class="py-1.5 pr-4 whitespace-nowrap">
+                <StatusPill status={row.status} selection={row.selection} />
+              </td>
+              <td class="py-1.5 pr-4 font-mono whitespace-nowrap text-[var(--color-ink-soft)]">
+                {row.exact_evidence_ids.length} · {row.context_evidence_ids.length} ·{' '}
+                {row.local_evaluation?.task_count ?? '—'}
+              </td>
+              <td class="py-1.5 font-mono whitespace-nowrap">
+                {row.provider_fallback ? row.provider_fallback.target_model : '—'}
+              </td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</div>

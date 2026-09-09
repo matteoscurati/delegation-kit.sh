@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CodeBlock from '../components/CodeBlock.astro';
+import LaneResolver from '../components/LaneResolver.astro';
+import RoutingTable from '../components/RoutingTable.astro';
+import kit from '../data/kit.json';
+
+const steps = [
+  {
+    name: 'Discover',
+    cmd: 'delegation-route resolve --lane builder --json',
+    text: 'Read-only. The router lists the profiles a user may select for the lane, the blocked ones, and why. Nothing is dispatched.'
+  },
+  {
+    name: 'Choose',
+    cmd: '"Use terra-builder for <task>."',
+    text: 'You name the profile, or you authorize the lead to pick one from the displayed choices. Task complexity, an installed skill, or a previous authorization is not authorization.'
+  },
+  {
+    name: 'Validate',
+    cmd: 'delegation-route resolve --lane builder --selected-profile terra-builder --json',
+    text: 'Still read-only. The router confirms the selection is legal for the lane and exits 78 if it is not.'
+  },
+  {
+    name: 'Dispatch',
+    cmd: 'codex exec --ephemeral -p terra-builder "<bounded, user-authorized task>" </dev/null',
+    text: 'Only now. Retries and the cross-family review are dispatches too: each needs its own approval unless your request named that finite set.'
+  }
+];
+
+const failures = [
+  {
+    mode: 'Agents that dispatch other agents on their own authority',
+    answer:
+      'Every dispatch is user-directed, per request, enforced by fail-closed routing gates rather than polite prose. The gate carries an activation policy: mode user-directed, scope per-dispatch, automatic_dispatch false.'
+  },
+  {
+    mode: 'Ungoverned routing — "use whatever model is available"',
+    answer:
+      'A lane exists only after a versioned, evidence-backed gate says so. Every external runner re-validates the complete decision graph before each check and run, and refuses drift between the central gate and its own.'
+  },
+  {
+    mode: 'Unverified output — delegated diffs shipped unread',
+    answer:
+      'A sufficiently capable model from a different family must review every delegated result; text-patch lanes pass through a read-only patch verifier. The lead, and only the lead, applies and tests.'
+  }
+];
+---
+
+<BaseLayout path="/">
+  <section class="pt-10 pb-14 md:pt-16 md:pb-20">
+    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · Claude Code and Codex</p>
+    <h1 class="text-[2.6rem] md:text-[4.4rem] max-w-5xl">
+      Your agents don't dispatch on their own. You choose the lane. The gates decide if it's open.
+    </h1>
+    <p class="mt-8 max-w-2xl text-lg text-[var(--color-ink-soft)]">
+      delegation-kit gives Claude Code and Codex a governed way to hand bounded coding work to other
+      models: cheap lanes for small support tasks, max-effort builders for implementation, and a
+      mandatory cross-family review of every delegated result. Every delegation is named or
+      explicitly authorized by you, per request.
+    </p>
+    <div class="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end min-w-0">
+      <CodeBlock
+        label="Install (macOS, jq, git)"
+        code={`git clone https://github.com/matteoscurati/delegation-kit
+cd delegation-kit
+./install.sh        # or --claude-only / --codex-only
+./doctor.sh         # verify everything is wired`}
+      />
+      <div class="text-sm text-[var(--color-ink-soft)] md:pb-3">
+        or <span class="font-mono text-[var(--color-ink)]">npx delegation-kit</span><br />
+        or <span class="font-mono text-[var(--color-ink)]">/plugin install delegation-kit</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule py-14">
+    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
+      <h2 class="text-3xl md:text-4xl">Resolve a lane</h2>
+      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
+        This is the router's real answer, computed by <span class="font-mono">delegation-route</span
+        > when the site was built, from the gates shipped in {kit.version}. No script runs on this
+        page.
+      </p>
+    </div>
+    <LaneResolver />
+  </section>
+
+  <section class="rule py-14">
+    <h2 class="text-3xl md:text-4xl mb-3">How a dispatch happens</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
+      The flow is always the same four steps, in this order. The first three are read-only.
+    </p>
+    <ol class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+      {
+        steps.map((step, i) => (
+          <li class="border-t border-[var(--color-line-strong)] pt-4">
+            <p class="eyebrow mb-1">step {i + 1}</p>
+            <h3 class="text-xl mb-3">{step.name}</h3>
+            <p class="font-mono text-[0.75rem] bg-[var(--color-panel)] border border-[var(--color-line)] p-2 mb-3 break-words">
+              {step.cmd}
+            </p>
+            <p class="text-sm text-[var(--color-ink-soft)]">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="rule py-14">
+    <h2 class="text-3xl md:text-4xl mb-10">Three failure modes, three answers</h2>
+    <div class="grid gap-8 md:grid-cols-3">
+      {
+        failures.map((f) => (
+          <div>
+            <p class="text-lg leading-snug mb-3">{f.mode}</p>
+            <p class="text-sm text-[var(--color-ink-soft)] border-l-2 border-[var(--color-explicit)] pl-4">
+              {f.answer}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="rule py-14">
+    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-6">
+      <h2 class="text-3xl md:text-4xl">The routing table</h2>
+      <p class="text-sm text-[var(--color-ink-soft)] max-w-xl mt-3 md:mt-0">
+        {kit.profiles} profiles, {kit.laneRows} lane decisions, straight from <span
+          class="font-mono">delegation-route table</span
+        >. A status is bound to dated benchmark rows plus local smokes; selection is closed at
+        explicit-only or blocked. There are no default or fallback routes.
+      </p>
+    </div>
+    <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
+      <span><span class="status status-qualified">qualified</span> evidence-backed, selectable</span
+      >
+      <span
+        ><span class="status status-provisional">provisional</span> selectable with an explicit flag</span
+      >
+      <span
+        ><span class="status status-manual-qualified">manual-qualified</span> judgement, explicit-only</span
+      >
+      <span><span class="status status-candidate">candidate / disabled</span> blocked</span>
+    </p>
+    <RoutingTable />
+  </section>
+
+  <section class="rule py-14">
+    <h2 class="text-3xl md:text-4xl mb-10">What's in the box</h2>
+    <div class="grid gap-10 md:grid-cols-3 text-sm">
+      <div>
+        <p class="eyebrow mb-3">Claude Code · ~/.claude</p>
+        <ul class="space-y-2">
+          <li>
+            6 subagent profiles: <span class="font-mono">sonnet-clerk</span>, <span
+              class="font-mono">sonnet-scout</span
+            >, <span class="font-mono">sonnet-reviewer</span>, <span class="font-mono"
+              >opus-builder</span
+            >, <span class="font-mono">opus-reviewer</span>, <span class="font-mono"
+              >fable-judge</span>
+          </li>
+          <li>the routing skill, loaded only on an explicit delegation request</li>
+          <li>the orchestrate skill: the user-approved finite dispatch list is the budget</li>
+          <li>six external-executor skills, gate-allowed lanes only</li>
+          <li>the user-direction guard, always loaded from CLAUDE.md</li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow mb-3">Codex · ~/.codex</p>
+        <ul class="space-y-2">
+          <li>
+            5 native profiles: <span class="font-mono">luna-clerk</span>, <span class="font-mono"
+              >terra-builder</span
+            >, <span class="font-mono">terra-reviewer</span>, <span class="font-mono"
+              >astra-reviewer</span
+            >, <span class="font-mono">astra-judge</span>
+          </li>
+          <li>5 ephemeral profiles for <span class="font-mono">codex exec --ephemeral -p</span></li>
+          <li>the same guard, in AGENTS.md</li>
+        </ul>
+      </div>
+      <div>
+        <p class="eyebrow mb-3">CLI · ~/.local/bin, shared</p>
+        <ul class="space-y-2">
+          <li>
+            <span class="font-mono">delegation-route</span>: the read-only router. Never dispatches.
+          </li>
+          <li>
+            <span class="font-mono">delegation-{'{glm,gemini,kimi,grok,qwen,deepseek}'}</span>: {
+              kit.externalFamilies
+            } gated runners, {kit.laneDeclarations} lane declarations, {kit.dispatchableLanes} dispatchable
+          </li>
+          <li>
+            <span class="font-mono">delegation-executor-contract</span>: permission classes {
+              kit.permissionClasses.join(' / ')
+            }; exit codes {kit.exitCodes.join(' ')}
+          </li>
+          <li>
+            <span class="font-mono">delegation-patch-verify</span>: read-only trust boundary for
+            text-patch lanes
+          </li>
+          <li>
+            <span class="font-mono">delegation-evidence</span>, <span class="font-mono"
+              >delegation-epoch</span
+            >, <span class="font-mono">delegation-schema</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule py-14">
+    <div class="grid gap-10 md:grid-cols-[1fr_1fr]">
+      <div>
+        <h2 class="text-3xl md:text-4xl mb-3">Adapt it</h2>
+        <p class="text-[var(--color-ink-soft)]">
+          The kit ships as a reference implementation with the author's models. The structure is the
+          transferable part: map each role to a model and effort slot of your own and re-derive the
+          numbers.
+          <a href="/docs/adapting" class="underline underline-offset-4 text-[var(--color-ink)]"
+            >Adapting guide →</a
+          >
+        </p>
+      </div>
+      <div>
+        <h2 class="text-3xl md:text-4xl mb-3">Read the policy</h2>
+        <p class="text-[var(--color-ink-soft)]">
+          Which model does which job, with the cost-per-task numbers behind it, and the bar a new
+          model must clear before it earns a row.
+          <a href="/docs/routing" class="underline underline-offset-4 text-[var(--color-ink)]"
+            >Routing policy →</a
+          >
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

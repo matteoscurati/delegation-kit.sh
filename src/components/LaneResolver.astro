@@ -1,0 +1,196 @@
+---
+// "Resolve a lane": `delegation-route resolve` with no JavaScript.
+//
+// Every answer shown here was produced by the kit's own router at build time
+// (scripts/sync-kit.mjs runs `delegation-route resolve --lane … --json`, and
+// for review lanes once per producer family). Radio buttons pick the lane and
+// the producer; CSS `:has()` reveals the matching precomputed panel. The page
+// therefore cannot disagree with the router, and it ships no script.
+import resolve from '../data/resolve.json';
+import kit from '../data/kit.json';
+import StatusPill from './StatusPill.astro';
+import ResolvePanel from './ResolvePanel.astro';
+
+type Row = {
+  profile: string;
+  model: string;
+  family: string;
+  harness: string;
+  effort: string;
+  status: string;
+  selection: string;
+};
+type Resolved = {
+  lane: string;
+  choices: Row[];
+  blocked: Row[];
+  excluded_same_family: Row[];
+};
+type Compound = {
+  lane: string;
+  status: string;
+  selection: string;
+  members: string[];
+  protocol: string;
+  final_authority: string;
+  activation: string;
+};
+
+const plain = resolve.lanes as unknown as Record<string, Resolved>;
+const review = resolve.review as unknown as Record<string, Record<string, Resolved>>;
+const compound = resolve.compound as unknown as Record<string, Compound>;
+const plainLanes = Object.keys(plain).sort();
+const reviewLanes = Object.keys(review).sort();
+const compoundLanes = Object.keys(compound).sort();
+const families = kit.families as string[];
+const defaultLane = 'builder';
+const defaultFamily = 'openai';
+
+const laneId = (lane: string) => `lane-${lane}`;
+const familyId = (family: string) => `producer-${family}`;
+
+// Generated CSS: one rule per panel. `:has()` is supported by every current
+// browser; without it the first panel stays visible as a static fallback.
+const rules: string[] = [];
+rules.push('.resolver .panel{display:none}');
+for (const lane of plainLanes)
+  rules.push(`.resolver:has(#${laneId(lane)}:checked) .panel[data-lane="${lane}"]{display:block}`);
+for (const lane of compoundLanes)
+  rules.push(`.resolver:has(#${laneId(lane)}:checked) .panel[data-lane="${lane}"]{display:block}`);
+for (const lane of reviewLanes)
+  for (const family of families)
+    rules.push(
+      `.resolver:has(#${laneId(lane)}:checked):has(#${familyId(family)}:checked) .panel[data-lane="${lane}"][data-family="${family}"]{display:block}`
+    );
+rules.push('.resolver .producer{display:none}');
+rules.push(`.resolver:has(input[data-review]:checked) .producer{display:block}`);
+rules.push(
+  '.resolver .lane-option{border:1px solid var(--color-line);padding:.35rem .6rem;cursor:pointer;font-family:var(--font-mono);font-size:.8rem;background:var(--color-panel)}',
+  '.resolver input:checked + .lane-option{background:var(--color-ink);color:var(--color-paper);border-color:var(--color-ink)}',
+  '.resolver input:focus-visible + .lane-option{outline:2px solid var(--color-ink);outline-offset:2px}',
+  '.resolver input[type=radio]{position:absolute;opacity:0;width:1px;height:1px;overflow:hidden}'
+);
+const css = rules.join('\n');
+
+const command = (lane: string, family?: string) =>
+  `delegation-route resolve --lane ${lane}${family ? ` --producer-family ${family}` : ''} --json`;
+---
+
+<style set:html={css}></style>
+
+<div class="resolver relative">
+  <div class="flex flex-col gap-4 md:flex-row md:items-start md:gap-10">
+    <fieldset class="min-w-0">
+      <legend class="eyebrow mb-2">Lane</legend>
+      <div class="flex flex-wrap gap-1.5">
+        {
+          [...plainLanes, ...reviewLanes, ...compoundLanes].map((lane) => (
+            <span class="relative">
+              <input
+                type="radio"
+                name="lane"
+                id={laneId(lane)}
+                value={lane}
+                checked={lane === defaultLane}
+                data-review={reviewLanes.includes(lane) ? '' : undefined}
+              />
+              <label for={laneId(lane)} class="lane-option inline-block">
+                {lane}
+              </label>
+            </span>
+          ))
+        }
+      </div>
+    </fieldset>
+    <fieldset class="producer min-w-0">
+      <legend class="eyebrow mb-2">Producer family (review lanes exclude it)</legend>
+      <div class="flex flex-wrap gap-1.5">
+        {
+          families.map((family) => (
+            <span class="relative">
+              <input
+                type="radio"
+                name="producer"
+                id={familyId(family)}
+                value={family}
+                checked={family === defaultFamily}
+              />
+              <label for={familyId(family)} class="lane-option inline-block">
+                {family}
+              </label>
+            </span>
+          ))
+        }
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="mt-6">
+    {
+      plainLanes.map((lane) => {
+        const r = plain[lane];
+        return (
+          <div class="panel" data-lane={lane}>
+            <p class="font-mono text-[0.8rem] text-[var(--color-ink-soft)] mb-4">
+              $ {command(lane)}
+            </p>
+            <ResolvePanel choices={r.choices} blocked={r.blocked} excluded={[]} />
+          </div>
+        );
+      })
+    }
+    {
+      reviewLanes.map((lane) =>
+        families.map((family) => {
+          const r = review[lane][family];
+          return (
+            <div class="panel" data-lane={lane} data-family={family}>
+              <p class="font-mono text-[0.8rem] text-[var(--color-ink-soft)] mb-4">
+                $ {command(lane, family)}
+              </p>
+              <ResolvePanel
+                choices={r.choices}
+                blocked={r.blocked}
+                excluded={r.excluded_same_family}
+              />
+            </div>
+          );
+        })
+      )
+    }
+    {
+      compoundLanes.map((lane) => {
+        const c = compound[lane];
+        return (
+          <div class="panel" data-lane={lane}>
+            <p class="font-mono text-[0.8rem] text-[var(--color-ink-soft)] mb-4">
+              $ {command(lane)}
+            </p>
+            <div class="grid gap-6 md:grid-cols-[1fr_1fr]">
+              <div>
+                <p class="eyebrow mb-2">Compound lane</p>
+                <p class="font-mono text-sm">
+                  {c.members.join(' + ')} <StatusPill status={c.status} selection={c.selection} />
+                </p>
+                <p class="text-sm text-[var(--color-ink-soft)] mt-2">
+                  Protocol <span class="font-mono">{c.protocol}</span>; final authority:{' '}
+                  {c.final_authority}.
+                </p>
+              </div>
+              <div>
+                <p class="eyebrow mb-2">Activation</p>
+                <p class="text-sm">{c.activation}</p>
+              </div>
+            </div>
+          </div>
+        );
+      })
+    }
+    <p
+      class="font-mono text-[0.75rem] text-[var(--color-ink-soft)] mt-6 border-t border-[var(--color-line)] pt-3"
+    >
+      requires_user_direction: true · automatic_dispatch: false · authorization carries to retries:
+      false · to review: false
+    </p>
+  </div>
+</div>

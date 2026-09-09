@@ -1,0 +1,40 @@
+{
+  "valid": true,
+  "read_only": true,
+  "enforcement_authority": "provider-runner",
+  "grants_permissions": false,
+  "contract_file": "/Users/matteoscurati/work/delegation-kit/config/external-executor-contract.json",
+  "contract_version": "1.0.0",
+  "schema_version": 1,
+  "central_routing_gate": "/Users/matteoscurati/work/delegation-kit/config/routing-gates.json",
+  "families": 6,
+  "runners": [
+    "delegation-deepseek",
+    "delegation-gemini",
+    "delegation-glm",
+    "delegation-grok",
+    "delegation-kimi",
+    "delegation-qwen"
+  ],
+  "lane_declarations": 35,
+  "dispatchable_lanes": 11,
+  "permission_classes": [
+    "read-only",
+    "text-patch",
+    "worktree-edit"
+  ],
+  "exit_codes": [
+    64,
+    69,
+    70,
+    75,
+    78,
+    130
+  ],
+  "patch_policy_file": "/Users/matteoscurati/work/delegation-kit/config/external-patch-policy.json",
+  "patch_policy_version": "1.0.0",
+  "patch_verifier": "delegation-patch-verify",
+  "text_patch_lanes": 4,
+  "patch_verification_required": true,
+  "patch_applied_by": "lead"
+}

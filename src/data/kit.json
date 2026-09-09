@@ -1,0 +1,63 @@
+{
+  "version": "0.23.1",
+  "releaseDate": "2026-09-07",
+  "profiles": 27,
+  "laneRows": 54,
+  "lanes": [
+    "builder",
+    "clerk",
+    "frontend-builder",
+    "judgement",
+    "material-review",
+    "policy-annotation",
+    "reviewer",
+    "routine-review",
+    "scout",
+    "security",
+    "senior"
+  ],
+  "reviewLanes": [
+    "routine-review",
+    "material-review",
+    "security"
+  ],
+  "families": [
+    "alibaba",
+    "anthropic",
+    "deepseek",
+    "google",
+    "moonshot",
+    "openai",
+    "openai-gpt6",
+    "xai",
+    "zai"
+  ],
+  "externalFamilies": 6,
+  "laneDeclarations": 35,
+  "dispatchableLanes": 11,
+  "permissionClasses": [
+    "read-only",
+    "text-patch",
+    "worktree-edit"
+  ],
+  "exitCodes": [
+    64,
+    69,
+    70,
+    75,
+    78,
+    130
+  ],
+  "patchPolicyVersion": "1.0.0",
+  "activation": {
+    "mode": "user-directed",
+    "scope": "per-dispatch",
+    "assistant_may_list_choices": true,
+    "assistant_may_select_profile_only_when_user_authorizes_selection": true,
+    "authorization_carries_to_retries": false,
+    "authorization_carries_to_review": false,
+    "automatic_dispatch": false,
+    "basis": "Explicit owner decision: DelegationKit exposes optional lanes but grants no standing permission to dispatch. Every agent call must be selected or explicitly delegated by the user for the current request."
+  },
+  "syncedAt": "2026-09-07"
+}

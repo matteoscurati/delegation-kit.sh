@@ -1,0 +1,1060 @@
+{
+  "profiles": [
+    {
+      "profile": "luna-clerk",
+      "model": "gpt-5.6-luna",
+      "family": "openai",
+      "harness": "codex",
+      "effort": "max",
+      "lane": "clerk",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-codex-gpt-5.6-luna-max"
+      ],
+      "context_evidence_ids": [
+        "epoch-deepswe-gpt-5-6-luna-mini-swe-agent-low",
+        "epoch-deepswe-gpt-5-6-luna-mini-swe-agent-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "terra-builder",
+      "model": "gpt-5.6-terra",
+      "family": "openai",
+      "harness": "codex",
+      "effort": "max",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-codex-gpt-5.6-terra-max"
+      ],
+      "context_evidence_ids": [
+        "epoch-deepswe-gpt-5-6-terra-mini-swe-agent-medium",
+        "epoch-deepswe-gpt-5-6-terra-mini-swe-agent-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "terra-reviewer",
+      "model": "gpt-5.6-terra",
+      "family": "openai",
+      "harness": "codex",
+      "effort": "max",
+      "lane": "routine-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "aa-codex-gpt-5.6-terra-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
+    },
+    {
+      "profile": "terra-reviewer",
+      "model": "gpt-5.6-terra",
+      "family": "openai",
+      "harness": "codex",
+      "effort": "max",
+      "lane": "material-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "aa-codex-gpt-5.6-terra-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
+    },
+    {
+      "profile": "terra-reviewer",
+      "model": "gpt-5.6-terra",
+      "family": "openai",
+      "harness": "codex",
+      "effort": "max",
+      "lane": "security",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "aa-codex-gpt-5.6-terra-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
+    },
+    {
+      "profile": "astra-reviewer",
+      "model": "gpt-6-astra",
+      "family": "openai-gpt6",
+      "harness": "codex",
+      "effort": "high",
+      "lane": "material-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "openai-gpt-6-astra-high-swe",
+        "openai-gpt-6-astra-high-computer-use"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row."
+    },
+    {
+      "profile": "astra-reviewer",
+      "model": "gpt-6-astra",
+      "family": "openai-gpt6",
+      "harness": "codex",
+      "effort": "high",
+      "lane": "security",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "openai-gpt-6-astra-high-swe",
+        "openai-gpt-6-astra-high-computer-use"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
+    },
+    {
+      "profile": "astra-reviewer",
+      "model": "gpt-6-astra",
+      "family": "openai-gpt6",
+      "harness": "codex",
+      "effort": "high",
+      "lane": "routine-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "openai-gpt-6-astra-high-swe",
+        "openai-gpt-6-astra-high-computer-use"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row."
+    },
+    {
+      "profile": "astra-judge",
+      "model": "gpt-6-astra",
+      "family": "openai-gpt6",
+      "harness": "codex",
+      "effort": "high",
+      "lane": "judgement",
+      "status": "manual-qualified",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "openai-gpt-6-astra-high-swe",
+        "openai-gpt-6-astra-high-computer-use"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-09-01-astra-high-runtime-probe",
+        "task_count": 1,
+        "repeats": 1,
+        "confidence": "low",
+        "limitations": "Authenticated Codex CLI returned exact PONG and surfaced model gpt-6-astra at requested high; this proves runtime compatibility, not judgement quality."
+      },
+      "provider_fallback": null,
+      "evidence_gap": "Judgement is manual-only; the available rows measure coding or computer use rather than judgement quality."
+    },
+    {
+      "profile": "sonnet-clerk",
+      "model": "claude-sonnet-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "low",
+      "lane": "clerk",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No current exact Claude Code low row."
+    },
+    {
+      "profile": "sonnet-scout",
+      "model": "claude-sonnet-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "low",
+      "lane": "scout",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No current exact Claude Code low row."
+    },
+    {
+      "profile": "sonnet-reviewer",
+      "model": "claude-sonnet-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "medium",
+      "lane": "routine-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row."
+    },
+    {
+      "profile": "opus-builder",
+      "model": "claude-opus-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "max",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-claude-opus-5-max"
+      ],
+      "context_evidence_ids": [
+        "cursorbench-opus-5-max",
+        "apex-swe-opus-5-max",
+        "epoch-deepswe-claude-opus-5-mini-swe-agent-max"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-17-opus-builder-named-profile-smoke",
+        "task_count": 1,
+        "repeats": 1,
+        "valid_repeats": 1,
+        "mean_score": 1,
+        "all_checker_runs_pass": true,
+        "provider_cost_usd": 0.228272,
+        "confidence": "low",
+        "limitations": "One disposable one-line edit through the installed named opus-builder profile. The run touched only the assigned tracked file, passed git diff --check, and reported canonicalModel claude-opus-5 at the explicitly requested max effort. This is compatibility and scope evidence, not a held-out repeated builder qualification."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "opus-reviewer",
+      "model": "claude-opus-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "max",
+      "lane": "routine-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "aa-claude-opus-5-max",
+        "cursorbench-opus-5-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
+    },
+    {
+      "profile": "opus-reviewer",
+      "model": "claude-opus-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "max",
+      "lane": "material-review",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "aa-claude-opus-5-max",
+        "cursorbench-opus-5-max"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
+    },
+    {
+      "profile": "opus-reviewer",
+      "model": "claude-opus-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "max",
+      "lane": "security",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "aa-claude-opus-5-max",
+        "anthropic-claude-opus-5-launch"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": {
+        "possible": true,
+        "target_model": "claude-opus-4.8",
+        "trigger": "Anthropic safety classifier on flagged cyber requests",
+        "exact_variant_guaranteed": false,
+        "source_evidence_id": "anthropic-claude-opus-5-launch"
+      },
+      "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
+    },
+    {
+      "profile": "opus-policy-annotator",
+      "model": "claude-opus-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "xhigh",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No frozen local policy-annotation result exists for the xhigh Claude Code variant."
+    },
+    {
+      "profile": "fable-judge",
+      "model": "claude-fable-5-1",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "max",
+      "lane": "judgement",
+      "status": "manual-qualified",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-claude-fable-5-1-max"
+      ],
+      "context_evidence_ids": [
+        "terminalbench4-claude-fable-5-1-max",
+        "aa-claude-fable-5-max",
+        "arena-agent-fable-5-high"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-09-01-fable-5-1-max-runtime-probe",
+        "task_count": 1,
+        "repeats": 1,
+        "confidence": "low",
+        "limitations": "Authenticated Claude Code returned exact PONG and surfaced model claude-fable-5-1 at requested max; this proves runtime compatibility, not judgement quality."
+      },
+      "provider_fallback": null,
+      "evidence_gap": "No exact judgement benchmark; coding evidence is contextual only."
+    },
+    {
+      "profile": "fable-policy-annotator",
+      "model": "claude-fable-5",
+      "family": "anthropic",
+      "harness": "claude-code",
+      "effort": "xhigh",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "The frozen v1 transport failed; no fresh held-out policy-annotation result exists for the xhigh Claude Code variant."
+    },
+    {
+      "profile": "glm53-flash-max-clerk",
+      "model": "glm-5.3-flash",
+      "family": "zai",
+      "harness": "claude-zai",
+      "effort": "max",
+      "lane": "clerk",
+      "status": "qualified",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "zai-glm-5.3-flash-launch-max-2026-08-28"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-29-glm-5.3-flash-max-qualification-v4",
+        "task_count": 6,
+        "repeats": 3,
+        "valid_repeats": 3,
+        "strict_identity_valid_repeats": 3,
+        "mean_score": 1,
+        "mean_latency_seconds": 28.67,
+        "provider_cost_usd": 0.089595,
+        "confidence": "bounded-repeated",
+        "limitations": "Exact deterministic extraction pack with complete assistant-event identity and canonical first-party modelUsage; explicit-only selection is retained. Earlier runs remain terminal."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "glm53-flash-max-scout",
+      "model": "glm-5.3-flash",
+      "family": "zai",
+      "harness": "claude-zai",
+      "effort": "max",
+      "lane": "scout",
+      "status": "qualified",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "zai-glm-5.3-flash-launch-max-2026-08-28"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-29-glm-5.3-flash-max-qualification-v4",
+        "task_count": 7,
+        "repeats": 3,
+        "valid_repeats": 3,
+        "strict_identity_valid_repeats": 3,
+        "mean_score": 1,
+        "mean_latency_seconds": 166,
+        "provider_cost_usd": 0.386353,
+        "confidence": "bounded-repeated",
+        "limitations": "Exact deterministic repository-tracing pack with complete assistant-event identity and canonical first-party modelUsage; explicit-only selection is retained."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "glm53-flash-max-builder",
+      "model": "glm-5.3-flash",
+      "family": "zai",
+      "harness": "claude-zai",
+      "effort": "max",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "zai-glm-5.3-flash-launch-max-2026-08-28"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-29-glm-5.3-flash-max-qualification-v4",
+        "task_count": 6,
+        "repeats": 3,
+        "valid_repeats": 3,
+        "strict_identity_valid_repeats": 3,
+        "mean_score": 1,
+        "all_checker_runs_pass": true,
+        "mean_latency_seconds": 70.67,
+        "provider_cost_usd": 0.229925,
+        "confidence": "bounded-repeated",
+        "limitations": "Exact deterministic scoped-edit pack with complete assistant-event identity and canonical first-party modelUsage; broader evidence is still insufficient for qualified status."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "glm53-flash-max-reviewer",
+      "model": "glm-5.3-flash",
+      "family": "zai",
+      "harness": "claude-zai",
+      "effort": "max",
+      "lane": "reviewer",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall result."
+    },
+    {
+      "profile": "glm53-flash-max-policy-annotation",
+      "model": "glm-5.3-flash",
+      "family": "zai",
+      "harness": "claude-zai",
+      "effort": "max",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No frozen local GLM-5.3-Flash/max policy-annotation result; coding-lane qualification does not transfer."
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "clerk",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-kimi-code-kimi-k3"
+      ],
+      "context_evidence_ids": [],
+      "local_evaluation": {
+        "run_id": "2026-07-16-kimi-k3",
+        "task_count": null,
+        "repeats": null,
+        "confidence": "low",
+        "limitations": "Provider quota truncated the run; valid-subset size is not recorded in the published gate."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "scout",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-kimi-code-kimi-k3"
+      ],
+      "context_evidence_ids": [
+        "arena-agent-kimi-k3"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-07-16-kimi-k3",
+        "task_count": null,
+        "repeats": null,
+        "confidence": "low",
+        "limitations": "Provider quota truncated the run; valid-subset size is not recorded in the published gate."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [
+        "aa-kimi-code-kimi-k3"
+      ],
+      "context_evidence_ids": [
+        "arena-agent-kimi-k3-2026-08-03",
+        "epoch-deepswe-kimi-k3-mini-swe-agent-max"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-07-16-kimi-k3",
+        "task_count": null,
+        "repeats": null,
+        "confidence": "low",
+        "limitations": "Provider quota truncated the run; valid-subset size is not recorded in the published gate."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "frontend-builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "webdev-kimi-k3",
+        "aa-kimi-code-kimi-k3"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-07-16-kimi-k3",
+        "task_count": null,
+        "repeats": null,
+        "confidence": "low",
+        "limitations": "No frontend-specific local pack; provider quota truncated the general run."
+      },
+      "provider_fallback": null,
+      "evidence_gap": "WebDev uses a different harness/default effort; coding evidence is supporting only."
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "senior",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "arena-agent-kimi-k3"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "Steerability evidence is insufficient for promotion."
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "judgement",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No frozen local policy-annotation result exists."
+    },
+    {
+      "profile": "kimi-k3",
+      "model": "kimi-k3",
+      "family": "moonshot",
+      "harness": "kimi-code-cli",
+      "effort": "max",
+      "lane": "reviewer",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall row."
+    },
+    {
+      "profile": "gemini-3.7-flash-scout",
+      "model": "gemini-3.7-flash",
+      "family": "google",
+      "harness": "agy",
+      "effort": "medium",
+      "lane": "scout",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "google-gemini-3.7-flash-launch-2026-08-17"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "The official launch confirms Gemini 3.7 Flash and medium thinking, but the current local Antigravity session cannot attest exact model inventory or OAuth. The previous Gemini 3.6 smoke does not transfer."
+    },
+    {
+      "profile": "gemini-3.7-flash-builder",
+      "model": "gemini-3.7-flash",
+      "family": "google",
+      "harness": "agy",
+      "effort": "high",
+      "lane": "builder",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "google-gemini-3.7-flash-launch-2026-08-17"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "Google reports strong DeepSWE and FrontierCode results, but they do not attest the prompt-only agy/high route and no local scoped-edit evaluation exists."
+    },
+    {
+      "profile": "gemini-3.7-flash-frontend-builder",
+      "model": "gemini-3.7-flash",
+      "family": "google",
+      "harness": "agy",
+      "effort": "high",
+      "lane": "frontend-builder",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "google-gemini-3.7-flash-launch-2026-08-17"
+      ],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "Google reports WebDev Elo 1588, but the harness differs and no frontend-specific local agy/high evaluation exists."
+    },
+    {
+      "profile": "gemini-3.7-flash-reviewer",
+      "model": "gemini-3.7-flash",
+      "family": "google",
+      "harness": "agy",
+      "effort": "high",
+      "lane": "reviewer",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall evaluation."
+    },
+    {
+      "profile": "gemini-3.7-flash-judgement",
+      "model": "gemini-3.7-flash",
+      "family": "google",
+      "harness": "agy",
+      "effort": "high",
+      "lane": "judgement",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "Runtime availability and launch claims cannot qualify judgement."
+    },
+    {
+      "profile": "grok-build",
+      "model": "grok-4.6",
+      "family": "xai",
+      "harness": "grok-build-cli",
+      "effort": "high",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "cursorbench-grok-4.6-high-2026-08-12",
+        "frontiercode-grok-4.6-high-2026-08-12",
+        "apex-swe-grok-4.6-high-2026-08-12",
+        "apex-agents-grok-4.6-high-2026-08-12"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-12-grok-4.6-build",
+        "task_count": 1,
+        "repeats": 1,
+        "confidence": "low",
+        "limitations": "One authenticated runtime compatibility smoke; not a held-out comparative evaluation. Current public results use other harnesses and the hardened runner is edit-only."
+      },
+      "provider_fallback": null,
+      "evidence_gap": null
+    },
+    {
+      "profile": "grok-build",
+      "model": "grok-4.6",
+      "family": "xai",
+      "harness": "grok-build-cli",
+      "effort": "high",
+      "lane": "frontend-builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "webdev-grok-4.6-high-2026-08-12",
+        "cursorbench-grok-4.6-high-2026-08-12",
+        "frontiercode-grok-4.6-high-2026-08-12"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-12-grok-4.6-build",
+        "task_count": 0,
+        "repeats": 0,
+        "confidence": "low",
+        "limitations": "No frontend-specific local pack; the edit-only scoped runner is shared with builder."
+      },
+      "provider_fallback": null,
+      "evidence_gap": "WebDev uses a different harness and its 4.6 row is preliminary; frontend preference is an explicit owner decision."
+    },
+    {
+      "profile": "grok-build",
+      "model": "grok-4.6",
+      "family": "xai",
+      "harness": "grok-build-cli",
+      "effort": "high",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No frozen Grok 4.6 policy-annotation manifest or local result exists. Historical Grok 4.5 manifests are not valid for this tuple."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "qwen-3.8-max-ga-launch"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-03-qwen3.8-max-ga",
+        "task_count": 1,
+        "repeats": 1,
+        "confidence": "low",
+        "limitations": "Owner promotion on an explicit routing decision, not on measured builder capability. The only local check is a runtime identity probe confirming the endpoint serves qwen3.8-max at xhigh; no held-out implementation pack was run. The runner is text-only and cannot edit a worktree, so this lane returns a patch the lead applies and verifies."
+      },
+      "provider_fallback": null,
+      "evidence_gap": "No DeepSWE or Terminal-Bench v2 row exists for qwen3.8-max on any harness, so both builder required metrics are unmet. Promotion is an owner decision recorded as provisional and explicit-only."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "clerk",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact public benchmark or local clerk evaluation."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "scout",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact public benchmark or local repository-navigation evaluation."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "reviewer",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall evaluation."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "senior",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact high-risk judgement or steerability evaluation."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "judgement",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "Launch claims and runtime access cannot qualify judgement."
+    },
+    {
+      "profile": "qwen3.8-max",
+      "model": "qwen3.8-max",
+      "family": "alibaba",
+      "harness": "token-plan-openai",
+      "effort": "xhigh",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No frozen local policy-annotation result exists. The previous allowlisted manifest was bound to the qwen3.8-max-preview tuple and is void after the rename; regenerate it against qwen3.8-max before any evaluation run."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "builder",
+      "status": "provisional",
+      "selection": "explicit-only",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [
+        "deepseek-v4-pro-launch-2026-08-17"
+      ],
+      "local_evaluation": {
+        "run_id": "2026-08-17-deepseek-v4-pro-max-smoke",
+        "task_count": 1,
+        "repeats": 1,
+        "confidence": "low",
+        "limitations": "One deterministic off-by-one diagnosis and patch task verified exact API model identity, reasoning_effort=max, valid structured output, and the expected result. This was not a held-out repeated implementation pack. The runner is text-only and cannot edit a worktree."
+      },
+      "provider_fallback": null,
+      "evidence_gap": "The provider reports Terminal-Bench 2.0 for a different harness, no DeepSWE row exists, and WebDev only supports frontend work."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "clerk",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact public benchmark or local clerk evaluation."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "scout",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact public benchmark or local repository-navigation evaluation."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "reviewer",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact review precision/recall evaluation."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "senior",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No exact high-risk judgement or steerability evaluation."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "judgement",
+      "status": "disabled",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "Provider claims and runtime access cannot qualify judgement."
+    },
+    {
+      "profile": "deepseek-v4-pro",
+      "model": "deepseek-v4-pro",
+      "family": "deepseek",
+      "harness": "deepseek-api",
+      "effort": "max",
+      "lane": "policy-annotation",
+      "status": "candidate",
+      "selection": "blocked",
+      "exact_evidence_ids": [],
+      "context_evidence_ids": [],
+      "local_evaluation": null,
+      "provider_fallback": null,
+      "evidence_gap": "No frozen local policy-annotation result exists."
+    }
+  ],
+  "model_families": {
+    "claude-fable-5": "anthropic",
+    "claude-fable-5-1": "anthropic",
+    "claude-opus-5": "anthropic",
+    "claude-sonnet-5": "anthropic",
+    "deepseek-v4-pro": "deepseek",
+    "gemini-3.7-flash": "google",
+    "glm-5.3-flash": "zai",
+    "gpt-5.6-luna": "openai",
+    "gpt-5.6-sol": "openai",
+    "gpt-5.6-terra": "openai",
+    "grok-4.6": "xai",
+    "kimi-k3": "moonshot",
+    "qwen3.8-max": "alibaba",
+    "gpt-6-astra": "openai-gpt6"
+  },
+  "review_policy": {
+    "require_cross_family": true,
+    "review_lanes": [
+      "routine-review",
+      "material-review",
+      "security"
+    ],
+    "eligible_reviewer_profiles": [
+      "sonnet-reviewer",
+      "opus-reviewer",
+      "terra-reviewer",
+      "astra-reviewer"
+    ],
+    "availability_must_be_verified": true
+  },
+  "compound_lanes": {
+    "super-judgement": {
+      "status": "manual-qualified",
+      "selection": "explicit-only",
+      "members": [
+        "fable-judge",
+        "astra-judge"
+      ],
+      "protocol": "independent-then-cross-review",
+      "final_authority": "lead",
+      "automatic_dispatch": false,
+      "automatic_merge": false,
+      "activation": "Use only for highly complex, high-blast-radius, difficult-to-reverse decisions with at least two documented complexity triggers."
+    }
+  }
+}

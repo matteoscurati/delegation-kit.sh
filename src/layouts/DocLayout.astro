@@ -1,0 +1,60 @@
+---
+// Layout for long-form MDX pages (/docs/*, /changelog, /privacy).
+// `doc: true` makes BaseLayout add the `.doc` class to <main> and load
+// /prose.css, which is served from public/ so it ships only on these pages.
+import BaseLayout from './BaseLayout.astro';
+
+interface PageMeta {
+  title?: string;
+  description?: string;
+  path?: string;
+}
+
+interface Props extends PageMeta {
+  frontmatter?: PageMeta;
+}
+
+const merged = { ...Astro.props, ...Astro.props.frontmatter };
+const baseFrontmatter = { ...merged, doc: true };
+
+const docNav = [
+  { href: '/docs', label: 'Getting started' },
+  { href: '/docs/routing', label: 'Routing policy' },
+  { href: '/docs/executors', label: 'External executors' },
+  { href: '/docs/compatibility', label: 'Compatibility' },
+  { href: '/docs/adapting', label: 'Adapting to your models' },
+  { href: '/changelog', label: 'Changelog' }
+];
+const current = merged.path ?? '';
+---
+
+<BaseLayout frontmatter={baseFrontmatter}>
+  <div class="lg:grid lg:grid-cols-[14rem_1fr] lg:gap-12">
+    <aside class="mb-10 lg:mb-0">
+      <p class="eyebrow mb-3">Documentation</p>
+      <ul class="text-sm flex flex-wrap lg:flex-col gap-x-4 gap-y-2 lg:sticky lg:top-6">
+        {
+          docNav.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={item.href === current ? 'page' : undefined}
+                class:list={[
+                  'hover:text-[var(--color-ink)]',
+                  item.href === current
+                    ? 'text-[var(--color-ink)] font-medium'
+                    : 'text-[var(--color-ink-soft)]'
+                ]}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+    <article class="min-w-0">
+      <slot />
+    </article>
+  </div>
+</BaseLayout>

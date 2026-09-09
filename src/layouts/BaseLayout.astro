@@ -1,0 +1,157 @@
+---
+import '../styles/global.css';
+import UmamiAnalytics from '../components/UmamiAnalytics.astro';
+import kit from '../data/kit.json';
+
+interface PageMeta {
+  title?: string;
+  description?: string;
+  path?: string;
+  /** When true, applies `.doc` MDX prose styles to <main> and loads prose.css. */
+  doc?: boolean;
+}
+
+interface Props extends PageMeta {
+  /** Astro injects MDX frontmatter here when this is used as `layout:` in MDX. */
+  frontmatter?: PageMeta;
+}
+
+const merged: PageMeta = { ...Astro.props, ...Astro.props.frontmatter };
+const {
+  title = 'delegation-kit — user-directed model delegation for Claude Code and Codex',
+  description = 'Hand bounded coding work to other models without giving up control: every dispatch is chosen by you, gated by evidence, and reviewed by a different model family.',
+  path = '/',
+  doc: isDoc = false
+} = merged;
+
+const siteOrigin = Astro.site ?? new URL('https://delegation-kit.sh');
+const canonical = new URL(path, siteOrigin).toString();
+const ogImage = new URL('/og-image.png', siteOrigin).toString();
+const ogAlt = 'delegation-kit — the kit never dispatches on its own.';
+
+const nav = [
+  { href: '/docs', label: 'Docs' },
+  { href: '/docs/routing', label: 'Policy' },
+  { href: '/changelog', label: 'Changelog' }
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="matteoscurati" />
+    <meta name="theme-color" content="#eef0f3" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+    />
+    {isDoc && <link rel="stylesheet" href="/prose.css" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="delegation-kit" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'delegation-kit',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'macOS',
+        softwareVersion: kit.version,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        url: siteOrigin.href.replace(/\/$/, ''),
+        license: 'https://opensource.org/licenses/MIT'
+      })}
+    />
+
+    <UmamiAnalytics />
+  </head>
+  <body>
+    <header class="border-b border-[var(--color-line-strong)]">
+      <nav class="max-w-6xl mx-auto px-6 min-h-14 py-2 flex items-center justify-between gap-6">
+        <a
+          href="/"
+          class="font-mono font-medium tracking-tight flex items-center gap-2 whitespace-nowrap"
+        >
+          <span class="inline-block w-2.5 h-2.5 bg-[var(--color-explicit)]" aria-hidden="true"
+          ></span>
+          delegation-kit
+        </a>
+        <ul class="flex flex-wrap justify-end gap-x-4 gap-y-1 text-sm">
+          {
+            nav.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a
+              href="https://github.com/matteoscurati/delegation-kit"
+              class="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+              rel="noopener"
+            >
+              GitHub ↗
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class:list={['max-w-6xl mx-auto px-6', isDoc ? 'doc py-12' : 'py-8']}>
+      <slot />
+    </main>
+
+    <footer class="border-t border-[var(--color-line-strong)] mt-24">
+      <div
+        class="max-w-6xl mx-auto px-6 py-8 text-sm text-[var(--color-ink-soft)] flex flex-col sm:flex-row justify-between gap-3"
+      >
+        <span>
+          Code: <a href="https://opensource.org/licenses/MIT" class="hover:text-[var(--color-ink)]"
+            >MIT</a
+          >
+          · <a href="/privacy" class="hover:text-[var(--color-ink)]">Privacy</a>
+          · <a
+            href="https://www.npmjs.com/package/delegation-kit"
+            class="hover:text-[var(--color-ink)]"
+            rel="noopener">npm</a
+          >
+        </span>
+        <span class="font-mono">
+          v{kit.version} · {kit.releaseDate} · gates {kit.profiles} profiles
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,81 @@
+---
+// The three lists a `delegation-route resolve` answer contains.
+import StatusPill from './StatusPill.astro';
+
+type Row = {
+  profile: string;
+  model: string;
+  family: string;
+  harness: string;
+  effort: string;
+  status: string;
+  selection: string;
+};
+interface Props {
+  choices: Row[];
+  blocked: Row[];
+  excluded: Row[];
+}
+const { choices, blocked, excluded } = Astro.props;
+---
+
+<div class="grid gap-6 md:grid-cols-[1.4fr_1fr_1fr]">
+  <div>
+    <p class="eyebrow mb-2">choices — you pick one, or authorize the lead to</p>
+    {
+      choices.length === 0 ? (
+        <p class="text-sm text-[var(--color-ink-soft)]">
+          none — the lane has no selectable profile
+        </p>
+      ) : (
+        <ul class="text-sm divide-y divide-[var(--color-line)]">
+          {choices.map((row) => (
+            <li class="py-1.5 flex items-baseline justify-between gap-3">
+              <span>
+                <span class="font-mono font-medium">{row.profile}</span>
+                <span class="font-mono text-[var(--color-ink-soft)] text-[0.75rem] block">
+                  {row.model} / {row.harness} / {row.effort} · {row.family}
+                </span>
+              </span>
+              <StatusPill status={row.status} selection={row.selection} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+  <div>
+    <p class="eyebrow mb-2">blocked — not selectable by anyone</p>
+    {
+      blocked.length === 0 ? (
+        <p class="text-sm text-[var(--color-ink-soft)]">none</p>
+      ) : (
+        <ul class="text-sm divide-y divide-[var(--color-line)]">
+          {blocked.map((row) => (
+            <li class="py-1.5 flex items-baseline justify-between gap-3">
+              <span class="font-mono">{row.profile}</span>
+              <StatusPill status={row.status} selection={row.selection} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+  <div>
+    <p class="eyebrow mb-2">excluded — same family as the producer</p>
+    {
+      excluded.length === 0 ? (
+        <p class="text-sm text-[var(--color-ink-soft)]">none</p>
+      ) : (
+        <ul class="text-sm divide-y divide-[var(--color-line)]">
+          {excluded.map((row) => (
+            <li class="py-1.5 font-mono">
+              {row.profile}{' '}
+              <span class="text-[var(--color-ink-soft)] text-[0.75rem]">· {row.family}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</div>
