@@ -5,20 +5,20 @@ user-directed model delegation for Claude Code and Codex.
 
 Built with **Astro 5** + **Tailwind v4** + **TypeScript**. Static-only output.
 The only runtime JavaScript is the copy button on code blocks; the "Resolve a
-lane" panel on the home page is radio buttons plus CSS `:has()`.
+role" panel on the home page is radio buttons plus CSS `:has()`.
 
 ## What the site shows, and where it comes from
 
 Everything that describes the kit is generated from the kit checkout, never
 written by hand here:
 
-| on the site                                                                 | source in `../delegation-kit`                                                            |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| version, release date, counts in the footer and hero                        | `package.json`, `CHANGELOG.md`, `delegation-executor-contract check --json`              |
-| the routing table                                                           | `delegation-route table --json`                                                          |
-| the "Resolve a lane" panel                                                  | `delegation-route resolve --lane … --json`, once per lane and per producer family        |
-| `/docs/executors`, `/docs/compatibility`, `/docs/routing`, `/docs/adapting` | `docs/external-executors.md`, `docs/compatibility.md`, `model-routing.md`, `ADAPTING.md` |
-| `/changelog`                                                                | `CHANGELOG.md`                                                                           |
+| on the site                                                                                        | source in `../delegation-kit`                                                                                          |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| version, release date, counts in the footer and hero                                               | `package.json`, `CHANGELOG.md`, `delegation-executor-contract check --json`                                            |
+| the routing table                                                                                  | `delegation-route table --json`                                                                                        |
+| the "Resolve a lane" panel                                                                         | `delegation-route resolve --lane … --json`, once per lane and per producer family                                      |
+| `/docs/configuration`, `/docs/executors`, `/docs/compatibility`, `/docs/routing`, `/docs/adapting` | `docs/user-configuration.md`, `docs/external-executors.md`, `docs/compatibility.md`, `model-routing.md`, `ADAPTING.md` |
+| `/changelog`                                                                                       | `CHANGELOG.md`                                                                                                         |
 
 `scripts/sync-kit.mjs` runs the kit's read-only commands and rewrites the
 synced blocks between `<!-- BEGIN AUTOGEN -->` / `<!-- END AUTOGEN -->`
@@ -55,7 +55,7 @@ Production runs on **Cloudflare Workers with Static Assets**, configured in
 domain `delegation-kit.sh`). Two ways to deploy, same result:
 
 - **From CI** — `.github/workflows/deploy.yml` builds and runs `wrangler
-  deploy` on every push to `main`. It needs the repository secrets
+deploy` on every push to `main`. It needs the repository secrets
   `CLOUDFLARE_API_TOKEN` (Workers Scripts:Edit + Workers Routes:Edit) and
   `CLOUDFLARE_ACCOUNT_ID`, and the optional variable `PUBLIC_CF_BEACON_TOKEN`.
 - **From a machine** — `npx wrangler login` once, then

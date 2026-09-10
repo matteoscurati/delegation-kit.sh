@@ -2,45 +2,39 @@
 // "Resolve a lane": `delegation-route resolve` with no JavaScript.
 //
 // Every answer shown here was produced by the kit's own router at build time
-// (scripts/sync-kit.mjs runs `delegation-route resolve --lane … --json`, and
-// for review lanes once per producer family). Radio buttons pick the lane and
-// the producer; CSS `:has()` reveals the matching precomputed panel. The page
-// therefore cannot disagree with the router, and it ships no script.
+// against a fresh default preset (scripts/sync-kit.mjs): every lane under the
+// default review policy, every review lane once per producer family under the
+// strict `cross-family` preset, and each compound lane. Radio buttons pick the
+// lane, the policy and the producer; CSS `:has()` reveals the precomputed
+// panel. The page cannot disagree with the router, and it ships no script.
 import resolve from '../data/resolve.json';
 import kit from '../data/kit.json';
-import StatusPill from './StatusPill.astro';
 import ResolvePanel from './ResolvePanel.astro';
 
 type Row = {
   profile: string;
   model: string;
-  family: string;
-  harness: string;
-  effort: string;
-  status: string;
+  family: string | null;
+  adapter: string;
+  technical_compatibility: boolean;
+  capabilities: string[];
+  evidence: { status?: string } | Record<string, never>;
   selection: string;
 };
-type Resolved = {
-  lane: string;
-  choices: Row[];
-  blocked: Row[];
-  excluded_same_family: Row[];
-};
+type Resolved = { lane: string; choices: Row[]; blocked: Row[]; review_policy: string };
 type Compound = {
   lane: string;
-  status: string;
-  selection: string;
   members: string[];
   protocol: string;
-  final_authority: string;
-  activation: string;
+  historical_evidence: { status?: string; activation?: string; final_authority?: string };
+  requires_explicit_member_dispatches: boolean;
 };
 
 const plain = resolve.lanes as unknown as Record<string, Resolved>;
-const review = resolve.review as unknown as Record<string, Record<string, Resolved>>;
+const strict = resolve.strict as unknown as Record<string, Record<string, Resolved>>;
 const compound = resolve.compound as unknown as Record<string, Compound>;
-const plainLanes = Object.keys(plain).sort();
-const reviewLanes = Object.keys(review).sort();
+const reviewLanes = kit.reviewLanes as string[];
+const laneList = Object.keys(plain).sort();
 const compoundLanes = Object.keys(compound).sort();
 const families = kit.families as string[];
 const defaultLane = 'builder';
@@ -49,21 +43,26 @@ const defaultFamily = 'openai';
 const laneId = (lane: string) => `lane-${lane}`;
 const familyId = (family: string) => `producer-${family}`;
 
-// Generated CSS: one rule per panel. `:has()` is supported by every current
-// browser; without it the first panel stays visible as a static fallback.
-const rules: string[] = [];
-rules.push('.resolver .panel{display:none}');
-for (const lane of plainLanes)
-  rules.push(`.resolver:has(#${laneId(lane)}:checked) .panel[data-lane="${lane}"]{display:block}`);
-for (const lane of compoundLanes)
-  rules.push(`.resolver:has(#${laneId(lane)}:checked) .panel[data-lane="${lane}"]{display:block}`);
+const rules: string[] = ['.resolver .panel{display:none}'];
+for (const lane of laneList)
+  rules.push(
+    `.resolver:has(#${laneId(lane)}:checked):has(#policy-optional:checked) .panel[data-lane="${lane}"][data-policy="optional"]{display:block}`
+  );
+for (const lane of laneList.filter((l) => !reviewLanes.includes(l)))
+  rules.push(
+    `.resolver:has(#${laneId(lane)}:checked):has(#policy-strict:checked) .panel[data-lane="${lane}"][data-policy="optional"]{display:block}`
+  );
 for (const lane of reviewLanes)
   for (const family of families)
     rules.push(
-      `.resolver:has(#${laneId(lane)}:checked):has(#${familyId(family)}:checked) .panel[data-lane="${lane}"][data-family="${family}"]{display:block}`
+      `.resolver:has(#${laneId(lane)}:checked):has(#policy-strict:checked):has(#${familyId(family)}:checked) .panel[data-lane="${lane}"][data-policy="strict"][data-family="${family}"]{display:block}`
     );
+for (const lane of compoundLanes)
+  rules.push(`.resolver:has(#${laneId(lane)}:checked) .panel[data-lane="${lane}"]{display:block}`);
 rules.push('.resolver .producer{display:none}');
-rules.push(`.resolver:has(input[data-review]:checked) .producer{display:block}`);
+rules.push(
+  '.resolver:has(input[data-review]:checked):has(#policy-strict:checked) .producer{display:block}'
+);
 rules.push(
   '.resolver .lane-option{border:1px solid var(--color-line);padding:.35rem .6rem;cursor:pointer;font-family:var(--font-mono);font-size:.8rem;background:var(--color-panel)}',
   '.resolver input:checked + .lane-option{background:var(--color-ink);color:var(--color-paper);border-color:var(--color-ink)}',
@@ -72,19 +71,19 @@ rules.push(
 );
 const css = rules.join('\n');
 
-const command = (lane: string, family?: string) =>
-  `delegation-route resolve --lane ${lane}${family ? ` --producer-family ${family}` : ''} --json`;
+const command = (lane: string, family?: string, strictPolicy = false) =>
+  `${strictPolicy ? 'DELEGATION_CONFIG_FILE=strict.json ' : ''}delegation-route resolve --lane ${lane}${family ? ` --producer-family ${family}` : ''} --json`;
 ---
 
 <style set:html={css}></style>
 
 <div class="resolver relative">
-  <div class="flex flex-col gap-4 md:flex-row md:items-start md:gap-10">
+  <div class="grid gap-5 md:grid-cols-[2fr_1fr_1fr] md:items-start">
     <fieldset class="min-w-0">
-      <legend class="eyebrow mb-2">Lane</legend>
+      <legend class="eyebrow mb-2">Role</legend>
       <div class="flex flex-wrap gap-1.5">
         {
-          [...plainLanes, ...reviewLanes, ...compoundLanes].map((lane) => (
+          [...laneList, ...compoundLanes].map((lane) => (
             <span class="relative">
               <input
                 type="radio"
@@ -102,8 +101,21 @@ const command = (lane: string, family?: string) =>
         }
       </div>
     </fieldset>
+    <fieldset class="min-w-0">
+      <legend class="eyebrow mb-2">review_policy</legend>
+      <div class="flex flex-wrap gap-1.5">
+        <span class="relative">
+          <input type="radio" name="policy" id="policy-optional" value="optional" checked />
+          <label for="policy-optional" class="lane-option inline-block">optional</label>
+        </span>
+        <span class="relative">
+          <input type="radio" name="policy" id="policy-strict" value="cross-family" />
+          <label for="policy-strict" class="lane-option inline-block">cross-family</label>
+        </span>
+      </div>
+    </fieldset>
     <fieldset class="producer min-w-0">
-      <legend class="eyebrow mb-2">Producer family (review lanes exclude it)</legend>
+      <legend class="eyebrow mb-2">Producer family (excluded)</legend>
       <div class="flex flex-wrap gap-1.5">
         {
           families.map((family) => (
@@ -127,14 +139,18 @@ const command = (lane: string, family?: string) =>
 
   <div class="mt-6">
     {
-      plainLanes.map((lane) => {
+      laneList.map((lane) => {
         const r = plain[lane];
         return (
-          <div class="panel" data-lane={lane}>
+          <div class="panel" data-lane={lane} data-policy="optional">
             <p class="font-mono text-[0.8rem] text-[var(--color-ink-soft)] mb-4">
               $ {command(lane)}
             </p>
-            <ResolvePanel choices={r.choices} blocked={r.blocked} excluded={[]} />
+            <ResolvePanel
+              choices={r.choices}
+              blocked={r.blocked}
+              blockedNote="the adapter does not support this role"
+            />
           </div>
         );
       })
@@ -142,16 +158,16 @@ const command = (lane: string, family?: string) =>
     {
       reviewLanes.map((lane) =>
         families.map((family) => {
-          const r = review[lane][family];
+          const r = strict[lane][family];
           return (
-            <div class="panel" data-lane={lane} data-family={family}>
+            <div class="panel" data-lane={lane} data-policy="strict" data-family={family}>
               <p class="font-mono text-[0.8rem] text-[var(--color-ink-soft)] mb-4">
-                $ {command(lane, family)}
+                $ {command(lane, family, true)}
               </p>
               <ResolvePanel
                 choices={r.choices}
                 blocked={r.blocked}
-                excluded={r.excluded_same_family}
+                blockedNote="same family as the producer, or role unsupported"
               />
             </div>
           );
@@ -168,18 +184,17 @@ const command = (lane: string, family?: string) =>
             </p>
             <div class="grid gap-6 md:grid-cols-[1fr_1fr]">
               <div>
-                <p class="eyebrow mb-2">Compound lane</p>
-                <p class="font-mono text-sm">
-                  {c.members.join(' + ')} <StatusPill status={c.status} selection={c.selection} />
-                </p>
+                <p class="eyebrow mb-2">Compound lane — each member is its own dispatch</p>
+                <p class="font-mono text-sm">{c.members.join(' + ')}</p>
                 <p class="text-sm text-[var(--color-ink-soft)] mt-2">
                   Protocol <span class="font-mono">{c.protocol}</span>; final authority:{' '}
-                  {c.final_authority}.
+                  {c.historical_evidence.final_authority ?? 'lead'}. Selecting the compound lane
+                  grants nothing; each member needs its own explicit dispatch.
                 </p>
               </div>
               <div>
-                <p class="eyebrow mb-2">Activation</p>
-                <p class="text-sm">{c.activation}</p>
+                <p class="eyebrow mb-2">Historical activation note</p>
+                <p class="text-sm">{c.historical_evidence.activation}</p>
               </div>
             </div>
           </div>
@@ -189,8 +204,8 @@ const command = (lane: string, family?: string) =>
     <p
       class="font-mono text-[0.75rem] text-[var(--color-ink-soft)] mt-6 border-t border-[var(--color-line)] pt-3"
     >
-      requires_user_direction: true · automatic_dispatch: false · authorization carries to retries:
-      false · to review: false
+      schema_version: 2 · requires_user_direction: true · automatic_dispatch: false ·
+      authorization_granted: false
     </p>
   </div>
 </div>

@@ -1,32 +1,25 @@
 ---
-// The routing table, as `delegation-route table --json` returns it. One row
-// per (profile, lane) decision; the profile cell repeats only when the profile
-// changes, so the eye reads the gate as the router does: profile, then lanes.
+// The routing table, as `delegation-route table --json` (schema 2) returns it
+// for a fresh default preset. One row per (profile, role): what the adapter
+// supports today decides; the historical qualification is shown muted beside
+// it, because since 0.24.0 evidence informs and never gates.
 import table from '../data/routing-table.json';
+import kit from '../data/kit.json';
 import StatusPill from './StatusPill.astro';
 
-interface Props {
-  /** Limit to these lanes; default shows every decision. */
-  lanes?: string[];
-}
-const { lanes } = Astro.props;
-const rows = (
-  lanes ? table.profiles.filter((r) => lanes.includes(r.lane)) : table.profiles
-) as Array<{
+type Row = {
   profile: string;
   model: string;
-  family: string;
-  harness: string;
-  effort: string;
+  family: string | null;
+  adapter: string;
   lane: string;
-  status: string;
+  technical_compatibility: boolean;
+  capabilities: string[];
+  evidence: { status?: string; evidence_gap?: string | null } | Record<string, never>;
   selection: string;
-  exact_evidence_ids: string[];
-  context_evidence_ids: string[];
-  local_evaluation: { task_count?: number; confidence?: string } | null;
-  provider_fallback: { target_model: string; trigger: string } | null;
-  evidence_gap: string | null;
-}>;
+};
+const rows = table.profiles as Row[];
+const profileConfig = kit.profileConfig as Record<string, { parameters?: { effort?: string } }>;
 let previous = '';
 ---
 
@@ -34,12 +27,12 @@ let previous = '';
   <table class="w-full text-[0.76rem] leading-snug border-collapse">
     <thead>
       <tr class="eyebrow text-left border-b border-[var(--color-line-strong)]">
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Profile</th>
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Model / harness / effort</th>
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Lane · evidence gap</th>
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Gate</th>
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Exact · context · local</th>
-        <th class="py-2 font-normal whitespace-nowrap">Fallback</th>
+        <th class="py-2 pr-4 font-normal whitespace-nowrap"
+          >Profile · model / adapter / effort · capabilities</th
+        >
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Role</th>
+        <th class="py-2 pr-4 font-normal whitespace-nowrap">Adapter today</th>
+        <th class="py-2 font-normal whitespace-nowrap">Historical record · evidence gap</th>
       </tr>
     </thead>
     <tbody>
@@ -47,6 +40,7 @@ let previous = '';
         rows.map((row) => {
           const first = row.profile !== previous;
           previous = row.profile;
+          const effort = profileConfig[row.profile]?.parameters?.effort ?? '—';
           return (
             <tr
               class:list={[
@@ -54,29 +48,27 @@ let previous = '';
                 first && 'border-t border-t-[var(--color-line-strong)]'
               ]}
             >
-              <td class="py-1.5 pr-4 font-mono font-medium whitespace-nowrap">
-                {first ? row.profile : ''}
-              </td>
-              <td class="py-1.5 pr-4 font-mono text-[var(--color-ink-soft)] whitespace-nowrap">
-                {first ? `${row.model} / ${row.harness} / ${row.effort}` : ''}
-              </td>
-              <td class="py-1.5 pr-4 min-w-[14rem] max-w-[26rem]">
-                {row.lane}
-                {row.evidence_gap && (
-                  <span class="block text-[0.7rem] leading-tight text-[var(--color-ink-soft)] mt-0.5">
-                    {row.evidence_gap}
-                  </span>
+              <td class="py-1.5 pr-4 whitespace-nowrap">
+                {first && (
+                  <>
+                    <span class="font-mono font-medium">{row.profile}</span>
+                    <span class="block font-mono text-[0.7rem] text-[var(--color-ink-soft)]">
+                      {row.model} / {row.adapter} / {effort} · {row.capabilities.join(', ')}
+                    </span>
+                  </>
                 )}
               </td>
+              <td class="py-1.5 pr-4 whitespace-nowrap">{row.lane}</td>
               <td class="py-1.5 pr-4 whitespace-nowrap">
-                <StatusPill status={row.status} selection={row.selection} />
+                <StatusPill kind="compat" value={row.technical_compatibility} />
               </td>
-              <td class="py-1.5 pr-4 font-mono whitespace-nowrap text-[var(--color-ink-soft)]">
-                {row.exact_evidence_ids.length} · {row.context_evidence_ids.length} ·{' '}
-                {row.local_evaluation?.task_count ?? '—'}
-              </td>
-              <td class="py-1.5 font-mono whitespace-nowrap">
-                {row.provider_fallback ? row.provider_fallback.target_model : '—'}
+              <td class="py-1.5 min-w-[16rem] max-w-[30rem]">
+                <StatusPill kind="history" value={row.evidence?.status} />
+                {row.evidence?.evidence_gap && (
+                  <span class="block text-[0.68rem] leading-tight text-[var(--color-ink-soft)] mt-1">
+                    {row.evidence.evidence_gap}
+                  </span>
+                )}
               </td>
             </tr>
           );

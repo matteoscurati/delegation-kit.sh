@@ -94,8 +94,11 @@ summary:focus-visible {
   color: var(--color-ink-soft);
 }
 
-/* Status colours as background fills, not tinted text: a gate decision
- * should be legible from across the room. */
+/* Status colours. `compatible` / `unsupported` are a coloured dot and word:
+ * the one thing that decides, stated plainly on every row without shouting.
+ * `excluded` (same family under cross-family review) is the only filled
+ * block, amber, because it is the one case that needs your attention; the
+ * historical record is a quiet grey outline. */
 .status {
   display: inline-block;
   font-family: var(--font-mono);
@@ -108,20 +111,40 @@ summary:focus-visible {
   color: #fff;
   white-space: nowrap;
 }
-.status-qualified {
-  background: var(--color-qualified);
+.status-compatible,
+.status-unsupported {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+  border-radius: 0;
 }
-.status-provisional,
-.status-manual-qualified {
+.status-compatible::before,
+.status-unsupported::before {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  margin-right: 0.45em;
+  vertical-align: 0.05em;
+  background: currentColor;
+}
+.status-compatible {
+  color: var(--color-qualified);
+}
+.status-unsupported {
+  color: var(--color-blocked);
+}
+.status-history {
+  background: transparent;
+  color: var(--color-ink-soft);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.status-excluded {
   background: var(--color-explicit);
   color: var(--color-ink);
-}
-.status-candidate,
-.status-disabled,
-.status-blocked {
-  background: transparent;
-  color: var(--color-blocked);
-  box-shadow: inset 0 0 0 1px var(--color-blocked);
 }
 
 @media (prefers-reduced-motion: reduce) {

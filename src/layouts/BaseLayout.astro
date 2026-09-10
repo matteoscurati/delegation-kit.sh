@@ -19,7 +19,7 @@ interface Props extends PageMeta {
 const merged: PageMeta = { ...Astro.props, ...Astro.props.frontmatter };
 const {
   title = 'delegation-kit — user-directed model delegation for Claude Code and Codex',
-  description = 'Hand bounded coding work to other models without giving up control: every dispatch is chosen by you, gated by evidence, and reviewed by a different model family.',
+  description = 'Hand bounded coding work to the models you configure without giving up control: every dispatch is chosen by you, every receipt says what answered, and review is a policy you set.',
   path = '/',
   doc: isDoc = false
 } = merged;
@@ -27,7 +27,7 @@ const {
 const siteOrigin = Astro.site ?? new URL('https://delegation-kit.sh');
 const canonical = new URL(path, siteOrigin).toString();
 const ogImage = new URL('/og-image.png', siteOrigin).toString();
-const ogAlt = 'delegation-kit — the kit never dispatches on its own.';
+const ogAlt = 'delegation-kit — your models, your call. The kit never dispatches on its own.';
 
 const nav = [
   { href: '/docs', label: 'Docs' },
@@ -149,7 +149,7 @@ const nav = [
           >
         </span>
         <span class="font-mono">
-          v{kit.version} · {kit.releaseDate} · gates {kit.profiles} profiles
+          v{kit.version} · {kit.releaseDate} · {kit.profiles} preset profiles
         </span>
       </div>
     </footer>

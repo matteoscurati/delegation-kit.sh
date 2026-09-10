@@ -7,24 +7,24 @@ import kit from '../data/kit.json';
 
 const steps = [
   {
-    name: 'Discover',
+    name: 'Configure',
+    cmd: 'delegation-config show',
+    text: 'Your profiles live in ~/.config/delegation-kit/config.json: an adapter, the model id your endpoint accepts, a declared family, roles, parameters. Any OpenAI-compatible text endpoint works. No kit qualification is required.'
+  },
+  {
+    name: 'Resolve',
     cmd: 'delegation-route resolve --lane builder --json',
-    text: 'Read-only. The router lists the profiles a user may select for the lane, the blocked ones, and why. Nothing is dispatched.'
+    text: 'Read-only. The router lists which of your profiles support the role, what each adapter can do, and the historical record beside it. Nothing is dispatched; selection grants nothing.'
   },
   {
     name: 'Choose',
     cmd: '"Use terra-builder for <task>."',
-    text: 'You name the profile, or you authorize the lead to pick one from the displayed choices. Task complexity, an installed skill, or a previous authorization is not authorization.'
+    text: 'You name the profile, or you authorize the lead to pick from the displayed choices. Task complexity, an installed skill, or a previous authorization is not authorization.'
   },
   {
-    name: 'Validate',
-    cmd: 'delegation-route resolve --lane builder --selected-profile terra-builder --json',
-    text: 'Still read-only. The router confirms the selection is legal for the lane and exits 78 if it is not.'
-  },
-  {
-    name: 'Dispatch',
-    cmd: 'codex exec --ephemeral -p terra-builder "<bounded, user-authorized task>" </dev/null',
-    text: 'Only now. Retries and the cross-family review are dispatches too: each needs its own approval unless your request named that finite set.'
+    name: 'Run',
+    cmd: 'delegation-run --profile terra-builder --lane builder --prompt-file task.txt --output out.txt --workdir .',
+    text: 'One dispatch, one receipt. Output, metrics, and a .result.json with review status and model identity. Retries and reviews are dispatches too: each needs its own approval.'
   }
 ];
 
@@ -32,17 +32,17 @@ const failures = [
   {
     mode: 'Agents that dispatch other agents on their own authority',
     answer:
-      'Every dispatch is user-directed, per request, enforced by fail-closed routing gates rather than polite prose. The gate carries an activation policy: mode user-directed, scope per-dispatch, automatic_dispatch false.'
+      'Every dispatch is user-directed, per request. The router only lists and validates; delegation-run runs exactly one selected profile once, and its receipt records authorization_granted: false for everything it did not do.'
   },
   {
-    mode: 'Ungoverned routing — "use whatever model is available"',
+    mode: 'Silent substitution — you asked for one model and got another',
     answer:
-      'A lane exists only after a versioned, evidence-backed gate says so. Every external runner re-validates the complete decision graph before each check and run, and refuses drift between the central gate and its own.'
+      'Requested and provider-reported identity are kept apart in every receipt. A mismatch fails unless you configured that alias; a missing report is labelled requested-only, never dressed up as certification.'
   },
   {
     mode: 'Unverified output — delegated diffs shipped unread',
     answer:
-      'A sufficiently capable model from a different family must review every delegated result; text-patch lanes pass through a read-only patch verifier. The lead, and only the lead, applies and tests.'
+      'Review is a policy you choose: optional, required, or cross-family. A mandatory policy holds the result as pending-review; it never spawns the reviewer for you. Text adapters return a patch; the lead applies and tests.'
   }
 ];
 ---
@@ -51,18 +51,19 @@ const failures = [
   <section class="pt-10 pb-14 md:pt-16 md:pb-20">
     <p class="eyebrow mb-6">delegation-kit · v{kit.version} · Claude Code and Codex</p>
     <h1 class="text-[2.6rem] md:text-[4.4rem] max-w-5xl">
-      Your agents don't dispatch on their own. You choose the lane. The gates decide if it's open.
+      Your models. Your call. The kit never dispatches on its own.
     </h1>
     <p class="mt-8 max-w-2xl text-lg text-[var(--color-ink-soft)]">
       delegation-kit gives Claude Code and Codex a governed way to hand bounded coding work to other
-      models: cheap lanes for small support tasks, max-effort builders for implementation, and a
-      mandatory cross-family review of every delegated result. Every delegation is named or
-      explicitly authorized by you, per request.
+      models: the profiles you configure, through native adapters or any OpenAI-compatible text
+      endpoint, dispatched one at a time only when you say so, with a receipt that says what was
+      asked, what answered, and whether review is still pending.
     </p>
     <div class="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end min-w-0">
       <CodeBlock
         label="Install (macOS, jq, git, Node ≥ 18)"
         code={`npx delegation-kit          # interactive installer; --claude-only / --codex-only
+delegation-config show      # the personal configuration it initialized
 ./doctor.sh                 # from a clone: verify everything is wired`}
       />
       <div class="text-sm text-[var(--color-ink-soft)] md:pb-3">
@@ -75,11 +76,11 @@ const failures = [
 
   <section class="rule py-14">
     <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
-      <h2 class="text-3xl md:text-4xl">Resolve a lane</h2>
+      <h2 class="text-3xl md:text-4xl">Resolve a role</h2>
       <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
-        This is the router's real answer, computed by <span class="font-mono">delegation-route</span
-        > when the site was built, from the gates shipped in {kit.version}. No script runs on this
-        page.
+        The router's real answer for a fresh default configuration, computed by
+        <span class="font-mono">delegation-route</span> when the site was built from {kit.version}.
+        Switch the review policy to see what cross-family excludes. No script runs on this page.
       </p>
     </div>
     <LaneResolver />
@@ -88,7 +89,7 @@ const failures = [
   <section class="rule py-14">
     <h2 class="text-3xl md:text-4xl mb-3">How a dispatch happens</h2>
     <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
-      The flow is always the same four steps, in this order. The first three are read-only.
+      The flow is always the same four steps, in this order. The first three never call a model.
     </p>
     <ol class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       {
@@ -126,22 +127,20 @@ const failures = [
     <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-6">
       <h2 class="text-3xl md:text-4xl">The routing table</h2>
       <p class="text-sm text-[var(--color-ink-soft)] max-w-xl mt-3 md:mt-0">
-        {kit.profiles} profiles, {kit.laneRows} lane decisions, straight from <span
-          class="font-mono">delegation-route table</span
-        >. A status is bound to dated benchmark rows plus local smokes; selection is closed at
-        explicit-only or blocked. There are no default or fallback routes.
+        {kit.profiles} profiles and {kit.laneRows} role rows from the default preset, straight from
+        <span class="font-mono">delegation-route table</span>. The adapter decides what a profile
+        can do today; the historical qualification sits beside it as a record, not a gate.
       </p>
     </div>
     <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
-      <span><span class="status status-qualified">qualified</span> evidence-backed, selectable</span
+      <span
+        ><span class="status status-compatible">compatible</span> the adapter supports this role</span
       >
       <span
-        ><span class="status status-provisional">provisional</span> selectable with an explicit flag</span
+        ><span class="status status-unsupported">unsupported</span> it does not; never selectable</span
       >
-      <span
-        ><span class="status status-manual-qualified">manual-qualified</span> judgement, explicit-only</span
+      <span><span class="status status-history">provisional</span> historical record, advisory</span
       >
-      <span><span class="status status-candidate">candidate / disabled</span> blocked</span>
     </p>
     <RoutingTable />
   </section>
@@ -150,35 +149,29 @@ const failures = [
     <h2 class="text-3xl md:text-4xl mb-10">What's in the box</h2>
     <div class="grid gap-10 md:grid-cols-3 text-sm">
       <div>
-        <p class="eyebrow mb-3">Claude Code · ~/.claude</p>
+        <p class="eyebrow mb-3">Configuration · ~/.config/delegation-kit</p>
         <ul class="space-y-2">
           <li>
-            6 subagent profiles: <span class="font-mono">sonnet-clerk</span>, <span
-              class="font-mono">sonnet-scout</span
-            >, <span class="font-mono">sonnet-reviewer</span>, <span class="font-mono"
-              >opus-builder</span
-            >, <span class="font-mono">opus-reviewer</span>, <span class="font-mono"
-              >fable-judge</span
-            >
+            <span class="font-mono">delegation-config</span> init / validate / show / apply; presets derived
+            from the kit's historical gates, a strict preset for cross-family review
           </li>
-          <li>the routing skill, loaded only on an explicit delegation request</li>
-          <li>the orchestrate skill: the user-approved finite dispatch list is the budget</li>
-          <li>six external-executor skills, gate-allowed lanes only</li>
-          <li>the user-direction guard, always loaded from CLAUDE.md</li>
+          <li>
+            adapters: <span class="font-mono">{kit.adapters.join(', ')}</span> plus <span
+              class="font-mono">openai-compatible</span
+            > for any text endpoint
+          </li>
+          <li>credentials by variable name only; migration backs up a legacy install first</li>
         </ul>
       </div>
       <div>
-        <p class="eyebrow mb-3">Codex · ~/.codex</p>
+        <p class="eyebrow mb-3">Hosts · ~/.claude and ~/.codex</p>
         <ul class="space-y-2">
           <li>
-            5 native profiles: <span class="font-mono">luna-clerk</span>, <span class="font-mono"
-              >terra-builder</span
-            >, <span class="font-mono">terra-reviewer</span>, <span class="font-mono"
-              >astra-reviewer</span
-            >, <span class="font-mono">astra-judge</span>
+            6 Claude subagent profiles and 5 Codex profiles, managed but never overwritten once you
+            edit them
           </li>
-          <li>5 ephemeral profiles for <span class="font-mono">codex exec --ephemeral -p</span></li>
-          <li>the same guard, in AGENTS.md</li>
+          <li>the routing and orchestrate skills, loaded only on an explicit delegation request</li>
+          <li>the user-direction guard, always loaded from CLAUDE.md and AGENTS.md</li>
         </ul>
       </div>
       <div>
@@ -188,23 +181,20 @@ const failures = [
             <span class="font-mono">delegation-route</span>: the read-only router. Never dispatches.
           </li>
           <li>
-            <span class="font-mono">delegation-{'{glm,gemini,kimi,grok,qwen,deepseek}'}</span>: {
-              kit.externalFamilies
-            } gated runners, {kit.laneDeclarations} lane declarations, {kit.dispatchableLanes} dispatchable
+            <span class="font-mono">delegation-run</span>: one selected profile, once, with a v2
+            receipt
           </li>
           <li>
-            <span class="font-mono">delegation-executor-contract</span>: permission classes {
-              kit.permissionClasses.join(' / ')
-            }; exit codes {kit.exitCodes.join(' ')}
+            <span class="font-mono">delegation-{'{glm,gemini,kimi,grok,qwen,deepseek}'}</span>: the
+            six provider runners with their own sandboxes; <span class="font-mono"
+              >delegation-patch-verify</span
+            > for text patches
           </li>
           <li>
-            <span class="font-mono">delegation-patch-verify</span>: read-only trust boundary for
-            text-patch lanes
-          </li>
-          <li>
-            <span class="font-mono">delegation-evidence</span>, <span class="font-mono"
-              >delegation-epoch</span
-            >, <span class="font-mono">delegation-schema</span>
+            <span class="font-mono">delegation-executor-contract</span>, <span class="font-mono"
+              >delegation-evidence</span
+            >, <span class="font-mono">delegation-epoch</span>: the historical records, still
+            validated
           </li>
         </ul>
       </div>
@@ -214,21 +204,20 @@ const failures = [
   <section class="rule py-14">
     <div class="grid gap-10 md:grid-cols-[1fr_1fr]">
       <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Adapt it</h2>
+        <h2 class="text-3xl md:text-4xl mb-3">Configure it</h2>
         <p class="text-[var(--color-ink-soft)]">
-          The kit ships as a reference implementation with the author's models. The structure is the
-          transferable part: map each role to a model and effort slot of your own and re-derive the
-          numbers.
-          <a href="/docs/adapting" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Adapting guide →</a
+          Profiles, adapters, parameters, review policies, aliases for reported identities, and how
+          a legacy install migrates.
+          <a href="/docs/configuration" class="underline underline-offset-4 text-[var(--color-ink)]"
+            >Personal configuration →</a
           >
         </p>
       </div>
       <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Read the policy</h2>
+        <h2 class="text-3xl md:text-4xl mb-3">Read the record</h2>
         <p class="text-[var(--color-ink-soft)]">
-          Which model does which job, with the cost-per-task numbers behind it, and the bar a new
-          model must clear before it earns a row.
+          The evidence-backed routing policy the presets came from, and the bar a model used to
+          clear. Advisory now, still worth reading before you choose.
           <a href="/docs/routing" class="underline underline-offset-4 text-[var(--color-ink)]"
             >Routing policy →</a
           >

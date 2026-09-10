@@ -2,9 +2,10 @@
 // Sync the site from the delegation-kit checkout (source of truth).
 //
 // Reads (sibling repo, or DELEGATION_KIT_ROOT):
-//   package.json, CHANGELOG.md, README.md, docs/*.md, model-routing.md, ADAPTING.md
-//   bin/delegation-route table|resolve --json       (read-only router)
-//   bin/delegation-executor-contract check --json   (read-only inspector)
+//   package.json, CHANGELOG.md, docs/*.md, model-routing.md, ADAPTING.md
+//   bin/delegation-config init                        (a fresh preset, in a temp dir)
+//   bin/delegation-route table|resolve --json         (read-only router, schema 2)
+//   bin/delegation-executor-contract check --json     (read-only inspector)
 // Writes:
 //   src/data/kit.json, routing-table.json, resolve.json, contract.json
 //   the AUTOGEN block of src/pages/docs/*.md and src/pages/changelog/index.md
@@ -17,15 +18,16 @@
 //
 // Syncs only from a clean kit checkout on the tag its package.json names;
 // --check skips itself otherwise, so a refactor in progress next door cannot
-// break or leak into the site.
-//
-// Nothing here dispatches a model: `table`, `resolve`, and `check` are the
-// kit's own read-only commands.
+// break or leak into the site. Nothing here dispatches a model: `init`,
+// `table`, `resolve`, and `check` are the kit's own read-only commands, run
+// against a throwaway personal configuration in a temp directory.
 
 import { execFileSync } from 'node:child_process';
-import { readFile, writeFile, mkdir, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, access, mkdtemp, rm } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { dirname, resolve, relative, posix } from 'node:path';
+import { dirname, resolve, relative, posix, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const siteRoot = resolve(__dirname, '..');
@@ -33,10 +35,13 @@ const kitRoot = resolve(
   process.env.DELEGATION_KIT_ROOT ?? resolve(siteRoot, '..', 'delegation-kit')
 );
 const isCheck = process.argv.includes('--check');
+const allowUnreleased = process.argv.includes('--allow-unreleased');
 const GITHUB = 'https://github.com/matteoscurati/delegation-kit';
 
 const BEGIN = '<!-- BEGIN AUTOGEN -->';
 const END = '<!-- END AUTOGEN -->';
+// Mirrors REVIEW_ROLES in the kit's bin/lib/delegation_config.py.
+const REVIEW_LANES = ['reviewer', 'routine-review', 'material-review', 'security'];
 
 function fail(message) {
   console.error(`sync-kit: ${message}`);
@@ -53,12 +58,14 @@ try {
   fail(`kit checkout not found at ${kitRoot} (set DELEGATION_KIT_ROOT)`);
 }
 
-// The site describes what npm installs, so it syncs only from a kit checkout
-// that is clean and sitting exactly on the release tag named by its own
-// package.json. Any other state (a refactor in progress, an unreleased
-// branch) is skipped by --check and refused by a write unless
-// --allow-unreleased is given explicitly.
-const allowUnreleased = process.argv.includes('--allow-unreleased');
+// ---- release guard -----------------------------------------------------------
+function readFileSyncSafe(path) {
+  try {
+    return readFileSync(path, 'utf8');
+  } catch {
+    return null;
+  }
+}
 function kitReleaseState() {
   const run = (args) => {
     try {
@@ -78,14 +85,6 @@ function kitReleaseState() {
   const released = dirty === '' && tag !== null && tag === expected;
   return { version, dirty: dirty === null ? null : dirty !== '', tag, expected, released };
 }
-import { readFileSync } from 'node:fs';
-function readFileSyncSafe(path) {
-  try {
-    return readFileSync(path, 'utf8');
-  } catch {
-    return null;
-  }
-}
 const state = kitReleaseState();
 if (!state.released) {
   const why = state.dirty
@@ -100,13 +99,33 @@ if (!state.released) {
   console.warn(`sync-kit: syncing from an unreleased kit state (${why}).`);
 }
 
-const kitCommand = (bin, args) =>
+// ---- throwaway personal configurations ----------------------------------------
+// The router reads the personal configuration. Two fresh presets, generated in
+// a temp directory with an empty data home (so no legacy install leaks in):
+// the default (review optional) and the strict one (review cross-family).
+const scratch = await mkdtemp(join(tmpdir(), 'delegation-kit-site-'));
+const emptyData = join(scratch, 'data');
+await mkdir(emptyData, { recursive: true });
+const configs = {
+  default: join(scratch, 'default.json'),
+  strict: join(scratch, 'strict.json')
+};
+const kitEnv = (configFile) => ({
+  ...process.env,
+  DELEGATION_CONFIG_FILE: configFile,
+  DELEGATION_DATA_HOME: emptyData
+});
+const kitCommand = (bin, args, configFile = configs.default) =>
   JSON.parse(
     execFileSync(resolve(kitRoot, 'bin', bin), args, {
       encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'pipe']
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: kitEnv(configFile)
     })
   );
+kitCommand('delegation-config', ['init'], configs.default);
+kitCommand('delegation-config', ['init', '--preset', 'strict'], configs.strict);
+const defaultConfig = JSON.parse(await readFile(configs.default, 'utf8'));
 
 let drift = [];
 async function emit(relPath, content) {
@@ -125,25 +144,29 @@ async function emit(relPath, content) {
   console.log(`sync-kit: wrote ${relPath}`);
 }
 
-// ---- version + release date -------------------------------------------------
+// ---- version + release date ---------------------------------------------------
 const pkg = JSON.parse(await readFile(resolve(kitRoot, 'package.json'), 'utf8'));
 const changelog = await readFile(resolve(kitRoot, 'CHANGELOG.md'), 'utf8');
 const head = changelog.match(/^## \[([^\]]+)\] — (\d{4}-\d{2}-\d{2})/m);
 if (!head) fail('CHANGELOG.md has no `## [version] — date` heading');
 if (head[1] !== pkg.version) fail(`CHANGELOG head ${head[1]} != package.json ${pkg.version}`);
 
-// ---- router + contract ------------------------------------------------------
+// ---- router + contract --------------------------------------------------------
 const table = kitCommand('delegation-route', ['table', '--json']);
 const contract = kitCommand('delegation-executor-contract', ['check', '--json']);
-const gates = JSON.parse(await readFile(resolve(kitRoot, 'config', 'routing-gates.json'), 'utf8'));
-
 const lanes = [...new Set(table.profiles.map((row) => row.lane))].sort();
-const reviewLanes = table.review_policy.review_lanes;
-const families = [...new Set(Object.values(table.model_families))].sort();
+const families = [
+  ...new Set(
+    Object.values(defaultConfig.profiles)
+      .map((p) => p.family)
+      .filter(Boolean)
+  )
+].sort();
+const adapters = [...new Set(Object.values(defaultConfig.profiles).map((p) => p.adapter))].sort();
 
-// The lane resolver on the home page is the router's own answer, precomputed
-// per lane (and per producer family for review lanes), so the CSS-only panel
-// can never disagree with `delegation-route resolve`.
+// The lane resolver on the home page is the router's own answer, precomputed:
+// every lane under the default preset, every review lane once per producer
+// family under the strict preset, and each compound lane.
 const resolveArgs = (lane, family) => [
   'resolve',
   '--lane',
@@ -151,41 +174,42 @@ const resolveArgs = (lane, family) => [
   '--json',
   ...(family ? ['--producer-family', family] : [])
 ];
-const resolveData = { lanes: {}, review: {}, compound: {} };
-for (const lane of lanes) {
-  if (reviewLanes.includes(lane)) {
-    resolveData.review[lane] = {};
-    for (const family of families) {
-      resolveData.review[lane][family] = kitCommand('delegation-route', resolveArgs(lane, family));
-    }
-  } else {
-    resolveData.lanes[lane] = kitCommand('delegation-route', resolveArgs(lane));
-  }
+const resolveData = { lanes: {}, strict: {}, compound: {} };
+for (const lane of lanes)
+  resolveData.lanes[lane] = kitCommand('delegation-route', resolveArgs(lane));
+for (const lane of lanes.filter((l) => REVIEW_LANES.includes(l))) {
+  resolveData.strict[lane] = {};
+  for (const family of families)
+    resolveData.strict[lane][family] = kitCommand(
+      'delegation-route',
+      resolveArgs(lane, family),
+      configs.strict
+    );
 }
-for (const lane of Object.keys(table.compound_lanes)) {
-  // `resolve` on a compound lane returns the decision envelope; the lane's
-  // own definition (members, protocol, activation) comes from `table`.
-  resolveData.compound[lane] = {
-    ...table.compound_lanes[lane],
-    ...kitCommand('delegation-route', resolveArgs(lane))
-  };
+for (const lane of Object.keys(table.compound_lanes ?? {})) {
+  resolveData.compound[lane] = kitCommand('delegation-route', resolveArgs(lane));
 }
+await rm(scratch, { recursive: true, force: true });
 
 const kit = {
   version: pkg.version,
   releaseDate: head[2],
-  profiles: new Set(table.profiles.map((row) => row.profile)).size,
+  schemaVersion: table.schema_version,
+  reviewPolicy: table.review_policy,
+  profiles: Object.keys(defaultConfig.profiles).length,
   laneRows: table.profiles.length,
   lanes,
-  reviewLanes,
+  reviewLanes: REVIEW_LANES.filter((l) => lanes.includes(l)),
   families,
+  adapters,
+  // Parameters per profile, from the preset the router read (effort etc.).
+  profileConfig: defaultConfig.profiles,
   externalFamilies: contract.families,
   laneDeclarations: contract.lane_declarations,
   dispatchableLanes: contract.dispatchable_lanes,
   permissionClasses: contract.permission_classes,
   exitCodes: contract.exit_codes,
   patchPolicyVersion: contract.patch_policy_version,
-  activation: gates.activation_policy,
   syncedAt: head[2]
 };
 
@@ -195,28 +219,31 @@ await emit('src/data/routing-table.json', json(table));
 await emit('src/data/resolve.json', json(resolveData));
 await emit('src/data/contract.json', json(contract));
 
-// ---- markdown docs ----------------------------------------------------------
+// ---- markdown docs ------------------------------------------------------------
 const routeFor = {
   'README.md': '/',
   'CHANGELOG.md': '/changelog',
   'ADAPTING.md': '/docs/adapting',
   'model-routing.md': '/docs/routing',
+  'docs/user-configuration.md': '/docs/configuration',
   'docs/external-executors.md': '/docs/executors',
   'docs/compatibility.md': '/docs/compatibility'
 };
 
 function rewriteLinks(markdown, sourcePath) {
   const sourceDir = posix.dirname(sourcePath);
-  return markdown.replace(/\]\((\.\.?\/[^)#\s]+)(#[^)\s]*)?\)/g, (match, target, hash = '') => {
-    const kitPath = posix.normalize(posix.join(sourceDir, target));
-    if (routeFor[kitPath]) return `](${routeFor[kitPath]}${hash})`;
-    return `](${GITHUB}/blob/main/${kitPath}${hash})`;
-  });
+  return markdown.replace(
+    /\]\(((?:\.\.?\/)?[A-Za-z0-9_./-]+\.(?:md|json|toml|sh))(#[^)\s]*)?\)/g,
+    (match, target, hash = '') => {
+      if (/^[a-z]+:/.test(target)) return match;
+      const kitPath = posix.normalize(posix.join(sourceDir, target));
+      if (routeFor[kitPath]) return `](${routeFor[kitPath]}${hash})`;
+      return `](${GITHUB}/blob/main/${kitPath}${hash})`;
+    }
+  );
 }
 
-async function syncDoc(sourcePath, sitePath) {
-  let source = await readFile(resolve(kitRoot, sourcePath), 'utf8');
-  source = rewriteLinks(source, sourcePath).trimEnd();
+async function syncBlock(sitePath, body) {
   const abs = resolve(siteRoot, sitePath);
   let page;
   try {
@@ -227,28 +254,29 @@ async function syncDoc(sourcePath, sitePath) {
   const b = page.indexOf(BEGIN);
   const e = page.indexOf(END, b + BEGIN.length);
   if (b === -1 || e === -1) fail(`markers missing from ${sitePath}`);
-  const next = `${page.slice(0, b + BEGIN.length)}\n\n${source}\n\n${page.slice(e)}`;
-  await emit(sitePath, next);
+  await emit(
+    sitePath,
+    `${page.slice(0, b + BEGIN.length)}\n\n${body.trimEnd()}\n\n${page.slice(e)}`
+  );
 }
 
+async function syncDoc(sourcePath, sitePath) {
+  const source = await readFile(resolve(kitRoot, sourcePath), 'utf8');
+  await syncBlock(sitePath, rewriteLinks(source, sourcePath));
+}
+
+await syncDoc('docs/user-configuration.md', 'src/pages/docs/configuration.md');
 await syncDoc('docs/external-executors.md', 'src/pages/docs/executors.md');
 await syncDoc('docs/compatibility.md', 'src/pages/docs/compatibility.md');
 await syncDoc('model-routing.md', 'src/pages/docs/routing.md');
 await syncDoc('ADAPTING.md', 'src/pages/docs/adapting.md');
 
-// Changelog: everything from the first version heading on.
 const firstVersion = changelog.match(/^## \[/m);
 if (!firstVersion) fail('CHANGELOG.md has no version headings');
-{
-  const sitePath = 'src/pages/changelog/index.md';
-  const abs = resolve(siteRoot, sitePath);
-  const page = await readFile(abs, 'utf8').catch(() => fail(`missing page ${sitePath}`));
-  const b = page.indexOf(BEGIN);
-  const e = page.indexOf(END, b + BEGIN.length);
-  if (b === -1 || e === -1) fail(`markers missing from ${sitePath}`);
-  const body = rewriteLinks(changelog.slice(firstVersion.index), 'CHANGELOG.md').trimEnd();
-  await emit(sitePath, `${page.slice(0, b + BEGIN.length)}\n\n${body}\n\n${page.slice(e)}`);
-}
+await syncBlock(
+  'src/pages/changelog/index.md',
+  rewriteLinks(changelog.slice(firstVersion.index), 'CHANGELOG.md')
+);
 
 if (isCheck) {
   if (drift.length) {

@@ -1,17 +1,22 @@
 ---
-// A gate decision as a solid colour block. The colour is the gate vocabulary:
-// green = may be chosen (qualified), amber = needs your explicit hand
-// (provisional / manual-qualified, always explicit-only), red = blocked
-// (candidate / disabled). Nothing else on the site uses these colours.
+// Two vocabularies, kept apart on purpose.
+// `kind="compat"`: what the adapter can do today — compatible (green, may be
+// selected) or unsupported (red outline, cannot). This is what decides.
+// `kind="history"`: the historical qualification status of the same row,
+// muted, because since 0.24.0 it informs and never gates.
 interface Props {
-  status: string;
-  selection?: string;
+  kind: 'compat' | 'history';
+  value: string | boolean | null | undefined;
 }
-const { status, selection } = Astro.props;
+const { kind, value } = Astro.props;
 const label =
-  selection === 'blocked' && status !== 'candidate' && status !== 'disabled' ? 'blocked' : status;
+  kind === 'compat' ? (value ? 'compatible' : 'unsupported') : value ? String(value) : 'no record';
+const cls =
+  kind === 'compat'
+    ? value
+      ? 'status status-compatible'
+      : 'status status-unsupported'
+    : 'status status-history';
 ---
 
-<span class={`status status-${label}`} title={selection ? `selection: ${selection}` : undefined}
-  >{label}</span
->
+<span class={cls}>{label}</span>
