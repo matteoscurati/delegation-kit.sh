@@ -11,9 +11,10 @@ path: '/docs/configuration'
 
 # User configuration
 
-Models are user choices. Historical qualification and benchmark records remain
-available through `delegation-evidence` and under `config/` and `evaluation/`;
-they do not authorize or block execution. The lead verifies the actual result.
+Models are user choices. No benchmark, gate, or kit qualification authorizes
+or blocks a profile; the adapter's technical limits and the lead's verification
+of the actual result are the only checks. The starting profiles ship in
+`config/presets.json`.
 
 ## Configure
 
@@ -137,9 +138,9 @@ files remain in place, and the summary announces optional review. The backup is
 retained on repeated initialization/installations. The personal file and later
 policy changes are preserved. Historical evaluation artifacts are never rewritten.
 
-`--allow-provisional` remains accepted as a deprecated no-op. Quality states in
-historical records retain their original meaning; runtime compatibility is a
-separate field in a new JSON version. Scientific evaluation commands keep their
-explicit manifest bindings, without making those a prerequisite for ordinary use.
+`--allow-provisional` remains accepted as a deprecated no-op for one release.
+A legacy `routing-gates.json` that does not parse, or has no profiles, falls
+back to the shipped preset; the snapshot is kept either way. The installer
+removes the retired gate, contract, and evidence files from the data directory.
 
 <!-- END AUTOGEN -->

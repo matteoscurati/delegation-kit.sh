@@ -4,10 +4,9 @@
 // Reads (sibling repo, or DELEGATION_KIT_ROOT):
 //   package.json, CHANGELOG.md, docs/*.md, model-routing.md, ADAPTING.md
 //   bin/delegation-config init                        (a fresh preset, in a temp dir)
-//   bin/delegation-route table|resolve --json         (read-only router, schema 2)
-//   bin/delegation-executor-contract check --json     (read-only inspector)
+//   bin/delegation-route table|resolve --json         (read-only router, schema 3)
 // Writes:
-//   src/data/kit.json, routing-table.json, resolve.json, contract.json
+//   src/data/kit.json, routing-table.json, resolve.json
 //   the AUTOGEN block of src/pages/docs/*.md and src/pages/changelog/index.md
 //
 // Usage:
@@ -19,7 +18,7 @@
 // Syncs only from a clean kit checkout on the tag its package.json names;
 // --check skips itself otherwise, so a refactor in progress next door cannot
 // break or leak into the site. Nothing here dispatches a model: `init`,
-// `table`, `resolve`, and `check` are the kit's own read-only commands, run
+// `table` and `resolve` are the kit's own read-only commands, run
 // against a throwaway personal configuration in a temp directory.
 
 import { execFileSync } from 'node:child_process';
@@ -151,9 +150,8 @@ const head = changelog.match(/^## \[([^\]]+)\] — (\d{4}-\d{2}-\d{2})/m);
 if (!head) fail('CHANGELOG.md has no `## [version] — date` heading');
 if (head[1] !== pkg.version) fail(`CHANGELOG head ${head[1]} != package.json ${pkg.version}`);
 
-// ---- router + contract --------------------------------------------------------
+// ---- router -------------------------------------------------------------------
 const table = kitCommand('delegation-route', ['table', '--json']);
-const contract = kitCommand('delegation-executor-contract', ['check', '--json']);
 const lanes = [...new Set(table.profiles.map((row) => row.lane))].sort();
 const families = [
   ...new Set(
@@ -165,8 +163,8 @@ const families = [
 const adapters = [...new Set(Object.values(defaultConfig.profiles).map((p) => p.adapter))].sort();
 
 // The lane resolver on the home page is the router's own answer, precomputed:
-// every lane under the default preset, every review lane once per producer
-// family under the strict preset, and each compound lane.
+// every lane under the default preset and every review lane once per producer
+// family under the strict preset.
 const resolveArgs = (lane, family) => [
   'resolve',
   '--lane',
@@ -174,7 +172,7 @@ const resolveArgs = (lane, family) => [
   '--json',
   ...(family ? ['--producer-family', family] : [])
 ];
-const resolveData = { lanes: {}, strict: {}, compound: {} };
+const resolveData = { lanes: {}, strict: {} };
 for (const lane of lanes)
   resolveData.lanes[lane] = kitCommand('delegation-route', resolveArgs(lane));
 for (const lane of lanes.filter((l) => REVIEW_LANES.includes(l))) {
@@ -185,9 +183,6 @@ for (const lane of lanes.filter((l) => REVIEW_LANES.includes(l))) {
       resolveArgs(lane, family),
       configs.strict
     );
-}
-for (const lane of Object.keys(table.compound_lanes ?? {})) {
-  resolveData.compound[lane] = kitCommand('delegation-route', resolveArgs(lane));
 }
 await rm(scratch, { recursive: true, force: true });
 
@@ -204,12 +199,6 @@ const kit = {
   adapters,
   // Parameters per profile, from the preset the router read (effort etc.).
   profileConfig: defaultConfig.profiles,
-  externalFamilies: contract.families,
-  laneDeclarations: contract.lane_declarations,
-  dispatchableLanes: contract.dispatchable_lanes,
-  permissionClasses: contract.permission_classes,
-  exitCodes: contract.exit_codes,
-  patchPolicyVersion: contract.patch_policy_version,
   syncedAt: head[2]
 };
 
@@ -217,7 +206,6 @@ const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
 await emit('src/data/kit.json', json(kit));
 await emit('src/data/routing-table.json', json(table));
 await emit('src/data/resolve.json', json(resolveData));
-await emit('src/data/contract.json', json(contract));
 
 // ---- markdown docs ------------------------------------------------------------
 const routeFor = {

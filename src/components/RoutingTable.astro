@@ -1,8 +1,7 @@
 ---
-// The routing table, as `delegation-route table --json` (schema 2) returns it
+// The routing table, as `delegation-route table --json` (schema 3) returns it
 // for a fresh default preset. One row per (profile, role): what the adapter
-// supports today decides; the historical qualification is shown muted beside
-// it, because since 0.24.0 evidence informs and never gates.
+// supports today is the only thing that decides.
 import table from '../data/routing-table.json';
 import kit from '../data/kit.json';
 import StatusPill from './StatusPill.astro';
@@ -15,7 +14,6 @@ type Row = {
   lane: string;
   technical_compatibility: boolean;
   capabilities: string[];
-  evidence: { status?: string; evidence_gap?: string | null } | Record<string, never>;
   selection: string;
 };
 const rows = table.profiles as Row[];
@@ -31,8 +29,7 @@ let previous = '';
           >Profile · model / adapter / effort · capabilities</th
         >
         <th class="py-2 pr-4 font-normal whitespace-nowrap">Role</th>
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Adapter today</th>
-        <th class="py-2 font-normal whitespace-nowrap">Historical record · evidence gap</th>
+        <th class="py-2 font-normal whitespace-nowrap">Adapter today</th>
       </tr>
     </thead>
     <tbody>
@@ -59,16 +56,8 @@ let previous = '';
                 )}
               </td>
               <td class="py-1.5 pr-4 whitespace-nowrap">{row.lane}</td>
-              <td class="py-1.5 pr-4 whitespace-nowrap">
+              <td class="py-1.5 whitespace-nowrap">
                 <StatusPill kind="compat" value={row.technical_compatibility} />
-              </td>
-              <td class="py-1.5 min-w-[16rem] max-w-[30rem]">
-                <StatusPill kind="history" value={row.evidence?.status} />
-                {row.evidence?.evidence_gap && (
-                  <span class="block text-[0.68rem] leading-tight text-[var(--color-ink-soft)] mt-1">
-                    {row.evidence.evidence_gap}
-                  </span>
-                )}
               </td>
             </tr>
           );

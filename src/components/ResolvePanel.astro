@@ -1,5 +1,5 @@
 ---
-// The lists a `delegation-route resolve` (schema 2) answer contains.
+// The lists a `delegation-route resolve` (schema 3) answer contains.
 import StatusPill from './StatusPill.astro';
 
 type Row = {
@@ -9,7 +9,6 @@ type Row = {
   adapter: string;
   technical_compatibility: boolean;
   capabilities: string[];
-  evidence: { status?: string } | Record<string, never>;
   selection: string;
 };
 interface Props {
@@ -40,7 +39,6 @@ const { choices, blocked, blockedNote } = Astro.props;
                   {row.capabilities.join(', ')}
                 </span>
               </span>
-              <StatusPill kind="history" value={row.evidence?.status} />
             </li>
           ))}
         </ul>

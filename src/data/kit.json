@@ -1,7 +1,7 @@
 {
-  "version": "0.24.0",
-  "releaseDate": "2026-09-10",
-  "schemaVersion": 2,
+  "version": "0.25.0",
+  "releaseDate": "2026-09-11",
+  "schemaVersion": 3,
   "reviewPolicy": "optional",
   "profiles": 22,
   "laneRows": 49,
@@ -314,22 +314,5 @@
       }
     }
   },
-  "externalFamilies": 6,
-  "laneDeclarations": 35,
-  "dispatchableLanes": 11,
-  "permissionClasses": [
-    "read-only",
-    "text-patch",
-    "worktree-edit"
-  ],
-  "exitCodes": [
-    64,
-    69,
-    70,
-    75,
-    78,
-    130
-  ],
-  "patchPolicyVersion": "1.0.0",
-  "syncedAt": "2026-09-10"
+  "syncedAt": "2026-09-11"
 }

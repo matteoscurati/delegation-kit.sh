@@ -129,7 +129,7 @@ delegation-config show      # the personal configuration it initialized
       <p class="text-sm text-[var(--color-ink-soft)] max-w-xl mt-3 md:mt-0">
         {kit.profiles} profiles and {kit.laneRows} role rows from the default preset, straight from
         <span class="font-mono">delegation-route table</span>. The adapter decides what a profile
-        can do today; the historical qualification sits beside it as a record, not a gate.
+        can do today. There is no other gate.
       </p>
     </div>
     <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
@@ -138,8 +138,6 @@ delegation-config show      # the personal configuration it initialized
       >
       <span
         ><span class="status status-unsupported">unsupported</span> it does not; never selectable</span
-      >
-      <span><span class="status status-history">provisional</span> historical record, advisory</span
       >
     </p>
     <RoutingTable />
@@ -152,8 +150,9 @@ delegation-config show      # the personal configuration it initialized
         <p class="eyebrow mb-3">Configuration · ~/.config/delegation-kit</p>
         <ul class="space-y-2">
           <li>
-            <span class="font-mono">delegation-config</span> init / validate / show / apply; presets derived
-            from the kit's historical gates, a strict preset for cross-family review
+            <span class="font-mono">delegation-config</span> init / validate / show / apply; the shipped
+            presets from <span class="font-mono">config/presets.json</span>, a strict preset for
+            cross-family review
           </li>
           <li>
             adapters: <span class="font-mono">{kit.adapters.join(', ')}</span> plus <span
@@ -190,12 +189,6 @@ delegation-config show      # the personal configuration it initialized
               >delegation-patch-verify</span
             > for text patches
           </li>
-          <li>
-            <span class="font-mono">delegation-executor-contract</span>, <span class="font-mono"
-              >delegation-evidence</span
-            >, <span class="font-mono">delegation-epoch</span>: the historical records, still
-            validated
-          </li>
         </ul>
       </div>
     </div>
@@ -214,10 +207,10 @@ delegation-config show      # the personal configuration it initialized
         </p>
       </div>
       <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Read the record</h2>
+        <h2 class="text-3xl md:text-4xl mb-3">Read the policy</h2>
         <p class="text-[var(--color-ink-soft)]">
-          The evidence-backed routing policy the presets came from, and the bar a model used to
-          clear. Advisory now, still worth reading before you choose.
+          How one person routes coding work across models, and how the presets were chosen.
+          Advisory: it governs nothing, and is still worth reading before you choose.
           <a href="/docs/routing" class="underline underline-offset-4 text-[var(--color-ink)]"
             >Routing policy →</a
           >

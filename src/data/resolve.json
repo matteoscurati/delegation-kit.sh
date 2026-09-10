@@ -1,7 +1,7 @@
 {
   "lanes": {
     "builder": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -20,18 +20,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-codex-gpt-5.6-terra-max"
-            ],
-            "context_evidence_ids": [
-              "epoch-deepswe-gpt-5-6-terra-mini-swe-agent-medium",
-              "epoch-deepswe-gpt-5-6-terra-mini-swe-agent-max"
-            ],
-            "qualification_basis": "Owner routing decision, 2026-08-17. Terra is a high-level builder pinned to max. Both builder required metrics rise on the exact AA row versus medium: DeepSWE 46% to 67% and Terminal-Bench v2 69% to 84%. Review uses a separate read-only Terra profile and is permitted only for work produced outside the OpenAI family."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -46,30 +34,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-claude-opus-5-max"
-            ],
-            "context_evidence_ids": [
-              "cursorbench-opus-5-max",
-              "apex-swe-opus-5-max",
-              "epoch-deepswe-claude-opus-5-mini-swe-agent-max"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-17-opus-builder-named-profile-smoke",
-              "task_count": 1,
-              "repeats": 1,
-              "valid_repeats": 1,
-              "mean_score": 1,
-              "all_checker_runs_pass": true,
-              "provider_cost_usd": 0.228272,
-              "confidence": "low",
-              "limitations": "One disposable one-line edit through the installed named opus-builder profile. The run touched only the assigned tracked file, passed git diff --check, and reported canonicalModel claude-opus-5 at the explicitly requested max effort. This is compatibility and scope evidence, not a held-out repeated builder qualification."
-            },
-            "qualification_basis": "Explicit owner routing decision, 2026-08-17. Opus is a high-level builder pinned to max; the exact Claude Code/max row carries both builder required metrics, and the installed named editing profile passed a scoped local smoke. Review uses a separate read-only Opus profile and is permitted only for work produced outside the Anthropic family. Status remains provisional because the single synthetic smoke is compatibility evidence rather than repeated held-out qualification."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -84,28 +48,6 @@
           "capabilities": [
             "native-tool-policy"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "zai-glm-5.3-flash-launch-max-2026-08-28"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-29-glm-5.3-flash-max-qualification-v4",
-              "task_count": 6,
-              "repeats": 3,
-              "valid_repeats": 3,
-              "strict_identity_valid_repeats": 3,
-              "mean_score": 1,
-              "all_checker_runs_pass": true,
-              "mean_latency_seconds": 70.67,
-              "provider_cost_usd": 0.229925,
-              "confidence": "bounded-repeated",
-              "limitations": "Exact deterministic scoped-edit pack with complete assistant-event identity and canonical first-party modelUsage; broader evidence is still insufficient for qualified status."
-            },
-            "qualification_basis": "The exact Flash/max v4 pack passed 3/3 builder repeats with every checker and strict identity check green; promotion stops at provisional explicit-only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -120,25 +62,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-kimi-code-kimi-k3"
-            ],
-            "context_evidence_ids": [
-              "arena-agent-kimi-k3-2026-08-03",
-              "epoch-deepswe-kimi-k3-mini-swe-agent-max"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-07-16-kimi-k3",
-              "task_count": null,
-              "repeats": null,
-              "confidence": "low",
-              "limitations": "Provider quota truncated the run; valid-subset size is not recorded in the published gate."
-            },
-            "qualification_basis": "Owner selection decision on measured evidence, 2026-08-05. Status stays provisional and dispatch still requires an explicit decision plus --allow-provisional. Kimi K3 carries both builder required metrics on an exact production tuple, while the other external builders remain owner-selected provisional alternatives. This records preference, not qualification: the local evaluation is still a quota-truncated run with no recorded valid-subset size."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -153,25 +76,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "cursorbench-grok-4.6-high-2026-08-12",
-              "frontiercode-grok-4.6-high-2026-08-12",
-              "apex-swe-grok-4.6-high-2026-08-12",
-              "apex-agents-grok-4.6-high-2026-08-12"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-12-grok-4.6-build",
-              "task_count": 1,
-              "repeats": 1,
-              "confidence": "low",
-              "limitations": "One authenticated runtime compatibility smoke; not a held-out comparative evaluation. Current public results use other harnesses and the hardened runner is edit-only."
-            },
-            "qualification_basis": "Owner replacement decision on 2026-08-12. Status stays provisional and dispatch still requires an explicit decision plus --allow-provisional. Current CursorBench, FrontierCode, and APEX results support the preference but use different harnesses, so they do not qualify the exact Grok Build CLI/high tuple."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -187,22 +91,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "qwen-3.8-max-ga-launch"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-03-qwen3.8-max-ga",
-              "task_count": 1,
-              "repeats": 1,
-              "confidence": "low",
-              "limitations": "Owner promotion on an explicit routing decision, not on measured builder capability. The only local check is a runtime identity probe confirming the endpoint serves qwen3.8-max at xhigh; no held-out implementation pack was run. The runner is text-only and cannot edit a worktree, so this lane returns a patch the lead applies and verifies."
-            },
-            "evidence_gap": "No DeepSWE or Terminal-Bench v2 row exists for qwen3.8-max on any harness, so both builder required metrics are unmet. Promotion is an owner decision recorded as provisional and explicit-only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -218,23 +106,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "deepseek-v41-flash-launch-2026-09-10"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-09-10-deepseek-flash-max-smoke",
-              "task_count": 1,
-              "repeats": 1,
-              "confidence": "low",
-              "limitations": "One deterministic PONG probe on the builder lane verified exact API model identity (response model deepseek-flash), reasoning_effort=max acceptance with 13 reasoning tokens reported, and a valid text response in about one second. It is not a held-out repeated implementation pack. The runner is text-only and cannot edit a worktree."
-            },
-            "qualification_basis": "Explicit owner decision on 2026-09-10: re-pin from deepseek-v4-pro to deepseek-flash (DeepSeek V4.1 Flash). DeepSeek routes every deepseek-v4-pro request to V4.1 Flash after 2026-09-14 12:00 Beijing time, which would fail the runner's exact identity check; the provider reports V4.1 Flash ahead of V4 Pro on its own tests. The text-only builder route stays provisional and explicit-only; the 2026-08-17 V4 Pro smoke does not transfer and a fresh exact-tuple smoke is recorded in local_evaluation when run. The lead applies and verifies returned patches.",
-            "evidence_gap": "Provider-reported DeepSWE v1.1 74.2 uses DeepSeek's own harness; no Artificial Analysis or Epoch exact row exists for deepseek-flash yet, and the local smoke is a single deterministic task, not a held-out pack."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -244,7 +115,7 @@
       "blocked": []
     },
     "clerk": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -263,18 +134,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-codex-gpt-5.6-luna-max"
-            ],
-            "context_evidence_ids": [
-              "epoch-deepswe-gpt-5-6-luna-mini-swe-agent-low",
-              "epoch-deepswe-gpt-5-6-luna-mini-swe-agent-max"
-            ],
-            "qualification_basis": "Owner effort decision on measured evidence, 2026-08-05. The lane is unchanged; only its pinned effort moved from low to max. At low the exact AA row scores 15% SWE-Atlas-QnA, the clerk required metric, and the Epoch effort ladder puts the same model at 1.5% DeepSWE; at max the exact AA row scores 33% and 63%. Codex accepts none/minimal/low/medium/high/xhigh/max, verified against the provider on 2026-08-05. AA publishes no luna row between low and max, so max is the only better effort that keeps an exact row."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -289,13 +148,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No current exact Claude Code low row."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -310,26 +162,6 @@
           "capabilities": [
             "native-tool-policy"
           ],
-          "evidence": {
-            "status": "qualified",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "zai-glm-5.3-flash-launch-max-2026-08-28"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-29-glm-5.3-flash-max-qualification-v4",
-              "task_count": 6,
-              "repeats": 3,
-              "valid_repeats": 3,
-              "strict_identity_valid_repeats": 3,
-              "mean_score": 1,
-              "mean_latency_seconds": 28.67,
-              "provider_cost_usd": 0.089595,
-              "confidence": "bounded-repeated",
-              "limitations": "Exact deterministic extraction pack with complete assistant-event identity and canonical first-party modelUsage; explicit-only selection is retained. Earlier runs remain terminal."
-            }
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -344,21 +176,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-kimi-code-kimi-k3"
-            ],
-            "context_evidence_ids": [],
-            "local_evaluation": {
-              "run_id": "2026-07-16-kimi-k3",
-              "task_count": null,
-              "repeats": null,
-              "confidence": "low",
-              "limitations": "Provider quota truncated the run; valid-subset size is not recorded in the published gate."
-            }
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -374,13 +191,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact public benchmark or local clerk evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -396,13 +206,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact public benchmark or local clerk evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -412,7 +215,7 @@
       "blocked": []
     },
     "frontend-builder": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -431,23 +234,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "webdev-kimi-k3",
-              "aa-kimi-code-kimi-k3"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-07-16-kimi-k3",
-              "task_count": null,
-              "repeats": null,
-              "confidence": "low",
-              "limitations": "No frontend-specific local pack; provider quota truncated the general run."
-            },
-            "evidence_gap": "WebDev uses a different harness/default effort; coding evidence is supporting only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -462,24 +248,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "webdev-grok-4.6-high-2026-08-12",
-              "cursorbench-grok-4.6-high-2026-08-12",
-              "frontiercode-grok-4.6-high-2026-08-12"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-12-grok-4.6-build",
-              "task_count": 0,
-              "repeats": 0,
-              "confidence": "low",
-              "limitations": "No frontend-specific local pack; the edit-only scoped runner is shared with builder."
-            },
-            "evidence_gap": "WebDev uses a different harness and its 4.6 row is preliminary; frontend preference is an explicit owner decision."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -489,7 +257,7 @@
       "blocked": []
     },
     "judgement": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -508,24 +276,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "manual-qualified",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "openai-gpt-6-astra-high-swe",
-              "openai-gpt-6-astra-high-computer-use"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-09-01-astra-high-runtime-probe",
-              "task_count": 1,
-              "repeats": 1,
-              "confidence": "low",
-              "limitations": "Authenticated Codex CLI returned exact PONG and surfaced model gpt-6-astra at requested high; this proves runtime compatibility, not judgement quality."
-            },
-            "evidence_gap": "Judgement is manual-only; the available rows measure coding or computer use rather than judgement quality.",
-            "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol @ max as the technical-feasibility judge (repository fit, failure modes, verifiability). Remains manual-qualified explicit-only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -540,27 +290,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "manual-qualified",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-claude-fable-5-1-max"
-            ],
-            "context_evidence_ids": [
-              "terminalbench4-claude-fable-5-1-max",
-              "aa-claude-fable-5-max",
-              "arena-agent-fable-5-high"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-09-01-fable-5-1-max-runtime-probe",
-              "task_count": 1,
-              "repeats": 1,
-              "confidence": "low",
-              "limitations": "Authenticated Claude Code returned exact PONG and surfaced model claude-fable-5-1 at requested max; this proves runtime compatibility, not judgement quality."
-            },
-            "evidence_gap": "No exact judgement benchmark; coding evidence is contextual only.",
-            "qualification_basis": "Owner decision, 2026-09-01: the judgement lane migrates from Fable 5 to Fable 5.1 (claude-fable-5-1) at max for architecture, trade-offs, synthesis, and final verdict. Migration follows the 2026-09-01 launch; the exact AA row replaces the Fable 5 row, and Fable 5 evidence is retained as context. Judgement remains manual-qualified and explicit-only; this owner decision does not convert coding evidence into judgement qualification."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -576,13 +305,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "disabled",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "Launch claims and runtime access cannot qualify judgement."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -598,13 +320,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "disabled",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "Provider claims and runtime access cannot qualify judgement."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -623,19 +338,13 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "disabled",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": []
-          },
           "selection": "unsupported",
           "review_policy": "optional"
         }
       ]
     },
     "material-review": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -654,16 +363,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "aa-codex-gpt-5.6-terra-max"
-            ],
-            "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-            "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -678,17 +377,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "openai-gpt-6-astra-high-swe",
-              "openai-gpt-6-astra-high-computer-use"
-            ],
-            "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-            "evidence_gap": "No exact review precision/recall row."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -703,17 +391,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "aa-claude-opus-5-max",
-              "cursorbench-opus-5-max"
-            ],
-            "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-            "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -723,7 +400,7 @@
       "blocked": []
     },
     "policy-annotation": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -742,14 +419,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [],
-            "evidence_gap": "No frozen local policy-annotation result exists for the xhigh Claude Code variant."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -764,16 +433,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [
-              "d9471fd8573f81fd0aae786054182a964864acf5db51e95d95923195aa21e6cc"
-            ],
-            "evidence_gap": "The frozen v1 transport failed; no fresh held-out policy-annotation result exists for the xhigh Claude Code variant."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -788,14 +447,6 @@
           "capabilities": [
             "native-tool-policy"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [],
-            "evidence_gap": "No frozen local GLM-5.3-Flash/max policy-annotation result; coding-lane qualification does not transfer."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -810,17 +461,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [
-              "1ad132e3396b8b0f951c121af661e998c27c836e2d43a49c2a8c5f02b39d59c0",
-              "49970b7eed76090c9fc34e921fd86788829f7f44c3a26b7937b56addeb1ac77e"
-            ],
-            "evidence_gap": "No frozen local policy-annotation result exists."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -835,14 +475,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [],
-            "evidence_gap": "No frozen Grok 4.6 policy-annotation manifest or local result exists. Historical Grok 4.5 manifests are not valid for this tuple."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -858,14 +490,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [],
-            "evidence_gap": "No frozen local policy-annotation result exists. The previous allowlisted manifest was bound to the qwen3.8-max-preview tuple and is void after the rename; regenerate it against qwen3.8-max before any evaluation run."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -881,14 +505,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evaluation_manifest_sha256": [],
-            "evidence_gap": "No frozen local policy-annotation result exists."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -898,7 +514,7 @@
       "blocked": []
     },
     "reviewer": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -917,13 +533,6 @@
           "capabilities": [
             "native-tool-policy"
           ],
-          "evidence": {
-            "status": "disabled",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact review precision/recall result."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -939,13 +548,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact review precision/recall evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -961,13 +563,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact review precision/recall evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -986,20 +581,13 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "disabled",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact review precision/recall row."
-          },
           "selection": "unsupported",
           "review_policy": "optional"
         }
       ]
     },
     "routine-review": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -1018,16 +606,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "aa-codex-gpt-5.6-terra-max"
-            ],
-            "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-            "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1042,17 +620,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "openai-gpt-6-astra-high-swe",
-              "openai-gpt-6-astra-high-computer-use"
-            ],
-            "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-            "evidence_gap": "No exact review precision/recall row."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1067,14 +634,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-            "evidence_gap": "No exact review precision/recall row."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1089,17 +648,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "aa-claude-opus-5-max",
-              "cursorbench-opus-5-max"
-            ],
-            "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-            "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -1109,7 +657,7 @@
       "blocked": []
     },
     "scout": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -1128,14 +676,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, read-only non-builder scouting.",
-            "evidence_gap": "No current exact Claude Code low row."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1150,26 +690,6 @@
           "capabilities": [
             "native-tool-policy"
           ],
-          "evidence": {
-            "status": "qualified",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "zai-glm-5.3-flash-launch-max-2026-08-28"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-08-29-glm-5.3-flash-max-qualification-v4",
-              "task_count": 7,
-              "repeats": 3,
-              "valid_repeats": 3,
-              "strict_identity_valid_repeats": 3,
-              "mean_score": 1,
-              "mean_latency_seconds": 166,
-              "provider_cost_usd": 0.386353,
-              "confidence": "bounded-repeated",
-              "limitations": "Exact deterministic repository-tracing pack with complete assistant-event identity and canonical first-party modelUsage; explicit-only selection is retained."
-            }
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1184,23 +704,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [
-              "aa-kimi-code-kimi-k3"
-            ],
-            "context_evidence_ids": [
-              "arena-agent-kimi-k3"
-            ],
-            "local_evaluation": {
-              "run_id": "2026-07-16-kimi-k3",
-              "task_count": null,
-              "repeats": null,
-              "confidence": "low",
-              "limitations": "Provider quota truncated the run; valid-subset size is not recorded in the published gate."
-            }
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1216,13 +719,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact public benchmark or local repository-navigation evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1238,13 +734,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact public benchmark or local repository-navigation evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -1254,7 +743,7 @@
       "blocked": []
     },
     "security": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -1273,16 +762,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "aa-codex-gpt-5.6-terra-max"
-            ],
-            "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-            "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1297,17 +776,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "openai-gpt-6-astra-high-swe",
-              "openai-gpt-6-astra-high-computer-use"
-            ],
-            "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-            "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1322,24 +790,6 @@
           "capabilities": [
             "native-profile"
           ],
-          "evidence": {
-            "status": "provisional",
-            "selection": "explicit-only",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "aa-claude-opus-5-max",
-              "anthropic-claude-opus-5-launch"
-            ],
-            "provider_fallback": {
-              "possible": true,
-              "target_model": "claude-opus-4.8",
-              "trigger": "Anthropic safety classifier on flagged cyber requests",
-              "exact_variant_guaranteed": false,
-              "source_evidence_id": "anthropic-claude-opus-5-launch"
-            },
-            "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-            "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -1349,7 +799,7 @@
       "blocked": []
     },
     "senior": {
-      "schema_version": 2,
+      "schema_version": 3,
       "read_only": true,
       "automatic_dispatch": false,
       "requires_user_direction": true,
@@ -1369,13 +819,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact high-risk judgement or steerability evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         },
@@ -1391,13 +834,6 @@
             "read-only",
             "text-patch"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [],
-            "evidence_gap": "No exact high-risk judgement or steerability evaluation."
-          },
           "selection": "explicit-only",
           "review_policy": "optional"
         }
@@ -1416,15 +852,6 @@
           "capabilities": [
             "sandboxed-worktree"
           ],
-          "evidence": {
-            "status": "candidate",
-            "selection": "blocked",
-            "exact_evidence_ids": [],
-            "context_evidence_ids": [
-              "arena-agent-kimi-k3"
-            ],
-            "evidence_gap": "Steerability evidence is insufficient for promotion."
-          },
           "selection": "unsupported",
           "review_policy": "optional"
         }
@@ -1434,7 +861,7 @@
   "strict": {
     "material-review": {
       "alibaba": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1453,16 +880,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1477,17 +894,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1502,17 +908,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -1522,7 +917,7 @@
         "blocked": []
       },
       "anthropic": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1541,16 +936,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1565,17 +950,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -1594,24 +968,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "deepseek": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1630,16 +993,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1654,17 +1007,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1679,17 +1021,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -1699,7 +1030,7 @@
         "blocked": []
       },
       "moonshot": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1718,16 +1049,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1742,17 +1063,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1767,17 +1077,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -1787,7 +1086,7 @@
         "blocked": []
       },
       "openai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1806,17 +1105,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1831,17 +1119,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -1860,23 +1137,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "openai-gpt6": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1895,16 +1162,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -1919,17 +1176,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -1948,24 +1194,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "xai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -1984,16 +1219,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2008,17 +1233,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2033,17 +1247,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2053,7 +1256,7 @@
         "blocked": []
       },
       "zai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2072,16 +1275,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2096,17 +1289,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: GPT-6 Astra @ high replaces Sol/high as the default material reviewer for work produced outside the openai-gpt6 family. Vendor SWE row is exact; no exact review precision/recall row exists, so status stays provisional.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2121,17 +1303,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2143,7 +1314,7 @@
     },
     "reviewer": {
       "alibaba": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2162,13 +1333,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2184,13 +1348,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2209,13 +1366,6 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           },
@@ -2231,20 +1381,13 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "anthropic": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2263,13 +1406,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2285,13 +1421,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2307,13 +1436,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2332,20 +1454,13 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           }
         ]
       },
       "deepseek": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2364,13 +1479,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2386,13 +1494,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2411,13 +1512,6 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           },
@@ -2433,20 +1527,13 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "moonshot": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2465,13 +1552,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2487,13 +1567,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2509,13 +1582,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2534,20 +1600,13 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           }
         ]
       },
       "openai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2566,13 +1625,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2588,13 +1640,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2610,13 +1655,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2635,20 +1673,13 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           }
         ]
       },
       "openai-gpt6": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2667,13 +1698,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2689,13 +1713,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2711,13 +1728,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2736,20 +1746,13 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           }
         ]
       },
       "xai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2768,13 +1771,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2790,13 +1786,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2812,13 +1801,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2837,20 +1819,13 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           }
         ]
       },
       "zai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2870,13 +1845,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2892,13 +1860,6 @@
               "read-only",
               "text-patch"
             ],
-            "evidence": {
-              "status": "candidate",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall evaluation."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -2917,13 +1878,6 @@
             "capabilities": [
               "native-tool-policy"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall result."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2938,13 +1892,6 @@
             "capabilities": [
               "sandboxed-worktree"
             ],
-            "evidence": {
-              "status": "disabled",
-              "selection": "blocked",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "unsupported",
             "review_policy": "cross-family"
           }
@@ -2953,7 +1900,7 @@
     },
     "routine-review": {
       "alibaba": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -2972,16 +1919,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -2996,17 +1933,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3021,14 +1947,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3043,17 +1961,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3063,7 +1970,7 @@
         "blocked": []
       },
       "anthropic": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3082,16 +1989,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3106,17 +2003,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3135,14 +2021,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3157,24 +2035,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "deepseek": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3193,16 +2060,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3217,17 +2074,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3242,14 +2088,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3264,17 +2102,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3284,7 +2111,7 @@
         "blocked": []
       },
       "moonshot": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3303,16 +2130,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3327,17 +2144,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3352,14 +2158,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3374,17 +2172,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3394,7 +2181,7 @@
         "blocked": []
       },
       "openai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3413,17 +2200,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3438,14 +2214,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3460,17 +2228,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3489,23 +2246,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "openai-gpt6": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3524,16 +2271,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3548,14 +2285,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3570,17 +2299,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3599,24 +2317,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "xai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3635,16 +2342,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3659,17 +2356,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3684,14 +2370,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3706,17 +2384,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3726,7 +2393,7 @@
         "blocked": []
       },
       "zai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3745,16 +2412,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max is a read-only cross-family reviewer for work produced outside the OpenAI family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3769,17 +2426,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high is an advanced fallback reviewer; tiny routine review stays with sonnet-reviewer.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3794,14 +2440,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [],
-              "qualification_basis": "Owner routing decision, 2026-08-17: Sonnet is the default only for very small, non-builder routine review outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3816,17 +2454,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "cursorbench-opus-5-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max is a read-only cross-family reviewer for work produced outside the Anthropic family.",
-              "evidence_gap": "No exact review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3838,7 +2465,7 @@
     },
     "security": {
       "alibaba": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3857,16 +2484,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3881,17 +2498,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3906,24 +2512,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -3933,7 +2521,7 @@
         "blocked": []
       },
       "anthropic": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -3952,16 +2540,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -3976,17 +2554,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4005,31 +2572,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "deepseek": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -4048,16 +2597,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4072,17 +2611,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4097,24 +2625,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4124,7 +2634,7 @@
         "blocked": []
       },
       "moonshot": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -4143,16 +2653,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4167,17 +2667,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4192,24 +2681,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4219,7 +2690,7 @@
         "blocked": []
       },
       "openai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -4238,17 +2709,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4263,24 +2723,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4299,23 +2741,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "openai-gpt6": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -4334,16 +2766,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4358,24 +2780,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4394,24 +2798,13 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
         ]
       },
       "xai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -4430,16 +2823,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4454,17 +2837,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4479,24 +2851,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4506,7 +2860,7 @@
         "blocked": []
       },
       "zai": {
-        "schema_version": 2,
+        "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
         "requires_user_direction": true,
@@ -4525,16 +2879,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-codex-gpt-5.6-terra-max"
-              ],
-              "qualification_basis": "Owner routing decision, 2026-08-17. Terra/max may review security-sensitive work only when the producer is outside the OpenAI family.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4549,17 +2893,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "openai-gpt-6-astra-high-swe",
-                "openai-gpt-6-astra-high-computer-use"
-              ],
-              "qualification_basis": "Owner decision, 2026-09-01: Astra @ high may review security-sensitive work only when the producer is outside the openai-gpt6 family. Astra is Preparedness-Critical for cyber; review is read-only and the owner decision explicitly scopes it to review, not to security operations.",
-              "evidence_gap": "No exact security-review precision/recall row; the coding row is contextual only."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           },
@@ -4574,24 +2907,6 @@
             "capabilities": [
               "native-profile"
             ],
-            "evidence": {
-              "status": "provisional",
-              "selection": "explicit-only",
-              "exact_evidence_ids": [],
-              "context_evidence_ids": [
-                "aa-claude-opus-5-max",
-                "anthropic-claude-opus-5-launch"
-              ],
-              "provider_fallback": {
-                "possible": true,
-                "target_model": "claude-opus-4.8",
-                "trigger": "Anthropic safety classifier on flagged cyber requests",
-                "exact_variant_guaranteed": false,
-                "source_evidence_id": "anthropic-claude-opus-5-launch"
-              },
-              "qualification_basis": "Owner routing decision, 2026-08-17. Opus/max may review security-sensitive work only when the producer is outside the Anthropic family. Anthropic may substitute Opus 4.8 on classifier-flagged cyber requests, so exact Opus 5 identity must be verified when required.",
-              "evidence_gap": "No exact security-review precision/recall row; coding evidence is contextual only, and the benign smoke does not exercise Anthropic's classifier-triggered fallback."
-            },
             "selection": "explicit-only",
             "review_policy": "cross-family"
           }
@@ -4600,38 +2915,6 @@
         "selection_validated": false,
         "blocked": []
       }
-    }
-  },
-  "compound": {
-    "super-judgement": {
-      "schema_version": 2,
-      "read_only": true,
-      "automatic_dispatch": false,
-      "requires_user_direction": true,
-      "authorization_granted": false,
-      "review_policy": "optional",
-      "lane": "super-judgement",
-      "members": [
-        "fable-judge",
-        "astra-judge"
-      ],
-      "protocol": "independent-then-cross-review",
-      "historical_evidence": {
-        "status": "manual-qualified",
-        "selection": "explicit-only",
-        "members": [
-          "fable-judge",
-          "astra-judge"
-        ],
-        "protocol": "independent-then-cross-review",
-        "final_authority": "lead",
-        "automatic_dispatch": false,
-        "automatic_merge": false,
-        "activation": "Use only for highly complex, high-blast-radius, difficult-to-reverse decisions with at least two documented complexity triggers."
-      },
-      "selection_validated": false,
-      "choices": [],
-      "requires_explicit_member_dispatches": true
     }
   }
 }

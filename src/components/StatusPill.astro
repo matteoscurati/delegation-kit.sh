@@ -1,22 +1,13 @@
 ---
-// Two vocabularies, kept apart on purpose.
-// `kind="compat"`: what the adapter can do today — compatible (green, may be
-// selected) or unsupported (red outline, cannot). This is what decides.
-// `kind="history"`: the historical qualification status of the same row,
-// muted, because since 0.24.0 it informs and never gates.
+// What the adapter can do today — compatible (green, may be selected) or
+// unsupported (red outline, cannot). This is the only thing that decides.
 interface Props {
-  kind: 'compat' | 'history';
-  value: string | boolean | null | undefined;
+  kind: 'compat';
+  value: boolean | null | undefined;
 }
-const { kind, value } = Astro.props;
-const label =
-  kind === 'compat' ? (value ? 'compatible' : 'unsupported') : value ? String(value) : 'no record';
-const cls =
-  kind === 'compat'
-    ? value
-      ? 'status status-compatible'
-      : 'status status-unsupported'
-    : 'status status-history';
+const { value } = Astro.props;
+const label = value ? 'compatible' : 'unsupported';
+const cls = value ? 'status status-compatible' : 'status status-unsupported';
 ---
 
 <span class={cls}>{label}</span>

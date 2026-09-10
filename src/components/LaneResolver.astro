@@ -4,7 +4,7 @@
 // Every answer shown here was produced by the kit's own router at build time
 // against a fresh default preset (scripts/sync-kit.mjs): every lane under the
 // default review policy, every review lane once per producer family under the
-// strict `cross-family` preset, and each compound lane. Radio buttons pick the
+// strict `cross-family` preset. Radio buttons pick the
 // lane, the policy and the producer; CSS `:has()` reveals the precomputed
 // panel. The page cannot disagree with the router, and it ships no script.
 import resolve from '../data/resolve.json';
@@ -18,24 +18,14 @@ type Row = {
   adapter: string;
   technical_compatibility: boolean;
   capabilities: string[];
-  evidence: { status?: string } | Record<string, never>;
   selection: string;
 };
 type Resolved = { lane: string; choices: Row[]; blocked: Row[]; review_policy: string };
-type Compound = {
-  lane: string;
-  members: string[];
-  protocol: string;
-  historical_evidence: { status?: string; activation?: string; final_authority?: string };
-  requires_explicit_member_dispatches: boolean;
-};
 
 const plain = resolve.lanes as unknown as Record<string, Resolved>;
 const strict = resolve.strict as unknown as Record<string, Record<string, Resolved>>;
-const compound = resolve.compound as unknown as Record<string, Compound>;
 const reviewLanes = kit.reviewLanes as string[];
 const laneList = Object.keys(plain).sort();
-const compoundLanes = Object.keys(compound).sort();
 const families = kit.families as string[];
 const defaultLane = 'builder';
 const defaultFamily = 'openai';
@@ -57,8 +47,6 @@ for (const lane of reviewLanes)
     rules.push(
       `.resolver:has(#${laneId(lane)}:checked):has(#policy-strict:checked):has(#${familyId(family)}:checked) .panel[data-lane="${lane}"][data-policy="strict"][data-family="${family}"]{display:block}`
     );
-for (const lane of compoundLanes)
-  rules.push(`.resolver:has(#${laneId(lane)}:checked) .panel[data-lane="${lane}"]{display:block}`);
 rules.push('.resolver .producer{display:none}');
 rules.push(
   '.resolver:has(input[data-review]:checked):has(#policy-strict:checked) .producer{display:block}'
@@ -83,7 +71,7 @@ const command = (lane: string, family?: string, strictPolicy = false) =>
       <legend class="eyebrow mb-2">Role</legend>
       <div class="flex flex-wrap gap-1.5">
         {
-          [...laneList, ...compoundLanes].map((lane) => (
+          laneList.map((lane) => (
             <span class="relative">
               <input
                 type="radio"
@@ -174,37 +162,10 @@ const command = (lane: string, family?: string, strictPolicy = false) =>
         })
       )
     }
-    {
-      compoundLanes.map((lane) => {
-        const c = compound[lane];
-        return (
-          <div class="panel" data-lane={lane}>
-            <p class="font-mono text-[0.8rem] text-[var(--color-ink-soft)] mb-4">
-              $ {command(lane)}
-            </p>
-            <div class="grid gap-6 md:grid-cols-[1fr_1fr]">
-              <div>
-                <p class="eyebrow mb-2">Compound lane — each member is its own dispatch</p>
-                <p class="font-mono text-sm">{c.members.join(' + ')}</p>
-                <p class="text-sm text-[var(--color-ink-soft)] mt-2">
-                  Protocol <span class="font-mono">{c.protocol}</span>; final authority:{' '}
-                  {c.historical_evidence.final_authority ?? 'lead'}. Selecting the compound lane
-                  grants nothing; each member needs its own explicit dispatch.
-                </p>
-              </div>
-              <div>
-                <p class="eyebrow mb-2">Historical activation note</p>
-                <p class="text-sm">{c.historical_evidence.activation}</p>
-              </div>
-            </div>
-          </div>
-        );
-      })
-    }
     <p
       class="font-mono text-[0.75rem] text-[var(--color-ink-soft)] mt-6 border-t border-[var(--color-line)] pt-3"
     >
-      schema_version: 2 · requires_user_direction: true · automatic_dispatch: false ·
+      schema_version: 3 · requires_user_direction: true · automatic_dispatch: false ·
       authorization_granted: false
     </p>
   </div>

@@ -135,13 +135,6 @@ summary:focus-visible {
 .status-unsupported {
   color: var(--color-blocked);
 }
-.status-history {
-  background: transparent;
-  color: var(--color-ink-soft);
-  box-shadow: inset 0 0 0 1px var(--color-line);
-  text-transform: none;
-  letter-spacing: 0;
-}
 .status-excluded {
   background: var(--color-explicit);
   color: var(--color-ink);
