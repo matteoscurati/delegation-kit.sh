@@ -10,8 +10,14 @@
 //   the AUTOGEN block of src/pages/docs/*.md and src/pages/changelog/index.md
 //
 // Usage:
-//   node scripts/sync-kit.mjs          write everything
-//   node scripts/sync-kit.mjs --check  exit 1 if anything is out of sync (CI)
+//   node scripts/sync-kit.mjs                     write everything
+//   node scripts/sync-kit.mjs --check             exit 1 if out of sync (CI)
+//   node scripts/sync-kit.mjs --allow-unreleased  sync from a checkout that is
+//                                                 not at a clean release tag
+//
+// Syncs only from a clean kit checkout on the tag its package.json names;
+// --check skips itself otherwise, so a refactor in progress next door cannot
+// break or leak into the site.
 //
 // Nothing here dispatches a model: `table`, `resolve`, and `check` are the
 // kit's own read-only commands.
@@ -45,6 +51,53 @@ try {
     process.exit(0);
   }
   fail(`kit checkout not found at ${kitRoot} (set DELEGATION_KIT_ROOT)`);
+}
+
+// The site describes what npm installs, so it syncs only from a kit checkout
+// that is clean and sitting exactly on the release tag named by its own
+// package.json. Any other state (a refactor in progress, an unreleased
+// branch) is skipped by --check and refused by a write unless
+// --allow-unreleased is given explicitly.
+const allowUnreleased = process.argv.includes('--allow-unreleased');
+function kitReleaseState() {
+  const run = (args) => {
+    try {
+      return execFileSync('git', ['-C', kitRoot, ...args], {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore']
+      }).trim();
+    } catch {
+      return null;
+    }
+  };
+  const version =
+    JSON.parse(readFileSyncSafe(resolve(kitRoot, 'package.json')) ?? '{}').version ?? null;
+  const dirty = run(['status', '--porcelain']);
+  const tag = run(['describe', '--tags', '--exact-match', 'HEAD']);
+  const expected = version ? `delegation-kit--v${version}` : null;
+  const released = dirty === '' && tag !== null && tag === expected;
+  return { version, dirty: dirty === null ? null : dirty !== '', tag, expected, released };
+}
+import { readFileSync } from 'node:fs';
+function readFileSyncSafe(path) {
+  try {
+    return readFileSync(path, 'utf8');
+  } catch {
+    return null;
+  }
+}
+const state = kitReleaseState();
+if (!state.released) {
+  const why = state.dirty
+    ? 'the checkout has uncommitted changes'
+    : `HEAD is ${state.tag ?? 'not on a tag'}, expected ${state.expected ?? 'a release tag'}`;
+  if (isCheck) {
+    console.log(`sync-kit: kit checkout is not at a clean release (${why}); skipping --check.`);
+    process.exit(0);
+  }
+  if (!allowUnreleased)
+    fail(`kit checkout is not at a clean release (${why}); pass --allow-unreleased to sync anyway`);
+  console.warn(`sync-kit: syncing from an unreleased kit state (${why}).`);
 }
 
 const kitCommand = (bin, args) =>
