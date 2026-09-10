@@ -61,14 +61,13 @@ const failures = [
     </p>
     <div class="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end min-w-0">
       <CodeBlock
-        label="Install (macOS, jq, git)"
-        code={`git clone https://github.com/matteoscurati/delegation-kit
-cd delegation-kit
-./install.sh        # or --claude-only / --codex-only
-./doctor.sh         # verify everything is wired`}
+        label="Install (macOS, jq, git, Node ≥ 18)"
+        code={`npx delegation-kit          # interactive installer; --claude-only / --codex-only
+./doctor.sh                 # from a clone: verify everything is wired`}
       />
       <div class="text-sm text-[var(--color-ink-soft)] md:pb-3">
-        or <span class="font-mono text-[var(--color-ink)]">npx delegation-kit</span><br />
+        or <span class="font-mono text-[var(--color-ink)]">git clone</span> and
+        <span class="font-mono text-[var(--color-ink)]">./install.sh</span><br />
         or <span class="font-mono text-[var(--color-ink)]">/plugin install delegation-kit</span>
       </div>
     </div>
@@ -159,7 +158,8 @@ cd delegation-kit
             >, <span class="font-mono">sonnet-reviewer</span>, <span class="font-mono"
               >opus-builder</span
             >, <span class="font-mono">opus-reviewer</span>, <span class="font-mono"
-              >fable-judge</span>
+              >fable-judge</span
+            >
           </li>
           <li>the routing skill, loaded only on an explicit delegation request</li>
           <li>the orchestrate skill: the user-approved finite dispatch list is the budget</li>

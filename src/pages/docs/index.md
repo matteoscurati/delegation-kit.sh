@@ -20,6 +20,20 @@ runners need their own credentials: the installer asks once, stores keys mode
 
 ## Install
 
+The shortest path is the npm installer. It clones the tagged release,
+verifies it, and runs the same `install.sh` a clone would; nothing is copied
+into `node_modules`:
+
+```sh
+npx delegation-kit           # interactive: asks for external keys once
+npx delegation-kit --claude-only
+npx delegation-kit --codex-only
+npx delegation-kit --skip-doctor
+```
+
+From a clone, which is also where `doctor.sh` compares the installed kit with
+the sources:
+
 ```sh
 git clone https://github.com/matteoscurati/delegation-kit
 cd delegation-kit
@@ -27,19 +41,11 @@ cd delegation-kit
 ./doctor.sh         # verify everything is wired (add --ping for a live round-trip)
 ```
 
-Or, Claude-only, from the plugin marketplace:
+Claude-only, from the plugin marketplace:
 
 ```
 /plugin marketplace add matteoscurati/delegation-kit
 /plugin install delegation-kit
-```
-
-Or through npm, which clones the tagged release and runs the same installer:
-
-```sh
-npx delegation-kit           # interactive
-npx delegation-kit --claude-only
-npx delegation-kit --codex-only
 ```
 
 `./uninstall.sh` (or `npx delegation-kit --uninstall`) removes every installed
