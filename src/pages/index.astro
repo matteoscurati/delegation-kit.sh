@@ -14,7 +14,7 @@ const steps = [
   {
     name: 'Resolve',
     cmd: 'delegation-route resolve --lane builder --json',
-    text: 'Read-only. The router lists which of your profiles support the role, what each adapter can do, and the historical record beside it. Nothing is dispatched; selection grants nothing.'
+    text: 'Read-only. The router lists which of your profiles support the role and what each adapter can do. Nothing is dispatched; selection grants nothing.'
   },
   {
     name: 'Choose',
@@ -32,7 +32,7 @@ const failures = [
   {
     mode: 'Agents that dispatch other agents on their own authority',
     answer:
-      'Every dispatch is user-directed, per request. The router only lists and validates; delegation-run runs exactly one selected profile once, and its receipt records authorization_granted: false for everything it did not do.'
+      'Every dispatch is user-directed, per request. The router only lists and validates; delegation-run runs exactly one selected profile once, and its receipt records what was asked, what answered, and what is still pending.'
   },
   {
     mode: 'Silent substitution — you asked for one model and got another',

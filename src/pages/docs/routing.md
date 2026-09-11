@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocLayout.astro
 title: 'Routing policy — delegation-kit'
-description: 'The evidence-backed model-routing policy behind delegation-kit: which model does which job, and why.'
+description: 'The advisory model-routing policy behind the delegation-kit presets: which model does which job, and why. It governs nothing.'
 path: '/docs/routing'
 ---
 

@@ -63,7 +63,7 @@ file, link, and guarded block, and preserves stored keys as mode-600 backups.
   `delegation-config apply` and preserved once you edit them.
 - **Commands** on `~/.local/bin`: `delegation-config`, `delegation-route`,
   `delegation-run`, `delegation-openai-compatible`, the six provider runners,
-  `delegation-patch-verify`, and the historical-record inspectors.
+  and `delegation-patch-verify`.
 
 `./doctor.sh` has a "Personal configuration" section that answers "is this
 machine wired": configuration valid, review policy, managed snippets present,
@@ -108,8 +108,7 @@ what a role can actually do: text adapters (`deepseek-api`,
 or a patch; native adapters (`kimi-code-cli`, `claude-zai`, `grok-build-cli`,
 `codex`, `claude-code`) keep their own sandboxes and file-access controls.
 Assigning `builder` to a text adapter cannot grant worktree access. The full
-matrix, with what each adapter supports today and the historical record beside
-it, is on the [home page](/).
+matrix, with what each adapter supports today, is on the [home page](/).
 
 ## Review
 
@@ -123,8 +122,8 @@ selects `cross-family` for a new configuration.
 ## Where next
 
 - [Personal configuration](/docs/configuration) — schema, adapters, identity, review, migration.
-- [Routing policy](/docs/routing) — the evidence the presets came from, advisory now.
-- [External executors](/docs/executors) — the runner contract and the patch verifier.
+- [Routing policy](/docs/routing) — how the presets were chosen; advisory, governs nothing.
+- [External executors](/docs/executors) — adapters, permission classes, and the patch verifier.
 - [Compatibility](/docs/compatibility) — verified snapshots per release.
 - [Adapting](/docs/adapting) — bring your own models.
 - [Changelog](/changelog).
