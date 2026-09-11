@@ -14,6 +14,27 @@ in the kit repository by `npm run sync-kit` — edit there, not here. Tags follo
 
 <!-- BEGIN AUTOGEN -->
 
+## [0.25.1] — 2026-09-11
+
+### Fixed
+
+- **`install.sh` restores a key file the uninstaller backed up.**
+  `uninstall.sh` keeps `zai.env`, `qwen-token-plan.env`, and `deepseek.env`
+  as `$DELEGATION_DATA_HOME.<name>.env.bak`, but a later install asked for the
+  key again and never looked there, so a key could sit in the backup while
+  the runner reported it missing (the Z.AI key did, from 2026-09-01 to
+  2026-09-11). The installer now copies a backup into place, mode 600, only
+  when the data directory has no key file; an existing file is never
+  replaced. Covered by the install-marker suite.
+- `delegation-grok check` reports `adapter: "grok-build-cli"`, the name the
+  presets and `delegation-config` use, instead of its backend key
+  `grok-build`; the backend key itself is unchanged.
+- `docs/user-configuration.md` and `ADAPTING.md` no longer describe
+  historical evidence or evaluation receipts; the router is described at
+  schema 3.
+
+
+
 ## [0.25.0] — 2026-09-11
 
 The idea behind 0.24.0 was that which model runs is the user's call, not the
