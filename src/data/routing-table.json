@@ -403,34 +403,6 @@
       "model": "kimi-k3",
       "family": "moonshot",
       "adapter": "kimi-code-cli",
-      "lane": "senior",
-      "configuration_valid": true,
-      "technical_compatibility": false,
-      "capabilities": [
-        "sandboxed-worktree"
-      ],
-      "selection": "unsupported",
-      "review_policy": "optional"
-    },
-    {
-      "profile": "kimi-k3",
-      "model": "kimi-k3",
-      "family": "moonshot",
-      "adapter": "kimi-code-cli",
-      "lane": "judgement",
-      "configuration_valid": true,
-      "technical_compatibility": false,
-      "capabilities": [
-        "sandboxed-worktree"
-      ],
-      "selection": "unsupported",
-      "review_policy": "optional"
-    },
-    {
-      "profile": "kimi-k3",
-      "model": "kimi-k3",
-      "family": "moonshot",
-      "adapter": "kimi-code-cli",
       "lane": "policy-annotation",
       "configuration_valid": true,
       "technical_compatibility": true,
@@ -438,20 +410,6 @@
         "sandboxed-worktree"
       ],
       "selection": "explicit-only",
-      "review_policy": "optional"
-    },
-    {
-      "profile": "kimi-k3",
-      "model": "kimi-k3",
-      "family": "moonshot",
-      "adapter": "kimi-code-cli",
-      "lane": "reviewer",
-      "configuration_valid": true,
-      "technical_compatibility": false,
-      "capabilities": [
-        "sandboxed-worktree"
-      ],
-      "selection": "unsupported",
       "review_policy": "optional"
     },
     {

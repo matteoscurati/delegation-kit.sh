@@ -326,22 +326,7 @@
       ],
       "selected": null,
       "selection_validated": false,
-      "blocked": [
-        {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
-          "family": "moonshot",
-          "adapter": "kimi-code-cli",
-          "lane": "judgement",
-          "configuration_valid": true,
-          "technical_compatibility": false,
-          "capabilities": [
-            "sandboxed-worktree"
-          ],
-          "selection": "unsupported",
-          "review_policy": "optional"
-        }
-      ]
+      "blocked": []
     },
     "material-review": {
       "schema_version": 3,
@@ -569,22 +554,7 @@
       ],
       "selected": null,
       "selection_validated": false,
-      "blocked": [
-        {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
-          "family": "moonshot",
-          "adapter": "kimi-code-cli",
-          "lane": "reviewer",
-          "configuration_valid": true,
-          "technical_compatibility": false,
-          "capabilities": [
-            "sandboxed-worktree"
-          ],
-          "selection": "unsupported",
-          "review_policy": "optional"
-        }
-      ]
+      "blocked": []
     },
     "routine-review": {
       "schema_version": 3,
@@ -840,22 +810,7 @@
       ],
       "selected": null,
       "selection_validated": false,
-      "blocked": [
-        {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
-          "family": "moonshot",
-          "adapter": "kimi-code-cli",
-          "lane": "senior",
-          "configuration_valid": true,
-          "technical_compatibility": false,
-          "capabilities": [
-            "sandboxed-worktree"
-          ],
-          "selection": "unsupported",
-          "review_policy": "optional"
-        }
-      ]
+      "blocked": []
     }
   },
   "strict": {
@@ -1356,20 +1311,6 @@
         "selection_validated": false,
         "blocked": [
           {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          },
-          {
             "profile": "qwen3.8-max",
             "model": "qwen3.8-max",
             "family": "alibaba",
@@ -1442,22 +1383,7 @@
         ],
         "selected": null,
         "selection_validated": false,
-        "blocked": [
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          }
-        ]
+        "blocked": []
       },
       "deepseek": {
         "schema_version": 3,
@@ -1501,20 +1427,6 @@
         "selected": null,
         "selection_validated": false,
         "blocked": [
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          },
           {
             "profile": "deepseek-flash",
             "model": "deepseek-flash",
@@ -1588,22 +1500,7 @@
         ],
         "selected": null,
         "selection_validated": false,
-        "blocked": [
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          }
-        ]
+        "blocked": []
       },
       "openai": {
         "schema_version": 3,
@@ -1661,22 +1558,7 @@
         ],
         "selected": null,
         "selection_validated": false,
-        "blocked": [
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          }
-        ]
+        "blocked": []
       },
       "openai-gpt6": {
         "schema_version": 3,
@@ -1734,22 +1616,7 @@
         ],
         "selected": null,
         "selection_validated": false,
-        "blocked": [
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          }
-        ]
+        "blocked": []
       },
       "xai": {
         "schema_version": 3,
@@ -1807,22 +1674,7 @@
         ],
         "selected": null,
         "selection_validated": false,
-        "blocked": [
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
-            "review_policy": "cross-family"
-          }
-        ]
+        "blocked": []
       },
       "zai": {
         "schema_version": 3,
@@ -1879,20 +1731,6 @@
               "native-tool-policy"
             ],
             "selection": "explicit-only",
-            "review_policy": "cross-family"
-          },
-          {
-            "profile": "kimi-k3",
-            "model": "kimi-k3",
-            "family": "moonshot",
-            "adapter": "kimi-code-cli",
-            "lane": "reviewer",
-            "configuration_valid": true,
-            "technical_compatibility": false,
-            "capabilities": [
-              "sandboxed-worktree"
-            ],
-            "selection": "unsupported",
             "review_policy": "cross-family"
           }
         ]
