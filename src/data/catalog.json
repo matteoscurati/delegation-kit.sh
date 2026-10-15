@@ -1,0 +1,289 @@
+{
+  "catalogVersion": "2026-10-15",
+  "tiering": {
+    "rule": "index-bands-v1",
+    "frontier_within": 8,
+    "mid_within": 20,
+    "top_index": 57.6,
+    "source": "artificialanalysis",
+    "date": "2026-10-15",
+    "attribution": "https://artificialanalysis.ai/"
+  },
+  "models": [
+    {
+      "id": "claude-opus-5-5",
+      "tier": "frontier",
+      "index": 57.6,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 4,
+        "out": 20
+      }
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "tier": "frontier",
+      "index": 56,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 10
+      }
+    },
+    {
+      "id": "claude-fable-5-1",
+      "tier": "frontier",
+      "index": 53.4,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 10,
+        "out": 50
+      }
+    },
+    {
+      "id": "gpt-6-astra",
+      "tier": "frontier",
+      "index": 52.7,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 10,
+        "out": 50
+      }
+    },
+    {
+      "id": "gpt-6.1-sol",
+      "tier": "frontier",
+      "index": 51.8,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 10
+      }
+    },
+    {
+      "id": "claude-opus-5",
+      "tier": "frontier",
+      "index": 50.8,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 5,
+        "out": 25
+      }
+    },
+    {
+      "id": "claude-fable-5",
+      "tier": "frontier",
+      "index": 49.6,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 10,
+        "out": 50
+      }
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "tier": "mid",
+      "index": 47,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 4,
+        "out": 20
+      }
+    },
+    {
+      "id": "grok-4.7",
+      "tier": "mid",
+      "index": 46.4,
+      "variant": "xhigh",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 6
+      }
+    },
+    {
+      "id": "qwen3.8-max",
+      "tier": "mid",
+      "index": 45.4,
+      "variant": "default",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 6
+      }
+    },
+    {
+      "id": "grok-4.6",
+      "tier": "mid",
+      "index": 44.2,
+      "variant": "xhigh",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 6
+      }
+    },
+    {
+      "id": "kimi-k3",
+      "tier": "mid",
+      "index": 43.6,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.5,
+        "out": 2
+      }
+    },
+    {
+      "id": "claude-haiku-5-5",
+      "tier": "mid",
+      "index": 43.4,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.1,
+        "out": 0.5
+      }
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "tier": "mid",
+      "index": 42.1,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 12
+      }
+    },
+    {
+      "id": "glm-5.3-flash",
+      "tier": "mid",
+      "index": 41.8,
+      "variant": "default",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.15,
+        "out": 0.5
+      }
+    },
+    {
+      "id": "gemini-3.8-flash",
+      "tier": "mid",
+      "index": 40.9,
+      "variant": "high",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.75,
+        "out": 3.75
+      }
+    },
+    {
+      "id": "deepseek-flash",
+      "tier": "mid",
+      "index": 39.5,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.3,
+        "out": 1.2
+      }
+    },
+    {
+      "id": "gpt-5.5",
+      "tier": "mid",
+      "index": 38.4,
+      "variant": "xhigh",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 5,
+        "out": 30
+      }
+    },
+    {
+      "id": "claude-sonnet-5",
+      "tier": "mid",
+      "index": 38.2,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 3,
+        "out": 15
+      }
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "tier": "small",
+      "index": 37.3,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.2,
+        "out": 1.2
+      }
+    },
+    {
+      "id": "glm-5.2",
+      "tier": "small",
+      "index": 33.7,
+      "variant": "max",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.98,
+        "out": 3.08
+      }
+    },
+    {
+      "id": "gemini-3.1-pro-preview",
+      "tier": "small",
+      "index": 29.7,
+      "variant": "default",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 1.25,
+        "out": 5
+      }
+    },
+    {
+      "id": "minimax-m3",
+      "tier": "small",
+      "index": 29.2,
+      "variant": "default",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 0.3,
+        "out": 1.2
+      }
+    },
+    {
+      "id": "mistral-large-3",
+      "tier": "small",
+      "index": 9.3,
+      "variant": "default",
+      "source": "artificialanalysis:2026-10-15",
+      "price": {
+        "in": 2,
+        "out": 6
+      }
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "tier": "small",
+      "index": null,
+      "variant": null,
+      "source": "hand",
+      "price": {
+        "in": 1,
+        "out": 5
+      }
+    }
+  ]
+}

@@ -27,11 +27,11 @@ const {
 const siteOrigin = Astro.site ?? new URL('https://delegation-kit.sh');
 const canonical = new URL(path, siteOrigin).toString();
 const ogImage = new URL('/og-image.png', siteOrigin).toString();
-const ogAlt = 'delegation-kit — your models, your call. The kit never dispatches on its own.';
+const ogAlt = 'delegation-kit — your models, your call, your rules. You choose the decision model; it governs the models you already pay for.';
 
 const nav = [
   { href: '/docs', label: 'Docs' },
-  { href: '/docs/routing', label: 'Policy' },
+  { href: '/docs/router', label: 'Router' },
   { href: '/changelog', label: 'Changelog' }
 ];
 ---

@@ -1,70 +1,74 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
+import Ladder from '../components/Ladder.astro';
 import LaneResolver from '../components/LaneResolver.astro';
 import RoutingTable from '../components/RoutingTable.astro';
 import kit from '../data/kit.json';
 
 const steps = [
   {
-    name: 'Configure',
-    cmd: 'delegation-config show',
-    text: 'Your profiles live in ~/.config/delegation-kit/config.json: an adapter, the model id your endpoint accepts, a declared family, roles, parameters. Any OpenAI-compatible text endpoint works. No kit qualification is required.'
+    name: 'Measure',
+    cmd: 'tokens · turns · tools · images · JSON',
+    text: 'The request is measured, not judged: how long it is, whether it carries tools or images, whether it wants JSON. Deterministic, no model involved.'
   },
   {
-    name: 'Resolve',
-    cmd: 'delegation-route resolve --lane builder --json',
-    text: 'Read-only. The router lists which of your profiles support the role and what each adapter can do. Nothing is dispatched; selection grants nothing.'
+    name: 'Ask the decider',
+    cmd: '{"difficulty": 1, "tags": ["code"]}',
+    text: 'One typed question to the decision model you chose: how much capability does answering this correctly need (0 trivial … 4 frontier), and does it involve code, math or rare knowledge. It sees an excerpt, never your keys, never your model names.'
   },
   {
-    name: 'Choose',
-    cmd: '"Use terra-builder for <task>."',
-    text: 'You name the profile, or you authorize the lead to pick from the displayed choices. Task complexity, an installed skill, or a previous authorization is not authorization.'
+    name: 'The ladder',
+    cmd: 'small → mid → frontier',
+    text: 'The answer sets the lowest rung. Every profile in your pool sits on a rung placed by a third-party index; code narrows to code-capable profiles; math, rare and tools lift an easy request to mid; a very long one goes to the top.'
   },
   {
-    name: 'Run',
-    cmd: 'delegation-run --profile terra-builder --lane builder --prompt-file task.txt --output out.txt --workdir .',
-    text: 'One dispatch, one receipt. Output, metrics, and a .result.json with review status and model identity. Retries and reviews are dispatches too: each needs its own approval.'
+    name: 'Cheapest in the rung',
+    cmd: 'candidates: flash $0.0013, qwen $0.0066 → flash',
+    text: 'Inside the rung the cheapest eligible profile wins, priced for this request. An empty rung escalates, never descends. Doubt lands on your default, and says so.'
   }
 ];
 
-const failures = [
-  {
-    mode: 'Agents that dispatch other agents on their own authority',
-    answer:
-      'Every dispatch is user-directed, per request. The router only lists and validates; delegation-run runs exactly one selected profile once, and its receipt records what was asked, what answered, and what is still pending.'
-  },
+const answers = [
   {
     mode: 'Silent substitution — you asked for one model and got another',
     answer:
-      'Requested and provider-reported identity are kept apart in every receipt. A mismatch fails unless you configured that alias; a missing report is labelled requested-only, never dressed up as certification.'
+      'Every response names the profile and the model that answered, the reasons, the candidates with their estimated cost, and what the provider itself reported. A mismatch is disclosed, never hidden.'
   },
   {
-    mode: 'Unverified output — delegated diffs shipped unread',
+    mode: 'A router that spends your money on its own judgement',
     answer:
-      'Review is a policy you choose: optional, required, or cross-family. A mandatory policy holds the result as pending-review; it never spawns the reviewer for you. Text adapters return a patch; the lead applies and tests.'
+      'The decider rates the task; your configuration rates the models. Its per-decision cost is disclosed, a cost ceiling refuses rather than downgrades, and the ladder comes from a published rule over a third-party index — not from a vendor’s opinion of itself.'
+  },
+  {
+    mode: 'Agents that dispatch other agents on their own authority',
+    answer:
+      'Nothing dispatches without you. Starting the router and sending it "auto" is your choice; it chooses only inside the pool you declared, never retries, never falls back, never widens the pool. Hand-picked delegation for Claude Code and Codex follows the same rule, one dispatch at a time.'
   }
 ];
 ---
 
 <BaseLayout path="/">
   <section class="pt-10 pb-14 md:pt-16 md:pb-20">
-    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · Claude Code and Codex</p>
+    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · a local model router</p>
     <h1 class="text-[2.6rem] md:text-[4.4rem] max-w-5xl">
-      Your models. Your call. The kit never dispatches on its own.
+      Your models. Your call. Your rules.
     </h1>
     <p class="mt-8 max-w-2xl text-lg text-[var(--color-ink-soft)]">
-      delegation-kit gives Claude Code and Codex a governed way to hand bounded coding work to other
-      models: the profiles you configure, through native adapters or any OpenAI-compatible text
-      endpoint, dispatched one at a time only when you say so, with a receipt that says what was
-      asked, what answered, and whether review is still pending.
+      You choose the decision model — one of your cheap models, Levanto Sage, TypeSafe Jev, your
+      own — and it governs the models you already pay for. An OpenAI-compatible endpoint on your
+      own machine sends each request to the cheapest model in your pool that will get it right,
+      with that model's own credential, and tells you why. Nothing leaves your machine except the
+      request to the model you chose.
     </p>
     <div class="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end min-w-0">
       <CodeBlock
-        label="Install (macOS, jq, git, Node ≥ 18)"
-        code={`npx delegation-kit          # interactive installer; --claude-only / --codex-only
+        label="Install, declare, serve (macOS, jq, git, python3)"
+        code={`npx delegation-kit          # installer; --claude-only / --codex-only
 delegation-config show      # the personal configuration it initialized
-./doctor.sh                 # from a clone: verify everything is wired`}
+#   add a router block: the decider, then the profiles it governs
+delegation-router check     # the decider and the pool, resolved; no network
+delegation-router serve     # http://127.0.0.1:4141/v1 — send "model": "auto"`}
       />
       <div class="text-sm text-[var(--color-ink-soft)] md:pb-3">
         or <span class="font-mono text-[var(--color-ink)]">git clone</span> and
@@ -75,21 +79,10 @@ delegation-config show      # the personal configuration it initialized
   </section>
 
   <section class="rule py-14">
-    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
-      <h2 class="text-3xl md:text-4xl">Resolve a role</h2>
-      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
-        The router's real answer for a fresh default configuration, computed by
-        <span class="font-mono">delegation-route</span> when the site was built from {kit.version}.
-        Switch the review policy to see what cross-family excludes. No script runs on this page.
-      </p>
-    </div>
-    <LaneResolver />
-  </section>
-
-  <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-3">How a dispatch happens</h2>
+    <h2 class="text-3xl md:text-4xl mb-3">How the choice is made</h2>
     <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
-      The flow is always the same four steps, in this order. The first three never call a model.
+      The decider never picks a model by name. It judges the task; your configuration judges the
+      models. Four steps, then one forward and a full disclosure.
     </p>
     <ol class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
       {
@@ -105,13 +98,31 @@ delegation-config show      # the personal configuration it initialized
         ))
       }
     </ol>
+    <p class="mt-10 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+      So why Opus 5.5 rather than GLM 5.3 Flash? Because the decider said "1, code", and on the
+      ladder below a 1 is a job for the lowest rung that has a profile — GLM's. Say "3" and the
+      request climbs to the frontier rung, Opus's. The levers are yours: a rung and a price per
+      profile, the pool, the default, a ceiling.
+    </p>
+  </section>
+
+  <section class="rule py-14">
+    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
+      <h2 class="text-3xl md:text-4xl">The ladder</h2>
+      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
+        Where the rungs come from: the Artificial Analysis Intelligence Index through one published
+        rule, recorded with its date in the catalog the kit ships. Refresh it with your own key;
+        override any rung in your configuration.
+      </p>
+    </div>
+    <Ladder />
   </section>
 
   <section class="rule py-14">
     <h2 class="text-3xl md:text-4xl mb-10">Three failure modes, three answers</h2>
     <div class="grid gap-8 md:grid-cols-3">
       {
-        failures.map((f) => (
+        answers.map((f) => (
           <div>
             <p class="text-lg leading-snug mb-3">{f.mode}</p>
             <p class="text-sm text-[var(--color-ink-soft)] border-l-2 border-[var(--color-explicit)] pl-4">
@@ -125,11 +136,12 @@ delegation-config show      # the personal configuration it initialized
 
   <section class="rule py-14">
     <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-6">
-      <h2 class="text-3xl md:text-4xl">The routing table</h2>
+      <h2 class="text-3xl md:text-4xl">The profiles it governs</h2>
       <p class="text-sm text-[var(--color-ink-soft)] max-w-xl mt-3 md:mt-0">
         {kit.profiles} profiles and {kit.laneRows} role rows from the default preset, straight from
-        <span class="font-mono">delegation-route table</span>. The adapter decides what a profile
-        can do today. There is no other gate.
+        <span class="font-mono">delegation-route table</span>. Each profile describes one model once:
+        the adapter decides what it can do, the catalog places it on a rung, and the router or your
+        own hand picks it.
       </p>
     </div>
     <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
@@ -144,44 +156,65 @@ delegation-config show      # the personal configuration it initialized
   </section>
 
   <section class="rule py-14">
+    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
+      <h2 class="text-3xl md:text-4xl">Or pick by hand</h2>
+      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
+        The same profiles, one explicit dispatch at a time from Claude Code or Codex:
+        <span class="font-mono">delegation-route resolve</span> lists and validates without
+        dispatching, <span class="font-mono">delegation-run</span> runs one profile once and writes a
+        receipt. Computed by the kit when the site was built from {kit.version}; no script runs here.
+      </p>
+    </div>
+    <LaneResolver />
+  </section>
+
+  <section class="rule py-14">
     <h2 class="text-3xl md:text-4xl mb-10">What's in the box</h2>
     <div class="grid gap-10 md:grid-cols-3 text-sm">
+      <div>
+        <p class="eyebrow mb-3">The router · delegation-router</p>
+        <ul class="space-y-2">
+          <li>
+            <span class="font-mono">check</span>, <span class="font-mono">decide</span>,
+            <span class="font-mono">serve</span>: resolve, recommend, route — loopback only, streaming
+            passed through, disclosure in headers and a <span class="font-mono">router</span> object
+          </li>
+          <li>
+            five deciders: one of your HTTP profiles, Levanto Sage, TypeSafe Jev, your own Dipylon, a
+            local classifier; <span class="font-mono">eval</span> measures one against the rules-only
+            baseline on a golden set of yours
+          </li>
+          <li>
+            the catalog: a third-party index, one published band rule, your refresh with your key
+          </li>
+        </ul>
+      </div>
       <div>
         <p class="eyebrow mb-3">Configuration · ~/.config/delegation-kit</p>
         <ul class="space-y-2">
           <li>
-            <span class="font-mono">delegation-config</span> init / validate / show / apply; the shipped
-            presets from <span class="font-mono">config/presets.json</span>, a strict preset for
-            cross-family review
+            <span class="font-mono">delegation-config</span> init / validate / show / apply; the
+            shipped presets from <span class="font-mono">config/presets.json</span>
           </li>
           <li>
             adapters: <span class="font-mono">{kit.adapters.join(', ')}</span> plus <span
               class="font-mono">openai-compatible</span
-            > for any text endpoint
+            > for any text endpoint; native profiles join a pool through the kit's dispatcher
           </li>
-          <li>credentials by variable name only; migration backs up a legacy install first</li>
+          <li>credentials by variable name or a key file under the data home, mode 600, never in a profile</li>
         </ul>
       </div>
       <div>
-        <p class="eyebrow mb-3">Hosts · ~/.claude and ~/.codex</p>
+        <p class="eyebrow mb-3">Hosts and runners · ~/.claude, ~/.codex, ~/.local/bin</p>
         <ul class="space-y-2">
           <li>
-            6 Claude subagent profiles and 5 Codex profiles, managed but never overwritten once you
-            edit them
-          </li>
-          <li>the routing and orchestrate skills, loaded only on an explicit delegation request</li>
-          <li>the user-direction guard, always loaded from CLAUDE.md and AGENTS.md</li>
-        </ul>
-      </div>
-      <div>
-        <p class="eyebrow mb-3">CLI · ~/.local/bin, shared</p>
-        <ul class="space-y-2">
-          <li>
-            <span class="font-mono">delegation-route</span>: the read-only router. Never dispatches.
+            6 Claude subagent profiles and 5 Codex profiles, the skills for a lead, the user-direction
+            guard always loaded from CLAUDE.md and AGENTS.md
           </li>
           <li>
-            <span class="font-mono">delegation-run</span>: one selected profile, once, with a v2
-            receipt
+            <span class="font-mono">delegation-route</span> and <span class="font-mono"
+              >delegation-run</span
+            >: explicit delegation, one profile once, with a receipt
           </li>
           <li>
             <span class="font-mono">delegation-{'{glm,gemini,kimi,grok,qwen,deepseek}'}</span>: the
@@ -197,22 +230,21 @@ delegation-config show      # the personal configuration it initialized
   <section class="rule py-14">
     <div class="grid gap-10 md:grid-cols-[1fr_1fr]">
       <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Configure it</h2>
+        <h2 class="text-3xl md:text-4xl mb-3">The router</h2>
         <p class="text-[var(--color-ink-soft)]">
-          Profiles, adapters, parameters, review policies, aliases for reported identities, and how
-          a legacy install migrates.
-          <a href="/docs/configuration" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Personal configuration →</a
+          Commands, the router block, how a request is routed and why this model and not that one,
+          where the rungs come from, the deciders, disclosure, errors, eval.
+          <a href="/docs/router" class="underline underline-offset-4 text-[var(--color-ink)]"
+            >Read the router page →</a
           >
         </p>
       </div>
       <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Read the policy</h2>
+        <h2 class="text-3xl md:text-4xl mb-3">Configure it</h2>
         <p class="text-[var(--color-ink-soft)]">
-          How one person routes coding work across models, and how the presets were chosen.
-          Advisory: it governs nothing, and is still worth reading before you choose.
-          <a href="/docs/routing" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Routing policy →</a
+          Profiles, adapters, keys and environment, adding a model, review policies, upgrading.
+          <a href="/docs/configuration" class="underline underline-offset-4 text-[var(--color-ink)]"
+            >Personal configuration →</a
           >
         </p>
       </div>

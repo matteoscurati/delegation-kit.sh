@@ -1,0 +1,81 @@
+---
+// "The ladder": the shipped catalog, rung by rung, with the third-party index
+// each placement came from. Static — src/data/catalog.json is written by
+// scripts/sync-kit.mjs from the kit's config/catalog.json; nothing runs on
+// this page.
+import catalog from '../data/catalog.json';
+
+type Model = {
+  id: string;
+  tier: string | null;
+  index: number | null;
+  variant: string | null;
+  source: string;
+  price: { in: number; out: number } | null;
+};
+
+const models = catalog.models as Model[];
+const tiering = catalog.tiering as {
+  rule: string;
+  frontier_within: number;
+  mid_within: number;
+  top_index: number;
+  source: string;
+  date: string;
+} | null;
+
+const rungs: { tier: string; label: string; rule: string }[] = [
+  {
+    tier: 'frontier',
+    label: 'frontier',
+    rule: tiering ? `within ${tiering.frontier_within} of the best (${tiering.top_index})` : ''
+  },
+  {
+    tier: 'mid',
+    label: 'mid',
+    rule: tiering ? `within ${tiering.mid_within} of the best` : ''
+  },
+  { tier: 'small', label: 'small', rule: 'below' }
+];
+
+const byTier = (tier: string) => models.filter((m) => m.tier === tier);
+const unplaced = models.filter((m) => m.tier === null);
+const fmt = (n: number | null) => (n === null ? '—' : n.toFixed(1));
+const price = (p: Model['price']) => (p ? `$${p.in}/$${p.out}` : 'no list price');
+---
+
+<div class="grid gap-6 md:grid-cols-3">
+  {
+    rungs.map((r) => (
+      <div class="border-t border-[var(--color-line-strong)] pt-4">
+        <p class="eyebrow mb-1">{r.label}</p>
+        <p class="text-sm text-[var(--color-ink-soft)] mb-4">{r.rule}</p>
+        <ul class="space-y-2 text-sm">
+          {byTier(r.tier).map((m) => (
+            <li class="flex items-baseline justify-between gap-3">
+              <span class="font-mono break-all">{m.id}</span>
+              <span class="shrink-0 tabular-nums text-[var(--color-ink-soft)]" title={`${m.source} · ${price(m.price)}`}>
+                {m.source === 'hand' ? 'hand' : fmt(m.index)}
+                {m.variant && m.variant !== 'default' ? ` (${m.variant})` : ''}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>
+{
+  unplaced.length > 0 && (
+    <p class="mt-6 text-sm text-[var(--color-ink-soft)]">
+      Without a rung (usable only as a default): <span class="font-mono">{unplaced.map((m) => m.id).join(', ')}</span>
+    </p>
+  )
+}
+<p class="mt-6 text-sm text-[var(--color-ink-soft)]">
+  Catalog {catalog.catalogVersion}
+  {tiering ? `, rule ${tiering.rule}, data ${tiering.source} ${tiering.date}` : ''}. A number is the
+  Artificial Analysis Intelligence Index at the strongest measured setting; "hand" is a placement the
+  board does not cover. Your own declaration on a profile wins over all of it, and
+  <span class="font-mono">delegation-router catalog refresh</span> rewrites the ladder with your key.
+</p>
