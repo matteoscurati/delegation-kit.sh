@@ -7,12 +7,22 @@ path: '/docs'
 
 # Getting started
 
-delegation-kit installs, on one machine, a local model router and everything
-it dispatches through: a personal configuration that describes each model
-you can call once, the router itself, one dispatcher for every adapter, the
-six provider runners with their own sandboxes, Claude Code and Codex
-profiles, skills, and the always-loaded user-direction guard. Nothing
-dispatches on its own.
+Easy requests go to your cheap models; hard ones go to your strong ones.
+delegation-kit installs `delegation-router`, an OpenAI-compatible endpoint on
+your own machine: send it `"model": "auto"`, and a decision model you choose
+rates how much capability the request needs, from 0 to 4. It sees an excerpt,
+never your keys or your model names, and it cannot name a model. A public
+index places each of your models on a rung, the rating sets the lowest rung
+the request may use, and a published policy picks one model from your pool on
+price. You choose the judge; your rules pick the model; every response says
+why.
+
+The kit also installs what the same profiles are dispatched through by hand:
+a personal configuration that describes each model once, one dispatcher for
+every adapter, the six provider runners with their own sandboxes, Claude Code
+and Codex profiles, skills, and the always-loaded user-direction guard. Hand
+dispatch never starts on its own; the router routes only what you send it
+after you start `serve`.
 
 ## Requirements
 
@@ -78,9 +88,9 @@ decider governs which pool and which catalog is in effect.
 delegation-config show
 
 # 2. Add a router block: the decider first, then the profiles it governs
-#    "router": {"decider": {"kind": "llm", "profile": "deepseek-flash"},
-#               "pool": ["deepseek-flash", "qwen3.8-max", "sonnet-clerk"],
-#               "default": "qwen3.8-max"}
+#    "router": {"decider": {"kind": "llm", "profile": "glm"},
+#               "pool": ["glm", "opus"],
+#               "default": "glm"}
 
 # 3. Check — no network: the decider, the pool with its rungs and prices
 delegation-router check
@@ -90,18 +100,27 @@ delegation-router decide --prompt-file /tmp/task.txt --json
 
 # 5. Serve, then send "auto" from any OpenAI SDK with base_url http://127.0.0.1:4141/v1
 delegation-router serve
-curl -s 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' \
+curl -si 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' \
   -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'
 ```
+
+`glm` stands for an HTTP profile, GLM 5.3 Flash (mid rung) on an API key;
+`opus` for a `claude-code` profile, Opus 5.5 (frontier rung) on your Claude
+subscription, which answers through its CLI. The names are yours. With them,
+the rename above goes to glm: the decider rates it 1 with code, the floor is
+small, and glm is the cheapest code-capable model at small or above. A race
+condition rated 3 goes to opus, the only model on frontier. The
+[home page](/#how) walks through both.
 
 The response carries `X-Router-*` headers and a `router` object: the signals,
 the reasons, the candidates with their estimated cost, usage, what the
 provider reported. The decider can be one of your cheap profiles, Levanto
-Sage, TypeSafe Jev, your own Dipylon or a local classifier; the ladder the
-policy climbs comes from the Artificial Analysis index and
-`delegation-router catalog refresh` rewrites it with your own key. The
-[router page](/docs/router) has every field, the policy, the error codes and
-the evaluation harness.
+Sage, TypeSafe Jev, your own Dipylon, a local classifier, or `none` (rules
+only: every request goes to the default, the baseline `eval` measures the
+others against). The ladder the policy climbs comes from the Artificial
+Analysis index, and `delegation-router catalog refresh` rewrites it with your
+own key. The [router page](/docs/router) has every field, the policy, the
+error codes and the evaluation harness.
 
 ## Picking by hand
 
@@ -118,7 +137,8 @@ delegation-run --profile terra-builder --lane builder \
 `delegation-run` writes the output, a metrics file and a receipt with the
 requested versus provider-reported model and the review status. Text adapters
 return a patch the lead applies and tests; retries and reviews are dispatches
-too, each with its own approval.
+too, each with its own approval. The [dispatch page](/dispatch) resolves every
+role against the default preset.
 
 ## Where next
 

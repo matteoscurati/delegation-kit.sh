@@ -3,9 +3,12 @@
 /* Design tokens.
  *
  * The palette is a dispatch board: cool panel grey, ink, hairline rules, and
- * exactly three status colours that mean what the routing gates mean —
- * qualified (may be chosen), explicit-only (needs your hand), blocked. No
- * decorative accent exists; every colour on the page carries gate vocabulary.
+ * exactly three status colours with fixed meanings, never decorative:
+ *   green  = chosen / eligible
+ *   amber  = the decider, the floor and an escalation (and the brand mark)
+ *   red    = blocked / refused / unsupported
+ * Ink is a request's path; line grey is idle. `qualified-on-ink` is the same
+ * green, lightened only so it stays legible on an ink background.
  */
 @theme {
   --color-paper: #eef0f3;
@@ -21,6 +24,9 @@
   --color-qualified-soft: #dff1e7;
   --color-explicit-soft: #fbeed2;
   --color-blocked-soft: #f6dcd7;
+  --color-qualified-on-ink: #4cc38a;
+  /* The same green, dark enough for small text on paper and qualified-soft. */
+  --color-qualified-text: #176b47;
 
   --font-display: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
   --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -147,4 +153,96 @@ summary:focus-visible {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* Diagrams: inline SVG drawn in the same tokens and type. Every diagram is
+ * either aria-hidden next to an HTML equivalent, or role="img" with a title
+ * and a description. Animations live in each component, only under
+ * prefers-reduced-motion: no-preference, and the base styles below are
+ * always the final frame. */
+.dg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.dg text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-ink);
+}
+.dg .sm {
+  font-size: 11px;
+}
+.dg .ttl {
+  font-size: 13px;
+  font-weight: 500;
+}
+.dg .soft {
+  fill: var(--color-ink-soft);
+}
+.dg .ok {
+  fill: var(--color-qualified-text);
+  font-weight: 500;
+}
+.dg .warn {
+  fill: var(--color-explicit);
+}
+.dg .err {
+  fill: var(--color-blocked);
+}
+.dg .mid {
+  text-anchor: middle;
+}
+.dg .end {
+  text-anchor: end;
+}
+.dg .box {
+  fill: var(--color-panel);
+  stroke: var(--color-ink);
+  stroke-width: 1;
+}
+.dg .chip {
+  fill: var(--color-paper);
+  stroke: var(--color-line);
+  stroke-width: 1;
+}
+.dg .bnd {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1;
+  stroke-dasharray: 6 5;
+}
+.dg .path {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.25;
+}
+.dg .idle {
+  fill: none;
+  stroke: var(--color-line);
+  stroke-width: 1.25;
+}
+.dg .dash {
+  stroke-dasharray: 5 4;
+}
+.dg .amber {
+  fill: none;
+  stroke: var(--color-explicit);
+  stroke-width: 1.5;
+}
+.dg .refused {
+  fill: none;
+  stroke: var(--color-blocked);
+  stroke-width: 1.5;
+}
+.dg .num circle {
+  fill: var(--color-ink);
+  stroke: var(--color-paper);
+  stroke-width: 2;
+}
+.dg .num text {
+  fill: var(--color-paper);
+  font-size: 11px;
+  font-weight: 500;
+  text-anchor: middle;
 }

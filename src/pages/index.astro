@@ -1,251 +1,498 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
+import HeroResponse from '../components/HeroResponse.astro';
+import RequestFlow from '../components/RequestFlow.astro';
+import LadderStepper from '../components/LadderStepper.astro';
+import LadderChart from '../components/LadderChart.astro';
 import Ladder from '../components/Ladder.astro';
-import LaneResolver from '../components/LaneResolver.astro';
-import RoutingTable from '../components/RoutingTable.astro';
+import Disclosure from '../components/Disclosure.astro';
+import MachineBoundary from '../components/MachineBoundary.astro';
 import kit from '../data/kit.json';
+import catalog from '../data/catalog.json';
+import { glm, opus, luna, priceTag, cuts, catalogVersion, CONFIDENCE_FLOOR } from '../lib/example-pool';
+
+type Row = { id: string; tier: string | null; index: number | null };
+const row = (id: string, tier: string) => {
+  const m = (catalog.models as Row[]).find((r) => r.id === id);
+  if (!m || m.index === null || m.tier !== tier) throw new Error(`index.astro: the copy says ${id} is ${tier}`);
+  return m.index;
+};
+const solIndex = row('gpt-5.6-sol', 'mid');
+const fableIndex = row('claude-fable-5', 'frontier');
+if (fableIndex !== cuts.frontier) throw new Error('index.astro: the copy says Claude Fable 5 sits exactly on the frontier cut');
+const modelCount = catalog.models.length;
+
+const split = [
+  {
+    who: 'You',
+    tone: 'ink',
+    text: 'Choose the decider. Declare the pool, meaning the profiles it may choose from, and a default. A profile is one named entry in your config: a model, how to reach it and its key. If you want, declare a rung, a price or code capability for any profile, and a cost ceiling per request. Once, in one config file.'
+  },
+  {
+    who: 'The decider',
+    tone: 'amber',
+    text: 'Rates each request: how much capability answering it needs, as a difficulty from 0 (trivial) to 4 (frontier) or as the probability that a strong model is needed, and whether it involves code, math or rare knowledge. It reads an excerpt, never your keys and never your model names. Its answer has no field for a model.'
+  },
+  {
+    who: 'The index',
+    tone: 'ink',
+    text: 'The Artificial Analysis Intelligence Index, cut into three rungs (small, mid, frontier) by one published rule, index-bands-v1. A rung you declare yourself wins.'
+  },
+  {
+    who: 'The policy (tiered-v1)',
+    tone: 'ink',
+    text: 'Turns the rating into one model from your pool. It takes the lowest rung that is enough, then the cheapest eligible model there. A code request prefers code-capable models (from the catalog, or as you declare them): when one sits on that rung or above, the cheapest of those wins. It is deterministic and it prints its reasons.'
+  }
+];
 
 const steps = [
   {
-    name: 'Measure',
-    cmd: 'tokens · turns · tools · images · JSON',
-    text: 'The request is measured, not judged: how long it is, whether it carries tools or images, whether it wants JSON. Deterministic, no model involved.'
+    name: 'Measure.',
+    text: 'Tokens, turns, tools, images and whether the request asks for JSON are counted, not judged. No model is called. A model that cannot take this request is set aside here, and the response lists it under blocked. That happens when it has no rung and is not your default, its adapter cannot be routed, its context is too small, it has no JSON mode and JSON is asked for, its estimate is over your cost ceiling, or it answers through a CLI and the request carries tools, images or JSON mode.'
   },
   {
-    name: 'Ask the decider',
-    cmd: '{"difficulty": 1, "tags": ["code"]}',
-    text: 'One typed question to the decision model you chose: how much capability does answering this correctly need (0 trivial … 4 frontier), and does it involve code, math or rare knowledge. It sees an excerpt, never your keys, never your model names.'
+    name: 'Ask the decider.',
+    text: `It gets an excerpt: the head of the system prompt and the last user turn, never images, never your keys, never your model names. It answers one typed question, and its answer has no field for a model, so text inside the request cannot steer the route. Here it answers {"difficulty": 1, "tags": ["code"]}, and the router records confidence 0.8, the fixed value for an llm decider. If the decider errors, times out or answers outside the schema, or a decider that reports its own confidence gives less than ${CONFIDENCE_FLOOR}, the request goes to your default and the response says so. When no answer could change the choice, the decider is skipped and the reasons say so.`
   },
   {
-    name: 'The ladder',
-    cmd: 'small → mid → frontier',
-    text: 'The answer sets the lowest rung. Every profile in your pool sits on a rung placed by a third-party index; code narrows to code-capable profiles; math, rare and tools lift an easy request to mid; a very long one goes to the top.'
+    name: 'Find the rung.',
+    text: '0 or 1 is small, 2 is mid, 3 or 4 is frontier. Math, rare knowledge or tools in the request lift an easy request to mid. A request over 20,000 tokens goes to frontier. Code never raises the rung. It prefers code-capable models (from the catalog, or as you declare them): when one sits on the rung or above, only those count. Here the floor is small.'
   },
   {
-    name: 'Cheapest in the rung',
-    cmd: 'candidates: flash $0.0013, qwen $0.0066 → flash',
-    text: 'Inside the rung the cheapest eligible profile wins, priced for this request. An empty rung escalates, never descends. Doubt lands on your default, and says so.'
+    name: 'Take the cheapest.',
+    text: `Each candidate is priced for this request: input price × estimated tokens, plus output price × max_tokens (1,024 when unset). Without code, the candidates are the models on the rung. An empty rung moves up one, never down, and if even frontier is empty your default answers. With code, the candidates are every code-capable model on the rung or above. Here they are glm at ${priceTag(glm)} and opus at ${priceTag(opus)}, so glm wins.`
+  },
+  {
+    name: 'Forward once.',
+    text: 'One request goes to glm with glm’s own credential, never a key or header from your client. HTTP models are called directly. A Claude or Codex subscription answers through its own CLI. There is no retry and no second model.'
+  },
+  {
+    name: 'Disclose.',
+    text: 'The response carries X-Router-* headers and a router object: the decider’s answer, the reasons, the candidates with their estimated cost, the usage, and the model the provider says answered.'
   }
 ];
 
-const answers = [
-  {
-    mode: 'Silent substitution — you asked for one model and got another',
-    answer:
-      'Every response names the profile and the model that answered, the reasons, the candidates with their estimated cost, and what the provider itself reported. A mismatch is disclosed, never hidden.'
-  },
-  {
-    mode: 'A router that spends your money on its own judgement',
-    answer:
-      'The decider rates the task; your configuration rates the models. Its per-decision cost is disclosed, a cost ceiling refuses rather than downgrades, and the ladder comes from a published rule over a third-party index — not from a vendor’s opinion of itself.'
-  },
-  {
-    mode: 'Agents that dispatch other agents on their own authority',
-    answer:
-      'Nothing dispatches without you. Starting the router and sending it "auto" is your choice; it chooses only inside the pool you declared, never retries, never falls back, never widens the pool. Hand-picked delegation for Claude Code and Codex follows the same rule, one dispatch at a time.'
-  }
+const deciders = [
+  ['llm', 'one of your own HTTP models, ideally a cheap, fast one, asked for one JSON answer at temperature 0'],
+  ['sage', 'Levanto Sage, a hosted decision service, called with your Sage key'],
+  [
+    'jev',
+    'TypeSafe Jev’s System One API, called with your TypeSafe key. Jev is weak on numbers, so with it a request with arithmetic-looking numbers is never routed below mid'
+  ],
+  ['dipylon', 'your own Dipylon service, asked one yes-or-no question: does this need a strong model?'],
+  ['classifier', 'any classifier you run behind POST {"text"}'],
+  ['none', 'no decider. Every request goes to your default. This is the baseline eval measures the others against']
 ];
+
+const money = [
+  'It chooses only from the pool you declared. It never adds a model and never widens the pool.',
+  'One forward per request. If the chosen model’s call fails, no other model is tried: the error comes back to you.',
+  'A cost ceiling (max_cost_usd, or the X-Router-Max-Cost-USD header for one request) sets aside every model whose estimate is above it, and the response lists each one under blocked. If that leaves nothing on the rung the request needs or above, the request goes to your default and says so. If the model it lands on is over the ceiling too, the request is refused, with the estimate and the ceiling in the error.',
+  'The price of every decision is in the response.'
+];
+const data = [
+  'It runs on your machine and listens on loopback only, 127.0.0.1:4141 by default.',
+  'At most two destinations per request. One is the decider, sent an excerpt by default (the whole conversation with input "full") and the decider’s own credential. The other is the chosen model, sent the one forward with that model’s own credential. A subscription model answers through its own CLI, inside its runner’s sandbox. A decider on loopback, or none, removes the first.',
+  'Your client’s key and headers are never passed on. No key or model name is in what the decider reads; each call carries only its own credential.',
+  'The server prints one line when it starts and nothing after: no request log, no error log.',
+  'Receipts are opt-in: one line per request with the decision, model, usage, cost and latency, never the prompt.',
+  'A browser page cannot call it unless you allow-list its origin.'
+];
+const trust = [
+  'Shadow mode (mode: "shadow") decides and discloses as usual, but sends every request to your default. Compare, then switch.',
+  'decide --raw shows the decider’s own answer for any prompt.',
+  'eval scores a decider offline against the rules-only baseline (kind none) on a golden set of your own prompts, with outcomes you recorded. It reports accuracy, cost, decision latency and whether paraphrases land on the same rung, and it never dispatches a pool model.'
+];
+
+const link = 'underline underline-offset-4 text-[var(--color-ink)]';
+const mono = 'font-mono text-[0.9em]';
 ---
 
 <BaseLayout path="/">
+  <!-- Hero -->
   <section class="pt-10 pb-14 md:pt-16 md:pb-20">
-    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · a local model router</p>
-    <h1 class="text-[2.6rem] md:text-[4.4rem] max-w-5xl">
-      Your models. Your call. Your rules.
+    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · a model router that runs on your machine</p>
+    <h1 class="text-[2.6rem] md:text-[3.4rem] xl:text-[3.9rem] [text-wrap:balance]">
+      <span class="lg:block">Easy requests go to your cheap models.</span>
+      <span class="lg:block">Hard ones go to your strong ones.</span>
     </h1>
-    <p class="mt-8 max-w-2xl text-lg text-[var(--color-ink-soft)]">
-      You choose the decision model — one of your cheap models, Levanto Sage, TypeSafe Jev, your
-      own — and it governs the models you already pay for. An OpenAI-compatible endpoint on your
-      own machine sends each request to the cheapest model in your pool that will get it right,
-      with that model's own credential, and tells you why. Nothing leaves your machine except the
-      request to the model you chose.
+    <p
+      class="lede mt-6 max-w-4xl text-[var(--color-ink-soft)] text-[1.3rem] leading-[1.75rem] md:text-[1.5rem] md:leading-[2rem]"
+    >
+      You choose the judge. Your rules pick the model. Every response says why.
     </p>
-    <div class="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end min-w-0">
-      <CodeBlock
-        label="Install, declare, serve (macOS, jq, git, python3)"
-        code={`npx delegation-kit          # installer; --claude-only / --codex-only
-delegation-config show      # the personal configuration it initialized
-#   add a router block: the decider, then the profiles it governs
-delegation-router check     # the decider and the pool, resolved; no network
-delegation-router serve     # http://127.0.0.1:4141/v1 — send "model": "auto"`}
-      />
-      <div class="text-sm text-[var(--color-ink-soft)] md:pb-3">
-        or <span class="font-mono text-[var(--color-ink)]">git clone</span> and
-        <span class="font-mono text-[var(--color-ink)]">./install.sh</span><br />
-        or <span class="font-mono text-[var(--color-ink)]">/plugin install delegation-kit</span>
+    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
+      <div class="min-w-0">
+        <p class="max-w-2xl text-lg text-[var(--color-ink-soft)]">
+          delegation-router is an OpenAI-compatible endpoint on your own machine. Send it
+          <span class={`${mono} text-[var(--color-ink)]`}>"model": "auto"</span>. A decision model you
+          pick reads an excerpt of the request and rates how much capability it needs. It
+          never sees your keys or your model names, and it cannot name a model. A public index places
+          each of your models on one of three rungs. The rating sets the lowest rung the request may
+          use, and a published policy picks one model from your pool on price. That model answers with
+          its own key, and the response names it and gives the reasons.
+        </p>
+        <div class="mt-8 max-w-xl">
+          <CodeBlock
+            label="What changes in your client"
+            code={`base_url = "http://127.0.0.1:4141/v1"
+model    = "auto"`}
+          />
+        </div>
+        <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+          <a href="#how" class={link}>See one request routed ↓</a>
+          <a href="#install" class={link}>Install ↓</a>
+        </p>
       </div>
+      <HeroResponse />
     </div>
   </section>
 
+  <!-- The problem -->
   <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-3">How the choice is made</h2>
+    <h2 class="text-3xl md:text-4xl mb-6 max-w-3xl">
+      You pay for several models. Most requests go to one of them.
+    </h2>
+    <div class="max-w-2xl space-y-4 text-[var(--color-ink-soft)]">
+      <p>
+        A strong model on a subscription, a cheap one on an API key, maybe one running locally. Your
+        editor, your scripts and your agents each send every request to the one they were set up with.
+        So either the expensive model ends up renaming variables, or the cheap one gets the race
+        condition.
+      </p>
+      <p>
+        Picking by hand works for one request. It does not work for every request your tools send in a
+        day. A router can make that pick, but only one you can read and limit is worth using. This one
+        runs on your machine. It chooses only among the models you list, and every answer carries the
+        reasons for its choice.
+      </p>
+      <p>
+        Name a pool model as <span class={mono}>model</span> instead of <span class={mono}>"auto"</span>,
+        and the router skips the decider, forwards to that model, and still discloses.
+      </p>
+    </div>
+  </section>
+
+  <!-- Who decides what -->
+  <section class="rule py-14">
+    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
+      <div>
+        <p class="eyebrow mb-3">The split</p>
+        <h2 class="text-3xl md:text-4xl">Who decides what</h2>
+      </div>
+      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-4 md:mt-0">
+        <strong class="font-medium text-[var(--color-ink)]">Why rate the task and not the model?</strong>
+        A decider that picked models by name would have to know your models and judge them. Asking it
+        only how hard the request is keeps the question small enough for a cheap model to answer. It
+        also keeps your model names out of its prompt and leaves the ranking of models to a public index
+        you can check.
+      </p>
+    </div>
+    <dl class="border-b border-[var(--color-line-strong)]">
+      {
+        split.map((r) => (
+          <div class="border-t border-[var(--color-line-strong)] py-5 md:grid md:grid-cols-[14rem_minmax(0,1fr)] md:gap-8">
+            <dt
+              class:list={[
+                'display text-xl mb-2 md:mb-0 pl-4 border-l-2',
+                r.tone === 'amber' ? 'border-[var(--color-explicit)]' : 'border-[var(--color-ink)]'
+              ]}
+            >
+              {r.who}
+            </dt>
+            <dd class="max-w-2xl text-[var(--color-ink-soft)] pl-4 md:pl-0">{r.text}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <!-- How a request is routed -->
+  <section id="how" class="rule py-14 scroll-mt-4">
+    <p class="eyebrow mb-3">How it works</p>
+    <h2 class="text-3xl md:text-4xl mb-4">How a request is routed</h2>
     <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
-      The decider never picks a model by name. It judges the task; your configuration judges the
-      models. Four steps, then one forward and a full disclosure.
+      Six steps, in the same order every time. Only one of them is a model's judgement. The pool in this example
+      holds two profiles: <span class={mono}>glm</span> ({glm.name}, {glm.tier}) and
+      <span class={mono}>opus</span> ({opus.name}, {opus.tier}). glm is the default, and glm is also the
+      decider.
     </p>
-    <ol class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <RequestFlow />
+    <p class="mt-2 font-mono text-[0.75rem] text-[var(--color-ink-soft)] max-w-3xl">
+      Prices from the {catalogVersion} catalog, estimated for a 310-token request and the default
+      1,024-token answer budget. The decider's answer is illustrative.
+      <span class="text-[var(--color-ink)]">delegation-router decide --json</span> shows what yours says
+      about your own prompts.
+    </p>
+    <ol role="list" class="mt-12 grid gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
       {
         steps.map((step, i) => (
           <li class="border-t border-[var(--color-line-strong)] pt-4">
-            <p class="eyebrow mb-1">step {i + 1}</p>
-            <h3 class="text-xl mb-3">{step.name}</h3>
-            <p class="font-mono text-[0.75rem] bg-[var(--color-panel)] border border-[var(--color-line)] p-2 mb-3 break-words">
-              {step.cmd}
+            <p class="flex items-baseline gap-3 mb-2">
+              <span
+                class="inline-flex w-6 h-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-ink)] text-[var(--color-paper)] font-mono text-[0.7rem] font-medium self-center"
+                aria-hidden="true"
+              >
+                {i + 1}
+              </span>
+              <span class="display text-xl">{step.name}</span>
             </p>
             <p class="text-sm text-[var(--color-ink-soft)]">{step.text}</p>
           </li>
         ))
       }
     </ol>
-    <p class="mt-10 text-sm text-[var(--color-ink-soft)] max-w-2xl">
-      So why Opus 5.5 rather than GLM 5.3 Flash? Because the decider said "1, code", and on the
-      ladder below a 1 is a job for the lowest rung that has a profile — GLM's. Say "3" and the
-      request climbs to the frontier rung, Opus's. The levers are yours: a rung and a price per
-      profile, the pool, the default, a ceiling.
+  </section>
+
+  <!-- Why this model -->
+  <section class="rule py-14">
+    <p class="eyebrow mb-3">Same pool, six requests</p>
+    <h2 class="text-3xl md:text-4xl mb-4">Why this model and not that one</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
+      glm ({glm.name}) is cheap and sits on {glm.tier}, at index {glm.index.toFixed(1)}. opus
+      ({opus.name}) is the best model on the board and sits on {opus.tier}, at {opus.index.toFixed(1)}.
+      glm is the default. Nothing is on small. Pick a request and see where it lands.
+    </p>
+    <LadderStepper />
+  </section>
+
+  <!-- Where the rungs come from -->
+  <section class="rule py-14">
+    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
+      <div>
+        <p class="eyebrow mb-3">The ladder</p>
+        <h2 class="text-3xl md:text-4xl">Where the rungs come from</h2>
+      </div>
+      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-4 md:mt-0">
+        The kit ships a catalog with every release, with the source and the date beside every row.
+        <span class={mono}>delegation-router catalog show</span> prints it. With your own Artificial
+        Analysis key, <span class={mono}>delegation-router catalog refresh</span> writes a current ladder
+        on your machine that takes precedence. A rung you declare for a model always wins. The index
+        measures general capability on public benchmarks, not your work.
+        <span class={mono}>delegation-router eval</span> on your own prompts is the local check.
+      </p>
+    </div>
+    <div class="max-w-2xl text-[var(--color-ink-soft)] space-y-4 mb-10">
+      <p>
+        Not from the decider, and not from anyone's opinion of a model. Artificial Analysis publishes an Intelligence Index,
+        a composite of public evaluations. The kit turns it into three rungs with one published rule,
+        <span class={mono}>index-bands-v1</span>:
+      </p>
+      <ul class="list-disc pl-5 space-y-1">
+        <li><span class="text-[var(--color-ink)]">frontier</span>: within 8 points of the best model of the day</li>
+        <li><span class="text-[var(--color-ink)]">mid</span>: within 20 points</li>
+        <li><span class="text-[var(--color-ink)]">small</span>: everything below</li>
+      </ul>
+      <p>
+        In the {catalogVersion} catalog the best model is {opus.name} at {cuts.top.toFixed(1)}, so
+        frontier starts at {cuts.frontier.toFixed(1)} and mid at {cuts.mid.toFixed(1)}. A name does not
+        move a model. GPT-5.6 Sol ({solIndex.toFixed(1)}) is mid. {luna.name} ({luna.index.toFixed(1)}) is
+        small, {(cuts.mid - luna.index).toFixed(1)} under the cut. Claude Fable 5 ({fableIndex.toFixed(1)})
+        is frontier, exactly on the line.
+      </p>
+    </div>
+    <LadderChart />
+    <details class="mt-8">
+      <summary class="cursor-pointer text-sm underline underline-offset-4"
+        >All {modelCount} models in the catalog</summary
+      >
+      <div class="mt-6">
+        <Ladder />
+      </div>
+    </details>
+  </section>
+
+  <!-- Disclosure -->
+  <section class="rule py-14">
+    <p class="eyebrow mb-3">Disclosure</p>
+    <h2 class="text-3xl md:text-4xl mb-4">Every response shows its work</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-8">
+      The answer arrives as an ordinary chat completion. The headers come first, so you can read the
+      choice while the answer is still streaming. A <span class={mono}>router</span> object sits next to
+      <span class={mono}>choices</span>. When you stream, it arrives in one last chunk before
+      <span class={mono}>[DONE]</span>.
+    </p>
+    <Disclosure />
+    <p class="mt-8 text-[var(--color-ink-soft)] max-w-2xl">
+      Deciding costs something too. With a remote decider each request pays for one short call, and
+      <span class={mono}>decision_cost_usd</span> says how much. If the provider reports a model other
+      than the one configured, <span class={mono}>X-Router-Model-Mismatch: 1</span> says so. The
+      response is not dropped. <span class={mono}>delegation-router decide --json</span> prints the same
+      decision for any prompt without dispatching it: decide makes one call, to the decider, and never
+      to the model it picks. <span class={mono}>--raw</span> adds the decider's own answer, which a
+      served response never carries.
     </p>
   </section>
 
+  <!-- Boundaries -->
   <section class="rule py-14">
-    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
-      <h2 class="text-3xl md:text-4xl">The ladder</h2>
-      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
-        Where the rungs come from: the Artificial Analysis Intelligence Index through one published
-        rule, recorded with its date in the catalog the kit ships. Refresh it with your own key;
-        override any rung in your configuration.
-      </p>
+    <p class="eyebrow mb-3">Boundaries</p>
+    <h2 class="text-3xl md:text-4xl mb-10 max-w-3xl">What it will not do with your money or your data</h2>
+    <div class="grid gap-10 xl:grid-cols-3">
+      <div>
+        <h3 class="text-xl mb-4">Your money</h3>
+        <ul class="space-y-3 text-sm text-[var(--color-ink-soft)]">
+          {money.map((t) => <li class="border-t border-[var(--color-line)] pt-3">{t}</li>)}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xl mb-4">Your data</h3>
+        <MachineBoundary />
+        <ul class="mt-6 space-y-3 text-sm text-[var(--color-ink-soft)]">
+          {data.map((t) => <li class="border-t border-[var(--color-line)] pt-3">{t}</li>)}
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xl mb-4">Before you trust it</h3>
+        <ul class="space-y-3 text-sm text-[var(--color-ink-soft)]">
+          {trust.map((t) => <li class="border-t border-[var(--color-line)] pt-3">{t}</li>)}
+        </ul>
+      </div>
     </div>
-    <Ladder />
   </section>
 
+  <!-- Deciders -->
   <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-10">Three failure modes, three answers</h2>
-    <div class="grid gap-8 md:grid-cols-3">
+    <p class="eyebrow mb-3">Deciders</p>
+    <h2 class="text-3xl md:text-4xl mb-4">Pick the decider</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-8">
+      Each kind sees the same excerpt, and its answer is reduced to the same signals: a 0–4 difficulty
+      or a probability that a strong model is needed, plus tags. A remote decider uses its own
+      credential, and its cost per decision is disclosed.
+    </p>
+    <dl class="max-w-4xl border-b border-[var(--color-line)]">
       {
-        answers.map((f) => (
-          <div>
-            <p class="text-lg leading-snug mb-3">{f.mode}</p>
-            <p class="text-sm text-[var(--color-ink-soft)] border-l-2 border-[var(--color-explicit)] pl-4">
-              {f.answer}
-            </p>
+        deciders.map(([kind, text]) => (
+          <div class="border-t border-[var(--color-line)] py-3 sm:grid sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+            <dt class="font-mono font-medium pl-3 border-l-2 border-[var(--color-explicit)] mb-1 sm:mb-0">
+              {kind}
+            </dt>
+            <dd class="text-[var(--color-ink-soft)] pl-3 sm:pl-0">{text}</dd>
           </div>
         ))
       }
-    </div>
-  </section>
-
-  <section class="rule py-14">
-    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-6">
-      <h2 class="text-3xl md:text-4xl">The profiles it governs</h2>
-      <p class="text-sm text-[var(--color-ink-soft)] max-w-xl mt-3 md:mt-0">
-        {kit.profiles} profiles and {kit.laneRows} role rows from the default preset, straight from
-        <span class="font-mono">delegation-route table</span>. Each profile describes one model once:
-        the adapter decides what it can do, the catalog places it on a rung, and the router or your
-        own hand picks it.
-      </p>
-    </div>
-    <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
-      <span
-        ><span class="status status-compatible">compatible</span> the adapter supports this role</span
-      >
-      <span
-        ><span class="status status-unsupported">unsupported</span> it does not; never selectable</span
-      >
+    </dl>
+    <p class="mt-6 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+      Sage and Jev are third-party services. The router can call them with your key. delegation-kit is
+      not affiliated with either.
     </p>
-    <RoutingTable />
   </section>
 
-  <section class="rule py-14">
-    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
-      <h2 class="text-3xl md:text-4xl">Or pick by hand</h2>
-      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
-        The same profiles, one explicit dispatch at a time from Claude Code or Codex:
-        <span class="font-mono">delegation-route resolve</span> lists and validates without
-        dispatching, <span class="font-mono">delegation-run</span> runs one profile once and writes a
-        receipt. Computed by the kit when the site was built from {kit.version}; no script runs here.
-      </p>
-    </div>
-    <LaneResolver />
-  </section>
-
-  <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-10">What's in the box</h2>
-    <div class="grid gap-10 md:grid-cols-3 text-sm">
-      <div>
-        <p class="eyebrow mb-3">The router · delegation-router</p>
-        <ul class="space-y-2">
-          <li>
-            <span class="font-mono">check</span>, <span class="font-mono">decide</span>,
-            <span class="font-mono">serve</span>: resolve, recommend, route — loopback only, streaming
-            passed through, disclosure in headers and a <span class="font-mono">router</span> object
-          </li>
-          <li>
-            five deciders: one of your HTTP profiles, Levanto Sage, TypeSafe Jev, your own Dipylon, a
-            local classifier; <span class="font-mono">eval</span> measures one against the rules-only
-            baseline on a golden set of yours
-          </li>
-          <li>
-            the catalog: a third-party index, one published band rule, your refresh with your key
-          </li>
-        </ul>
-      </div>
-      <div>
-        <p class="eyebrow mb-3">Configuration · ~/.config/delegation-kit</p>
-        <ul class="space-y-2">
-          <li>
-            <span class="font-mono">delegation-config</span> init / validate / show / apply; the
-            shipped presets from <span class="font-mono">config/presets.json</span>
-          </li>
-          <li>
-            adapters: <span class="font-mono">{kit.adapters.join(', ')}</span> plus <span
-              class="font-mono">openai-compatible</span
-            > for any text endpoint; native profiles join a pool through the kit's dispatcher
-          </li>
-          <li>credentials by variable name or a key file under the data home, mode 600, never in a profile</li>
-        </ul>
-      </div>
-      <div>
-        <p class="eyebrow mb-3">Hosts and runners · ~/.claude, ~/.codex, ~/.local/bin</p>
-        <ul class="space-y-2">
-          <li>
-            6 Claude subagent profiles and 5 Codex profiles, the skills for a lead, the user-direction
-            guard always loaded from CLAUDE.md and AGENTS.md
-          </li>
-          <li>
-            <span class="font-mono">delegation-route</span> and <span class="font-mono"
-              >delegation-run</span
-            >: explicit delegation, one profile once, with a receipt
-          </li>
-          <li>
-            <span class="font-mono">delegation-{'{glm,gemini,kimi,grok,qwen,deepseek}'}</span>: the
-            six provider runners with their own sandboxes; <span class="font-mono"
-              >delegation-patch-verify</span
-            > for text patches
-          </li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="rule py-14">
-    <div class="grid gap-10 md:grid-cols-[1fr_1fr]">
-      <div>
-        <h2 class="text-3xl md:text-4xl mb-3">The router</h2>
+  <!-- Set it up -->
+  <section id="install" class="rule py-14 scroll-mt-4">
+    <p class="eyebrow mb-3">Get started</p>
+    <h2 class="text-3xl md:text-4xl mb-4">Set it up</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-8">
+      macOS with jq, git and python3. Claude Code or Codex only if you want a subscription in the pool.
+      Keys are asked for once and stored with mode 600.
+    </p>
+    <div class="grid gap-10 lg:grid-cols-2">
+      <div class="min-w-0 space-y-6">
+        <CodeBlock
+          label="Install"
+          code={`npx delegation-kit            # or: git clone … && ./install.sh
+                              # or the Claude Code plugin (see /docs)
+delegation-config show        # the personal configuration it created`}
+        />
         <p class="text-[var(--color-ink-soft)]">
-          Commands, the router block, how a request is routed and why this model and not that one,
-          where the rungs come from, the deciders, disclosure, errors, eval.
-          <a href="/docs/router" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Read the router page →</a
-          >
+          Add a <span class={mono}>router</span> block to
+          <span class={`${mono} break-all`}>~/.config/delegation-kit/config.json</span>. It names the
+          decider, then the pool it governs, using profiles in that file. A pool can mix API-key models,
+          local OpenAI-compatible endpoints and Claude or Codex subscriptions. A subscription answers
+          through its own CLI, so a request with tools, images or JSON mode goes only to the HTTP models
+          in the pool.
+        </p>
+        <div>
+          <CodeBlock
+            lang="json"
+            label="The pool used on this page"
+            code={`"router": {
+  "decider": {"kind": "llm", "profile": "glm"},
+  "pool": ["glm", "opus"],
+  "default": "glm",
+  "max_cost_usd": 0.05
+}`}
+          />
+          <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
+            glm stands for an HTTP profile ({glm.name} on an API key), opus for a
+            <span class={mono}>claude-code</span> profile on your Claude subscription, which answers
+            through its CLI. The names are yours. Optional
+            fields: <span class={mono}>mode</span> "shadow", <span class={mono}>receipts</span>,
+            <span class={mono}>allow_origins</span>.
+          </p>
+        </div>
+      </div>
+      <div class="min-w-0 space-y-6">
+        <CodeBlock
+          label="Check, serve, send"
+          code={`delegation-router check       # the decider, then each model with its rung and price; no network
+delegation-router serve       # http://127.0.0.1:4141/v1, loopback only
+curl -si 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' \\
+  -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'`}
+        />
+        <div>
+          <CodeBlock
+            lang="python"
+            label="Any OpenAI SDK"
+            code={`from openai import OpenAI
+client = OpenAI(base_url="http://127.0.0.1:4141/v1", api_key="unused")
+raw = client.chat.completions.with_raw_response.create(
+    model="auto", messages=[{"role": "user", "content": "Rename foo to bar in utils.py"}])
+print(raw.headers["X-Router-Profile"], raw.headers["X-Router-Tier"])`}
+          />
+          <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
+            The router ignores the SDK's key. Each model uses its own.
+          </p>
+        </div>
+        <p class="text-sm text-[var(--color-ink-soft)]">
+          <span class={mono}>./doctor.sh</span> reports what is installed and, first in its router
+          section, which decider governs which pool.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hand dispatch -->
+  <section class="rule py-14">
+    <p class="eyebrow mb-3">Without the router</p>
+    <h2 class="text-2xl mb-4">Also in the kit: dispatch by hand</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-2xl">
+      The same profiles can be sent a task directly from Claude Code or Codex.
+      <span class={mono}>delegation-route resolve</span> lists the profiles that can take a role, such
+      as builder or reviewer. <span class={mono}>delegation-run</span> dispatches the one you name,
+      inside its runner's sandbox, and writes a receipt. Hand dispatch never starts on its own: a retry
+      or a review is a new dispatch that you ask for. Six provider runners enforce each CLI's sandbox,
+      identity check and limits, and <span class={mono}>delegation-patch-verify</span> checks a text
+      model's patch before you apply it.
+    </p>
+    <p class="mt-4">
+      <a href="/dispatch" class={link}>Profiles, roles and the resolver →</a>
+    </p>
+  </section>
+
+  <!-- Read further -->
+  <section class="rule py-14">
+    <div class="grid gap-10 md:grid-cols-3">
+      <div>
+        <h2 class="text-2xl md:text-3xl mb-3">The router</h2>
+        <p class="text-[var(--color-ink-soft)]">
+          Every command, field, decider, error code and the eval harness.
+          <a href="/docs/router" class={link}>Router reference →</a>
         </p>
       </div>
       <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Configure it</h2>
+        <h2 class="text-2xl md:text-3xl mb-3">Configure it</h2>
         <p class="text-[var(--color-ink-soft)]">
-          Profiles, adapters, keys and environment, adding a model, review policies, upgrading.
-          <a href="/docs/configuration" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Personal configuration →</a
-          >
+          Profiles, adapters, keys, adding a model.
+          <a href="/docs/configuration" class={link}>Personal configuration →</a>
+        </p>
+      </div>
+      <div>
+        <h2 class="text-2xl md:text-3xl mb-3">Compatibility</h2>
+        <p class="text-[var(--color-ink-soft)]">
+          What each decider answered on real prompts, with latency and cost.
+          <a href="/docs/compatibility" class={link}>Compatibility →</a>
         </p>
       </div>
     </div>

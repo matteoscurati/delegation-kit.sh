@@ -1,0 +1,224 @@
+---
+// "Where the rungs come from": every model in the shipped catalog on one
+// Intelligence Index axis, cut into three rungs by index-bands-v1. The cuts
+// are computed from catalog.json (top_index − frontier_within, top_index −
+// mid_within), never written down, so the chart follows every refresh.
+//
+// Static by default. Where scroll-driven animations exist, the drawing
+// builds as it scrolls into view (axis, best of the day, the two cuts,
+// bands, dots, labels); its resting state is the last frame.
+import catalog from '../data/catalog.json';
+import { cuts, glm, opus, luna, tiering } from '../lib/example-pool';
+
+type M = { id: string; tier: string | null; index: number | null };
+const dots = (catalog.models as M[])
+  .filter((m): m is M & { index: number } => typeof m.index === 'number')
+  .sort((a, b) => b.index - a.index);
+const sol = dots.find((m) => m.id === 'gpt-5.6-sol');
+if (!sol) throw new Error('LadderChart: gpt-5.6-sol missing from the catalog');
+if (sol.tier !== 'mid') throw new Error('LadderChart: the copy says GPT-5.6 Sol is mid');
+const best = dots[0];
+if (best.id !== opus.id || best.index !== cuts.top)
+  throw new Error('LadderChart: the copy says Opus 5.5 is the best of the day');
+
+const under = (cuts.mid - luna.index).toFixed(1);
+const R = 5.5;
+
+/** Precomputed beeswarm: a dot rises one level when it would touch another. */
+function swarm(pos: (i: number) => number) {
+  const placed: { p: number; level: number }[] = [];
+  return dots.map((m) => {
+    const p = pos(m.index);
+    let level = 0;
+    while (placed.some((q) => q.level === level && Math.abs(q.p - p) < 2 * R + 1)) level++;
+    placed.push({ p, level });
+    return { m, p, level };
+  });
+}
+
+// desktop: index on x
+const X = (i: number) => 40 + (i / 60) * 880;
+const AX = 170;
+const hd = swarm(X).map((d) => ({ ...d, cx: d.p, cy: AX - 12 - d.level * 12 }));
+// vertical: index on y
+const Yv = (i: number) => 490 - i * 7.6;
+const vd = swarm(Yv).map((d) => ({ ...d, cx: 70 + d.level * 12, cy: d.p }));
+
+const pool = new Set([glm.id, opus.id]);
+const named = new Set([glm.id, opus.id, sol.id, luna.id]);
+const at = (list: typeof hd, id: string) => list.find((d) => d.m.id === id)!;
+
+const f = cuts.frontier;
+const md = cuts.mid;
+const ticks = [0, 10, 20, 30, 40, 50, 60];
+const n = dots.length;
+// Right to left, inside the entry range: the build is complete by the time
+// the whole chart is in view.
+const dotRange = (k: number) => {
+  const a = 60 + (k * 32) / Math.max(1, n - 1);
+  return `entry ${a.toFixed(1)}% entry ${(a + 5).toFixed(1)}%`;
+};
+
+const css = `
+.lc{view-timeline-name:--lc}
+.lc .band-f{fill:var(--color-ink);fill-opacity:.075}
+.lc .band-m{fill:var(--color-ink);fill-opacity:.035}
+.lc .bandname{font-size:11px;letter-spacing:.08em;text-transform:uppercase;fill:var(--color-ink-soft)}
+.lc .axis{stroke:var(--color-ink);stroke-width:1.25}
+.lc .tick{stroke:var(--color-ink);stroke-width:1}
+.lc .best{stroke:var(--color-ink);stroke-width:2}
+.lc .cut{stroke:var(--color-ink);stroke-width:1;stroke-dasharray:4 4}
+.lc .dot{fill:var(--color-ink-soft)}
+.lc .dot-pool{fill:var(--color-ink)}
+.lc .ring{fill:none;stroke:var(--color-ink);stroke-width:1.25}
+.lc .leader{fill:none;stroke:var(--color-ink-soft);stroke-width:.75}
+.lc .halo{paint-order:stroke;stroke:var(--color-paper);stroke-width:4px;stroke-linejoin:round}
+.lc .b{font-weight:500}
+.lc-m{display:block;max-width:26rem}
+.lc-m text{font-size:13px}
+.lc-m .sm{font-size:12px}
+.lc-m .bandname{font-size:12px}
+.lc-d{display:none}
+@media (min-width:1024px){.lc-d{display:block}.lc-m{display:none}}
+@supports (animation-timeline: view()){
+@media (prefers-reduced-motion:no-preference){
+@keyframes lc-draw{from{stroke-dasharray:1 1;stroke-dashoffset:1}to{stroke-dasharray:1 1;stroke-dashoffset:0}}
+@keyframes lc-rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes lc-slide{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes lc-fade{from{opacity:0}to{opacity:1}}
+@keyframes lc-drop{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+.lc .an{animation-duration:auto;animation-fill-mode:both;animation-timing-function:ease-out;animation-timeline:--lc}
+.lc .f1{animation-name:lc-draw;animation-range:entry 5% entry 30%}
+.lc .f2{animation-name:lc-rise;animation-range:entry 30% entry 40%;transform-box:fill-box;transform-origin:bottom}
+.lc .f3a{animation-name:lc-slide;animation-range:entry 38% entry 50%;transform-box:fill-box;transform-origin:right}
+.lc .f3b{animation-name:lc-slide;animation-range:entry 45% entry 55%;transform-box:fill-box;transform-origin:right}
+.lc .f4{animation-name:lc-fade;animation-range:entry 50% entry 62%}
+.lc .f5{animation-name:lc-drop}
+.lc .f6{animation-name:lc-fade;animation-range:entry 88% entry 100%}
+}}
+`;
+const desc = `The Artificial Analysis Intelligence Index from 0 to 60, one dot per model in the ${catalog.catalogVersion} catalog. The best model is Opus 5.5 at ${cuts.top}. Rule ${tiering.rule}: frontier starts ${tiering.frontier_within} points below it, at ${f}; mid starts ${tiering.mid_within} points below it, at ${md}; small is everything below. GLM 5.3 Flash (${glm.index}) is mid and Opus 5.5 (${opus.index}) is frontier: the two models of the example pool. GPT-5.6 Sol (${sol.index.toFixed(1)}) is mid. GPT-5.6 Luna (${luna.index}) is small, ${under} under the cut.`;
+const title = (d: (typeof hd)[number]) => `${d.m.id} · ${d.m.index.toFixed(1)} · ${d.m.tier}`;
+---
+
+<style set:html={css}></style>
+
+<div class="lc">
+  <svg class="dg lc-d" viewBox="0 0 960 256" role="img" aria-labelledby="lc-t lc-desc">
+    <title id="lc-t">Intelligence Index, cut into three rungs</title>
+    <desc id="lc-desc">{desc}</desc>
+    <g class="an f4">
+      <rect x={X(md)} y="24" width={X(f) - X(md)} height={AX - 24} class="band-m"></rect>
+      <rect x={X(f)} y="24" width={X(60) - X(f)} height={AX - 24} class="band-f"></rect>
+      <text x="48" y="42" class="bandname">small</text>
+      <text x={X(md) + 8} y="42" class="bandname">mid</text>
+      <text x={X(f) + 8} y="42" class="bandname">frontier</text>
+      <path d={`M${X(f)} 24 V${AX} M${X(md)} 24 V${AX}`} class="cut"></path>
+      <text x={X(f)} y="206" class="mid b sm">{f.toFixed(1)}</text>
+      <text x={X(md)} y="206" class="mid b sm">{md.toFixed(1)}</text>
+    </g>
+    <path d={`M40 ${AX} H${X(60)}`} pathLength="1" class="axis an f1"></path>
+    {
+      ticks.map((t) => (
+        <g>
+          <path d={`M${X(t)} ${AX} V${AX + 5}`} class="tick" />
+          <text x={X(t)} y="188" class="mid sm soft">
+            {t}
+          </text>
+        </g>
+      ))
+    }
+    <path d={`M${X(cuts.top)} ${AX} V84`} class="best an f2"></path>
+    <g class="an f3a">
+      <path d={`M${X(cuts.top)} 226 H${X(f)}`} class="cut"></path>
+      <text x={(X(cuts.top) + X(f)) / 2} y="230" class="mid sm halo">−{tiering.frontier_within}</text>
+    </g>
+    <g class="an f3b">
+      <path d={`M${X(cuts.top)} 246 H${X(md)}`} class="cut"></path>
+      <text x={(X(cuts.top) + X(md)) / 2} y="250" class="mid sm halo">−{tiering.mid_within}</text>
+    </g>
+    {
+      hd.map((d, k) => (
+        <g class="an f5" style={`animation-range:${dotRange(k)}`}>
+          <title>{title(d)}</title>
+          <circle cx={d.cx} cy={d.cy} r={R} class={pool.has(d.m.id) ? 'dot-pool' : 'dot'} />
+          {pool.has(d.m.id) && <circle cx={d.cx} cy={d.cy} r={R + 3.5} class="ring" />}
+        </g>
+      ))
+    }
+    <g class="an f6">
+      <text x="916" y="60" class="end b">Opus 5.5 {opus.index.toFixed(1)}</text>
+      <text x="916" y="76" class="end sm">best of the day · in the example pool</text>
+      <path d={`M${at(hd, glm.id).cx} ${at(hd, glm.id).cy - 10} V56`} class="leader"></path>
+      <text x={at(hd, glm.id).cx - 7} y="62" class="end b">GLM 5.3 Flash {glm.index.toFixed(1)}</text>
+      <text x={at(hd, glm.id).cx - 7} y="78" class="end sm">in the example pool</text>
+      <path d={`M${at(hd, sol.id).cx} ${at(hd, sol.id).cy - 7} V132`} class="leader"></path>
+      <text x={X(f) - 4} y="100" class="end sm halo">GPT-5.6 Sol {sol.index.toFixed(1)}</text>
+      <text x={X(f) - 4} y="114" class="end sm soft halo">mid, whatever</text>
+      <text x={X(f) - 4} y="128" class="end sm soft halo">the name</text>
+      <path d={`M${at(hd, luna.id).cx} ${at(hd, luna.id).cy - 7} V96`} class="leader"></path>
+      <text x={at(hd, luna.id).cx - 7} y="104" class="end sm halo">GPT-5.6 Luna {luna.index.toFixed(1)}</text>
+      <text x={at(hd, luna.id).cx - 7} y="118" class="end sm soft halo">small, {under} under the cut</text>
+    </g>
+  </svg>
+
+  <svg class="dg lc-m" viewBox="0 0 360 510" role="img" aria-labelledby="lc-tm lc-descm">
+    <title id="lc-tm">Intelligence Index, cut into three rungs</title>
+    <desc id="lc-descm">{desc}</desc>
+    <g class="an f4">
+      <rect x="56" y={Yv(f)} width="296" height={Yv(md) - Yv(f)} class="band-m"></rect>
+      <rect x="56" y={Yv(60)} width="296" height={Yv(f) - Yv(60)} class="band-f"></rect>
+      <text x="346" y={Yv(60) + 14} class="end bandname">frontier</text>
+      <text x="346" y={Yv(f) + 14} class="end bandname">mid</text>
+      <text x="346" y={Yv(md) + 14} class="end bandname">small</text>
+      <path d={`M56 ${Yv(f)} H352 M56 ${Yv(md)} H352`} class="cut"></path>
+      <text x="48" y={Yv(f) + 4} class="end b sm">{f.toFixed(1)}</text>
+      <text x="48" y={Yv(f) + 17} class="end sm soft">−{tiering.frontier_within}</text>
+      <text x="48" y={Yv(md) + 4} class="end b sm">{md.toFixed(1)}</text>
+      <text x="48" y={Yv(md) + 17} class="end sm soft">−{tiering.mid_within}</text>
+    </g>
+    <path d={`M56 ${Yv(0)} V${Yv(60)}`} pathLength="1" class="axis an f1"></path>
+    {
+      [0, 10, 20, 30, 40, 60].map((t) => (
+        <g>
+          <path d={`M51 ${Yv(t)} H56`} class="tick" />
+          <text x="48" y={Yv(t) + 4} class="end sm soft">
+            {t}
+          </text>
+        </g>
+      ))
+    }
+    {
+      vd.map((d, k) => (
+        <g class="an f5" style={`animation-range:${dotRange(k)}`}>
+          <title>{title(d)}</title>
+          <circle cx={d.cx} cy={d.cy} r={R} class={pool.has(d.m.id) ? 'dot-pool' : 'dot'} />
+          {pool.has(d.m.id) && <circle cx={d.cx} cy={d.cy} r={R + 3.5} class="ring" />}
+        </g>
+      ))
+    }
+    <g class="an f6">
+      {
+        vd
+          .filter((d) => named.has(d.m.id))
+          .map((d) =>
+            d.m.id === luna.id ? (
+              <path d={`M${d.cx + 7} ${d.cy} H112 V${d.cy + 14} H124`} class="leader" />
+            ) : (
+              <path d={`M${d.cx + 9} ${d.cy} H124`} class="leader" />
+            )
+          )
+      }
+      <text x="130" y={at(vd, opus.id).cy + 4} class="b">Opus 5.5 {opus.index.toFixed(1)}</text>
+      <text x="130" y={at(vd, opus.id).cy + 18} class="sm">best of the day</text>
+      <text x="130" y={at(vd, opus.id).cy + 32} class="sm">in the example pool</text>
+      <text x="130" y={at(vd, sol.id).cy + 4} class="sm">GPT-5.6 Sol {sol.index.toFixed(1)}</text>
+      <text x="130" y={at(vd, sol.id).cy + 18} class="sm soft">mid, whatever the name</text>
+      <text x="130" y={at(vd, glm.id).cy + 4} class="b">GLM 5.3 Flash {glm.index.toFixed(1)}</text>
+      <text x="130" y={at(vd, glm.id).cy + 18} class="sm">in the example pool</text>
+      <text x="130" y={at(vd, luna.id).cy + 18} class="sm">GPT-5.6 Luna {luna.index.toFixed(1)}</text>
+      <text x="130" y={at(vd, luna.id).cy + 32} class="sm soft">small, {under} under the cut</text>
+    </g>
+  </svg>
+  <p class="sr-only">{n} models with an index are plotted; claude-haiku-4-5 has no index and is listed in the full catalog below.</p>
+</div>

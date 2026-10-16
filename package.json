@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Showcase and docs site for delegation-kit — user-directed model delegation for Claude Code and Codex.",
+  "description": "Showcase and docs site for delegation-kit — a model router on your machine for the models you already pay for.",
   "scripts": {
     "dev": "astro dev",
     "prebuild": "node scripts/sync-kit.mjs --check && node scripts/generate-og-image.mjs",
