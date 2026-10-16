@@ -31,7 +31,6 @@ type Req = {
 };
 
 const list = (r: Route) => r.candidates.map((p) => `${p.key} ${priceTag(p)}`).join(', ');
-const same = (withLuna: boolean) => (withLuna ? ' (Same with Luna.)' : '');
 
 const requests: Req[] = [
   {
@@ -40,10 +39,7 @@ const requests: Req[] = [
     v: { difficulty: 1, tags: ['code'], confidence: 0.8 },
     says: '1 · code',
     expect: [glm, glm],
-    text: (r, l) =>
-      l
-        ? `Same floor, one more candidate: ${list(r)}. glm still answers, because for this request it costs the least of the three.`
-        : `The decider says 1, code. The floor is small. A code request takes the cheapest code-capable model on the floor rung or above: ${list(r)}. glm answers.`
+    text: (r) => `Code: the cheapest code-capable model wins (${list(r)}).`
   },
   {
     id: 'race',
@@ -51,8 +47,7 @@ const requests: Req[] = [
     v: { difficulty: 3, tags: ['code'], confidence: 0.8 },
     says: '3 · code',
     expect: [opus, opus],
-    text: (_r, l) =>
-      `The decider says 3, code. From 3 up, only frontier counts, and glm is not on it. opus answers.${same(l)}`
+    text: () => 'Hard: only frontier counts, and only opus is there.'
   },
   {
     id: 'summarise',
@@ -60,8 +55,7 @@ const requests: Req[] = [
     v: { difficulty: 2, tags: [], confidence: 0.8 },
     says: '2',
     expect: [glm, glm],
-    text: (_r, l) =>
-      `The decider says 2. Mid is enough. The router stops at the lowest rung that has a model, so opus is never a candidate. glm answers.${same(l)}`
+    text: () => 'Mid is enough. opus is never a candidate.'
   },
   {
     id: 'percent',
@@ -69,7 +63,7 @@ const requests: Req[] = [
     v: { difficulty: 1, tags: ['math'], confidence: 0.8 },
     says: '1 · math',
     expect: [glm, glm],
-    text: (_r, l) => `The decider says 1, math. Math lifts an easy request to mid. glm answers.${same(l)}`
+    text: () => 'Math lifts an easy request to mid.'
   },
   {
     id: 'translate',
@@ -78,9 +72,7 @@ const requests: Req[] = [
     says: '1 · no tags',
     expect: [glm, luna],
     text: (_r, l) =>
-      l
-        ? 'The floor is small, and now small has a model. Luna answers, even though glm’s estimate is lower. Without code, the rung comes first and the price second.'
-        : 'The decider says 1, no tags. The floor is small, and small is empty. The request climbs one rung, never down. glm answers.'
+      l ? 'Small has a model now: rung first, price second.' : 'Small is empty: climb one rung, never down.'
   },
   {
     id: 'unanswered',
@@ -88,8 +80,7 @@ const requests: Req[] = [
     v: { difficulty: 1, tags: [], confidence: 0.8, failed: 'timeout' },
     says: 'no answer · timeout',
     expect: [glm, glm],
-    text: () =>
-      'The decider times out, or answers outside the schema. No rung is chosen. The request goes to your default, glm, the response carries X-Router-Undecidable: 1, and the router object lists the warning “decider failed”. Nothing is retried. A cheap default makes doubt cheap, and a strong one makes it safe.'
+    text: () => 'No answer: your default replies, and says so. No retry.'
   }
 ];
 
@@ -266,26 +257,6 @@ ${rules.join('\n')}
 }
 `;
 
-const rows = [
-  { s: states[0], says: '1, code', floor: 'small' },
-  { s: states[1], says: '1, code', floor: 'small' },
-  { s: states[2], says: '3, code', floor: 'frontier' },
-  { s: states[4], says: '2', floor: 'mid' },
-  { s: states[6], says: '1, math', floor: 'mid (math lifts small)' },
-  { s: states[8], says: '1, no tags', floor: 'small, empty → mid' },
-  { s: states[9], says: '1, no tags', floor: 'small' },
-  { s: states[10], says: 'no answer (timeout)', floor: 'none (no usable signal)' }
-];
-const because = [
-  `code: the cheapest code-capable model at small or above (${list(states[0].r)})`,
-  `the same rule, one more candidate (${list(states[1].r)})`,
-  'only frontier counts from 3 up, and only opus is on it',
-  'mid is enough; the lowest rung that has a model wins',
-  'math lifts an easy request to mid',
-  'small is empty; the request climbs one rung, never down',
-  'small has a model now; the rung comes first, the price second',
-  'no usable signal goes to your default, with X-Router-Undecidable: 1'
-];
 ---
 
 <style set:html={css}></style>
@@ -331,53 +302,6 @@ const because = [
   </div>
 </div>
 
-<p class="mt-8 max-w-2xl text-[var(--color-ink-soft)]">
-  A request rated 4 also goes to opus: frontier is the top rung. To change any answer, change the
-  inputs: a model's rung or price, the pool, the default. <span class="font-mono text-[0.9em]"
-    >delegation-router decide --json</span
-  > prints the same reasons for any prompt of yours without dispatching it: it makes one call, to
-  the decider, and never to the model it picks.
+<p class="mt-6 font-mono text-[0.75rem] text-[var(--color-ink-soft)]">
+  Prices from the {catalogVersion} catalog; the decider's answers are illustrative.
 </p>
-<p class="mt-4 max-w-2xl text-[var(--color-ink-soft)]">
-  An llm decider always reports confidence 0.8, so with it doubt comes only from an error, a timeout,
-  a missing key or an answer outside the schema. A confidence below 0.55 comes from deciders that
-  report their own: Sage's distribution, Dipylon's P(yes), a classifier. It lands on the default the
-  same way.
-</p>
-<p class="mt-4 font-mono text-[0.75rem] text-[var(--color-ink-soft)]">
-  Estimates from the {catalogVersion} catalog for a 310-token request and the default 1,024-token answer
-  budget. The decider's answers are illustrative.
-</p>
-
-<details class="mt-6">
-  <summary class="cursor-pointer text-sm underline underline-offset-4">The same, as a table</summary>
-  <div class="overflow-x-auto mt-4">
-    <table class="w-full text-[0.8rem] leading-snug border-collapse">
-      <thead>
-        <tr class="eyebrow text-left border-b border-[var(--color-line-strong)]">
-          <th class="py-2 pr-4 font-normal">request</th>
-          <th class="py-2 pr-4 font-normal">the decider says</th>
-          <th class="py-2 pr-4 font-normal">floor</th>
-          <th class="py-2 pr-4 font-normal">answered by</th>
-          <th class="py-2 font-normal">because</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          rows.map((row, i) => (
-            <tr class="border-b border-[var(--color-line)] align-top">
-              <td class="py-2 pr-4">
-                {row.s.req.label}
-                {row.s.withLuna ? ' (with Luna)' : ''}
-              </td>
-              <td class="py-2 pr-4 font-mono">{row.says}</td>
-              <td class="py-2 pr-4 font-mono">{row.floor}</td>
-              <td class="py-2 pr-4 font-mono">{row.s.r.chosen.key}</td>
-              <td class="py-2">{because[i]}</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
-</details>
