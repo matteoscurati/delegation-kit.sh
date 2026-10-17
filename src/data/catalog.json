@@ -1,12 +1,12 @@
 {
-  "catalogVersion": "2026-10-15",
+  "catalogVersion": "2026-10-17",
   "tiering": {
     "rule": "index-bands-v1",
     "frontier_within": 8,
     "mid_within": 20,
     "top_index": 57.6,
     "source": "artificialanalysis",
-    "date": "2026-10-15",
+    "date": "2026-10-17",
     "attribution": "https://artificialanalysis.ai/"
   },
   "models": [
@@ -15,7 +15,7 @@
       "tier": "frontier",
       "index": 57.6,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 4,
         "out": 20
@@ -26,7 +26,7 @@
       "tier": "frontier",
       "index": 56,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 10
@@ -37,7 +37,7 @@
       "tier": "frontier",
       "index": 53.4,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 10,
         "out": 50
@@ -48,7 +48,7 @@
       "tier": "frontier",
       "index": 52.7,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 10,
         "out": 50
@@ -59,7 +59,7 @@
       "tier": "frontier",
       "index": 51.8,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 10
@@ -70,7 +70,7 @@
       "tier": "frontier",
       "index": 50.8,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 5,
         "out": 25
@@ -81,7 +81,7 @@
       "tier": "frontier",
       "index": 49.6,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 10,
         "out": 50
@@ -92,7 +92,7 @@
       "tier": "mid",
       "index": 47,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 4,
         "out": 20
@@ -103,7 +103,7 @@
       "tier": "mid",
       "index": 46.4,
       "variant": "xhigh",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 6
@@ -114,7 +114,7 @@
       "tier": "mid",
       "index": 45.4,
       "variant": "default",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 6
@@ -125,7 +125,7 @@
       "tier": "mid",
       "index": 44.2,
       "variant": "xhigh",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 6
@@ -136,7 +136,7 @@
       "tier": "mid",
       "index": 43.6,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.5,
         "out": 2
@@ -147,7 +147,7 @@
       "tier": "mid",
       "index": 43.4,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.1,
         "out": 0.5
@@ -158,7 +158,7 @@
       "tier": "mid",
       "index": 42.1,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 12
@@ -169,7 +169,7 @@
       "tier": "mid",
       "index": 41.8,
       "variant": "default",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.15,
         "out": 0.5
@@ -180,7 +180,7 @@
       "tier": "mid",
       "index": 40.9,
       "variant": "high",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.75,
         "out": 3.75
@@ -191,7 +191,7 @@
       "tier": "mid",
       "index": 39.5,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.3,
         "out": 1.2
@@ -202,7 +202,7 @@
       "tier": "mid",
       "index": 38.4,
       "variant": "xhigh",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 5,
         "out": 30
@@ -213,7 +213,7 @@
       "tier": "mid",
       "index": 38.2,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 3,
         "out": 15
@@ -224,7 +224,7 @@
       "tier": "small",
       "index": 37.3,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.2,
         "out": 1.2
@@ -235,7 +235,7 @@
       "tier": "small",
       "index": 33.7,
       "variant": "max",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.98,
         "out": 3.08
@@ -246,7 +246,7 @@
       "tier": "small",
       "index": 29.7,
       "variant": "default",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 1.25,
         "out": 5
@@ -257,7 +257,7 @@
       "tier": "small",
       "index": 29.2,
       "variant": "default",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 0.3,
         "out": 1.2
@@ -268,7 +268,7 @@
       "tier": "small",
       "index": 9.3,
       "variant": "default",
-      "source": "artificialanalysis:2026-10-15",
+      "source": "artificialanalysis:2026-10-17",
       "price": {
         "in": 2,
         "out": 6

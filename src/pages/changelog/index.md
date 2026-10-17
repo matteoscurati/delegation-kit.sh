@@ -14,7 +14,7 @@ in the kit repository by `npm run sync-kit` — edit there, not here. Tags follo
 
 <!-- BEGIN AUTOGEN -->
 
-## [0.27.0] — 2026-10-15
+## [0.27.0] — 2026-10-17
 
 You choose the decision model; it governs the models you already pay for.
 
