@@ -1,24 +1,32 @@
 # delegation-kit.sh
 
 Showcase and docs site for [`delegation-kit`](https://github.com/matteoscurati/delegation-kit):
-user-directed model delegation for Claude Code and Codex.
+a model router on your machine for the models you already pay for. Easy
+requests go to your cheap models, hard ones to your strong ones; you choose
+the judge, your rules pick the model, and every response says why.
 
 Built with **Astro 5** + **Tailwind v4** + **TypeScript**. Static-only output.
-The only runtime JavaScript is the copy button on code blocks; the "Resolve a
-role" panel on the home page is radio buttons plus CSS `:has()`.
+The only runtime JavaScript is the copy button on code blocks. The animated
+diagrams on the home page are inline SVG and CSS (off under
+`prefers-reduced-motion`); the request stepper on the home page and the
+"Resolve a role" panel on `/dispatch` are radio buttons plus CSS `:has()`.
 
 ## What the site shows, and where it comes from
 
 Everything that describes the kit is generated from the kit checkout, never
 written by hand here:
 
-| on the site                                                                                        | source in `../delegation-kit`                                                                                          |
-| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| version, release date, counts in the footer and hero                                               | `package.json`, `CHANGELOG.md`, `delegation-executor-contract check --json`                                            |
-| the routing table                                                                                  | `delegation-route table --json`                                                                                        |
-| the "Resolve a lane" panel                                                                         | `delegation-route resolve --lane … --json`, once per lane and per producer family                                      |
-| `/docs/configuration`, `/docs/executors`, `/docs/compatibility`, `/docs/routing`, `/docs/adapting` | `docs/user-configuration.md`, `docs/external-executors.md`, `docs/compatibility.md`, `model-routing.md`, `ADAPTING.md` |
-| `/changelog`                                                                                       | `CHANGELOG.md`                                                                                                         |
+| on the site                                                                 | source in `../delegation-kit`                                                           |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| version in the footer and hero, catalog date in the footer                  | `package.json`, `config/catalog.json`                                                   |
+| the ladder, the index chart and every price and rung in the worked example  | `config/catalog.json`                                                                   |
+| the routing table and the "Resolve a role" panel on `/dispatch`             | `delegation-route table --json`, `delegation-route resolve --lane … --json`             |
+| `/docs/router`, `/docs/configuration`, `/docs/executors`, `/docs/compatibility` | `docs/router.md`, `docs/user-configuration.md`, `docs/external-executors.md`, `docs/compatibility.md` |
+| `/changelog`                                                                | `CHANGELOG.md`                                                                          |
+
+The worked example (a pool of GLM 5.3 Flash and Opus 5.5) is computed at build
+time by `src/lib/example-pool.ts`, which mirrors tiered-v1 and fails the build
+if the catalog moves one of its models to another rung.
 
 `scripts/sync-kit.mjs` runs the kit's read-only commands and rewrites the
 synced blocks between `<!-- BEGIN AUTOGEN -->` / `<!-- END AUTOGEN -->`
@@ -71,10 +79,12 @@ and `/privacy`.
 
 ```
 src/
-  components/   CodeBlock, StatusPill, RoutingTable, LaneResolver, ResolvePanel, CloudflareAnalytics
-  data/         kit.json, routing-table.json, resolve.json, contract.json  (generated)
+  components/   CodeBlock, HeroResponse, RequestFlow, LadderStepper, LadderChart, Ladder, Disclosure,
+                MachineBoundary, StatusPill, RoutingTable, LaneResolver, ResolvePanel, CloudflareAnalytics
+  data/         kit.json, catalog.json, routing-table.json, resolve.json  (generated)
+  lib/          example-pool.ts (the worked example, from catalog.json)
   layouts/      BaseLayout, DocLayout
-  pages/        index.astro, docs/*.md, changelog/index.md, privacy.md
+  pages/        index.astro, dispatch.astro, docs/*.md, changelog/index.md, privacy.md
   styles/       global.css (design tokens)
 scripts/        sync-kit.mjs, generate-og-image.mjs
 public/         favicon, og-image, prose.css, _headers, robots.txt

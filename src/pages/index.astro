@@ -1,221 +1,184 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
-import LaneResolver from '../components/LaneResolver.astro';
-import RoutingTable from '../components/RoutingTable.astro';
+import HeroResponse from '../components/HeroResponse.astro';
+import RequestFlow from '../components/RequestFlow.astro';
+import LadderStepper from '../components/LadderStepper.astro';
+import LadderChart from '../components/LadderChart.astro';
 import kit from '../data/kit.json';
+import { glm, opus } from '../lib/example-pool';
 
+// The text equivalent of the flow diagram, which is aria-hidden.
 const steps = [
-  {
-    name: 'Configure',
-    cmd: 'delegation-config show',
-    text: 'Your profiles live in ~/.config/delegation-kit/config.json: an adapter, the model id your endpoint accepts, a declared family, roles, parameters. Any OpenAI-compatible text endpoint works. No kit qualification is required.'
-  },
-  {
-    name: 'Resolve',
-    cmd: 'delegation-route resolve --lane builder --json',
-    text: 'Read-only. The router lists which of your profiles support the role and what each adapter can do. Nothing is dispatched; selection grants nothing.'
-  },
-  {
-    name: 'Choose',
-    cmd: '"Use terra-builder for <task>."',
-    text: 'You name the profile, or you authorize the lead to pick from the displayed choices. Task complexity, an installed skill, or a previous authorization is not authorization.'
-  },
-  {
-    name: 'Run',
-    cmd: 'delegation-run --profile terra-builder --lane builder --prompt-file task.txt --output out.txt --workdir .',
-    text: 'One dispatch, one receipt. Output, metrics, and a .result.json with review status and model identity. Retries and reviews are dispatches too: each needs its own approval.'
-  }
+  ['Measure', 'tokens, tools, images, JSON — counted, not judged'],
+  ['Ask the decider', 'how hard is this, 0–4? code, math, rare?'],
+  ['Find the rung', 'the answer sets the lowest rung: small, mid, frontier'],
+  ['Take the cheapest', 'the cheapest model of yours on that rung'],
+  ['Forward once', 'with that model’s own key; no retry'],
+  ['Disclose', 'headers and reasons in every response']
 ];
 
-const failures = [
-  {
-    mode: 'Agents that dispatch other agents on their own authority',
-    answer:
-      'Every dispatch is user-directed, per request. The router only lists and validates; delegation-run runs exactly one selected profile once, and its receipt records what was asked, what answered, and what is still pending.'
-  },
-  {
-    mode: 'Silent substitution — you asked for one model and got another',
-    answer:
-      'Requested and provider-reported identity are kept apart in every receipt. A mismatch fails unless you configured that alias; a missing report is labelled requested-only, never dressed up as certification.'
-  },
-  {
-    mode: 'Unverified output — delegated diffs shipped unread',
-    answer:
-      'Review is a policy you choose: optional, required, or cross-family. A mandatory policy holds the result as pending-review; it never spawns the reviewer for you. Text adapters return a patch; the lead applies and tests.'
-  }
+const deciders = [
+  ['llm', 'one of your own cheap models'],
+  ['sage', 'Levanto Sage, with your key'],
+  ['jev', 'TypeSafe Jev, with your key'],
+  ['dipylon', 'your own decision service'],
+  ['classifier', 'any local classifier'],
+  ['none', 'always your default — the baseline']
 ];
+
+const promises = [
+  'Runs on your machine, loopback only.',
+  'Chooses only from the models you list.',
+  'One forward per request. No retry, no fallback.',
+  'Never sends your keys or model names to the decider.',
+  'Logs nothing. Receipts only if you turn them on.',
+  'A cost ceiling refuses rather than overspends.'
+];
+
+const link = 'underline underline-offset-4 text-[var(--color-ink)]';
+const mono = 'font-mono text-[0.9em]';
 ---
 
 <BaseLayout path="/">
+  <!-- Hero -->
   <section class="pt-10 pb-14 md:pt-16 md:pb-20">
-    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · Claude Code and Codex</p>
-    <h1 class="text-[2.6rem] md:text-[4.4rem] max-w-5xl">
-      Your models. Your call. The kit never dispatches on its own.
+    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · a model router on your machine</p>
+    <h1 class="text-[2.6rem] md:text-[3.4rem] xl:text-[3.9rem] [text-wrap:balance]">
+      <span class="lg:block">Easy requests go to your cheap models.</span>
+      <span class="lg:block">Hard ones go to your strong ones.</span>
     </h1>
-    <p class="mt-8 max-w-2xl text-lg text-[var(--color-ink-soft)]">
-      delegation-kit gives Claude Code and Codex a governed way to hand bounded coding work to other
-      models: the profiles you configure, through native adapters or any OpenAI-compatible text
-      endpoint, dispatched one at a time only when you say so, with a receipt that says what was
-      asked, what answered, and whether review is still pending.
-    </p>
-    <div class="mt-10 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end min-w-0">
-      <CodeBlock
-        label="Install (macOS, jq, git, Node ≥ 18)"
-        code={`npx delegation-kit          # interactive installer; --claude-only / --codex-only
-delegation-config show      # the personal configuration it initialized
-./doctor.sh                 # from a clone: verify everything is wired`}
-      />
-      <div class="text-sm text-[var(--color-ink-soft)] md:pb-3">
-        or <span class="font-mono text-[var(--color-ink)]">git clone</span> and
-        <span class="font-mono text-[var(--color-ink)]">./install.sh</span><br />
-        or <span class="font-mono text-[var(--color-ink)]">/plugin install delegation-kit</span>
+    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
+      <div class="min-w-0">
+        <p class="max-w-xl text-lg md:text-xl text-[var(--color-ink-soft)]">
+          You pick a decision model. It rates how hard each request is. Your rules turn that into the
+          cheapest model that can handle it — and every response says which one, and why.
+        </p>
+        <div class="mt-8 max-w-md">
+          <CodeBlock
+            label="The only change in your client"
+            code={`base_url = "http://127.0.0.1:4141/v1"
+model    = "auto"`}
+          />
+        </div>
+        <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+          <a href="#how" class={link}>How it works ↓</a>
+          <a href="#install" class={link}>Install ↓</a>
+        </p>
       </div>
+      <HeroResponse />
     </div>
   </section>
 
-  <section class="rule py-14">
-    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-8">
-      <h2 class="text-3xl md:text-4xl">Resolve a role</h2>
-      <p class="text-sm text-[var(--color-ink-soft)] max-w-md mt-3 md:mt-0">
-        The router's real answer for a fresh default configuration, computed by
-        <span class="font-mono">delegation-route</span> when the site was built from {kit.version}.
-        Switch the review policy to see what cross-family excludes. No script runs on this page.
-      </p>
-    </div>
-    <LaneResolver />
-  </section>
-
-  <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-3">How a dispatch happens</h2>
-    <p class="text-[var(--color-ink-soft)] max-w-2xl mb-10">
-      The flow is always the same four steps, in this order. The first three never call a model.
+  <!-- How a request is routed -->
+  <section id="how" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-3">One request, six steps</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
+      Only one step is a model's judgement — and it judges the task, never your models.
     </p>
-    <ol class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <RequestFlow />
+    <ol role="list" class="mt-10 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
       {
-        steps.map((step, i) => (
-          <li class="border-t border-[var(--color-line-strong)] pt-4">
-            <p class="eyebrow mb-1">step {i + 1}</p>
-            <h3 class="text-xl mb-3">{step.name}</h3>
-            <p class="font-mono text-[0.75rem] bg-[var(--color-panel)] border border-[var(--color-line)] p-2 mb-3 break-words">
-              {step.cmd}
-            </p>
-            <p class="text-sm text-[var(--color-ink-soft)]">{step.text}</p>
+        steps.map(([name, text], i) => (
+          <li class="flex gap-3 border-t border-[var(--color-line)] pt-3">
+            <span class="font-mono text-[var(--color-ink-soft)]" aria-hidden="true">{i + 1}</span>
+            <span>
+              <span class="font-medium">{name}</span>
+              <span class="text-[var(--color-ink-soft)]"> — {text}</span>
+            </span>
           </li>
         ))
       }
     </ol>
   </section>
 
+  <!-- Why this model -->
   <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-10">Three failure modes, three answers</h2>
-    <div class="grid gap-8 md:grid-cols-3">
-      {
-        failures.map((f) => (
-          <div>
-            <p class="text-lg leading-snug mb-3">{f.mode}</p>
-            <p class="text-sm text-[var(--color-ink-soft)] border-l-2 border-[var(--color-explicit)] pl-4">
-              {f.answer}
-            </p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-  <section class="rule py-14">
-    <div class="md:flex md:items-baseline md:justify-between md:gap-10 mb-6">
-      <h2 class="text-3xl md:text-4xl">The routing table</h2>
-      <p class="text-sm text-[var(--color-ink-soft)] max-w-xl mt-3 md:mt-0">
-        {kit.profiles} profiles and {kit.laneRows} role rows from the default preset, straight from
-        <span class="font-mono">delegation-route table</span>. The adapter decides what a profile
-        can do today. There is no other gate.
-      </p>
-    </div>
-    <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
-      <span
-        ><span class="status status-compatible">compatible</span> the adapter supports this role</span
-      >
-      <span
-        ><span class="status status-unsupported">unsupported</span> it does not; never selectable</span
-      >
+    <h2 class="text-3xl md:text-4xl mb-3">Why this model and not that one</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
+      glm is cheap ({glm.tier}), opus is strong ({opus.tier}). Pick a request.
     </p>
-    <RoutingTable />
+    <LadderStepper />
   </section>
 
+  <!-- Where the rungs come from -->
   <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-10">What's in the box</h2>
-    <div class="grid gap-10 md:grid-cols-3 text-sm">
+    <h2 class="text-3xl md:text-4xl mb-3">Who decides which model is strong?</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
+      Not the decider, and not us. Artificial Analysis, an independent lab, gives every model the same
+      public tests and a score. The best score of the day sets the bar: up to 8 points below it is
+      frontier, up to 20 is mid, the rest is small. The kit ships today's scores. Refresh them with
+      your own key, or place any model yourself.
+    </p>
+    <LadderChart />
+  </section>
+
+  <!-- Deciders + promises -->
+  <section class="rule py-14">
+    <div class="grid gap-12 md:grid-cols-2">
       <div>
-        <p class="eyebrow mb-3">Configuration · ~/.config/delegation-kit</p>
-        <ul class="space-y-2">
-          <li>
-            <span class="font-mono">delegation-config</span> init / validate / show / apply; the shipped
-            presets from <span class="font-mono">config/presets.json</span>, a strict preset for
-            cross-family review
-          </li>
-          <li>
-            adapters: <span class="font-mono">{kit.adapters.join(', ')}</span> plus <span
-              class="font-mono">openai-compatible</span
-            > for any text endpoint
-          </li>
-          <li>credentials by variable name only; migration backs up a legacy install first</li>
-        </ul>
+        <h2 class="text-3xl md:text-4xl mb-6">Pick the decider</h2>
+        <dl class="border-b border-[var(--color-line)]">
+          {
+            deciders.map(([kind, text]) => (
+              <div class="border-t border-[var(--color-line)] py-2.5 grid grid-cols-[7rem_minmax(0,1fr)] gap-4">
+                <dt class="font-mono font-medium pl-3 border-l-2 border-[var(--color-explicit)]">{kind}</dt>
+                <dd class="text-[var(--color-ink-soft)]">{text}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-4 text-sm text-[var(--color-ink-soft)]">
+          <span class={mono}>delegation-router eval</span> tells you which one is right on your own prompts.
+        </p>
       </div>
       <div>
-        <p class="eyebrow mb-3">Hosts · ~/.claude and ~/.codex</p>
-        <ul class="space-y-2">
-          <li>
-            6 Claude subagent profiles and 5 Codex profiles, managed but never overwritten once you
-            edit them
-          </li>
-          <li>the routing and orchestrate skills, loaded only on an explicit delegation request</li>
-          <li>the user-direction guard, always loaded from CLAUDE.md and AGENTS.md</li>
-        </ul>
-      </div>
-      <div>
-        <p class="eyebrow mb-3">CLI · ~/.local/bin, shared</p>
-        <ul class="space-y-2">
-          <li>
-            <span class="font-mono">delegation-route</span>: the read-only router. Never dispatches.
-          </li>
-          <li>
-            <span class="font-mono">delegation-run</span>: one selected profile, once, with a v2
-            receipt
-          </li>
-          <li>
-            <span class="font-mono">delegation-{'{glm,gemini,kimi,grok,qwen,deepseek}'}</span>: the
-            six provider runners with their own sandboxes; <span class="font-mono"
-              >delegation-patch-verify</span
-            > for text patches
-          </li>
+        <h2 class="text-3xl md:text-4xl mb-6">What it won't do</h2>
+        <ul class="border-b border-[var(--color-line)]">
+          {promises.map((t) => <li class="border-t border-[var(--color-line)] py-2.5">{t}</li>)}
         </ul>
       </div>
     </div>
   </section>
 
+  <!-- Set it up -->
+  <section id="install" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-8">Set it up</h2>
+    <div class="grid gap-8 lg:grid-cols-2">
+      <CodeBlock
+        label="1 · Install"
+        code={`npx delegation-kit         # macOS · jq · git · python3
+delegation-config show     # your models, one profile each`}
+      />
+      <CodeBlock
+        lang="json"
+        label="2 · Name the decider and its pool (config.json)"
+        code={`"router": {
+  "decider": {"kind": "llm", "profile": "glm"},
+  "pool": ["glm", "opus"],
+  "default": "glm"
+}`}
+      />
+      <CodeBlock
+        label="3 · Serve"
+        code={`delegation-router check     # no network: decider, pool, rungs
+delegation-router serve     # http://127.0.0.1:4141/v1`}
+      />
+      <CodeBlock
+        label="4 · Send"
+        code={`curl -s 127.0.0.1:4141/v1/chat/completions \\
+  -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo"}]}'`}
+      />
+    </div>
+  </section>
+
+  <!-- Read further -->
   <section class="rule py-14">
-    <div class="grid gap-10 md:grid-cols-[1fr_1fr]">
-      <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Configure it</h2>
-        <p class="text-[var(--color-ink-soft)]">
-          Profiles, adapters, parameters, review policies, aliases for reported identities, and how
-          a legacy install migrates.
-          <a href="/docs/configuration" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Personal configuration →</a
-          >
-        </p>
-      </div>
-      <div>
-        <h2 class="text-3xl md:text-4xl mb-3">Read the policy</h2>
-        <p class="text-[var(--color-ink-soft)]">
-          How one person routes coding work across models, and how the presets were chosen.
-          Advisory: it governs nothing, and is still worth reading before you choose.
-          <a href="/docs/routing" class="underline underline-offset-4 text-[var(--color-ink)]"
-            >Routing policy →</a
-          >
-        </p>
-      </div>
+    <div class="grid gap-8 md:grid-cols-4 text-[var(--color-ink-soft)]">
+      <p><a href="/docs/router" class={link}>Router reference →</a><br />every field, decider, error</p>
+      <p><a href="/docs/configuration" class={link}>Configuration →</a><br />models, keys, adapters</p>
+      <p><a href="/docs/compatibility" class={link}>Compatibility →</a><br />real decider answers, costs</p>
+      <p><a href="/dispatch" class={link}>Dispatch by hand →</a><br />from Claude Code or Codex</p>
     </div>
   </section>
 </BaseLayout>

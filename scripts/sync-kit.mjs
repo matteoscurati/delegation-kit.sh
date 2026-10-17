@@ -2,7 +2,7 @@
 // Sync the site from the delegation-kit checkout (source of truth).
 //
 // Reads (sibling repo, or DELEGATION_KIT_ROOT):
-//   package.json, CHANGELOG.md, docs/*.md, model-routing.md, ADAPTING.md
+//   package.json, CHANGELOG.md, docs/*.md, config/catalog.json
 //   bin/delegation-config init                        (a fresh preset, in a temp dir)
 //   bin/delegation-route table|resolve --json         (read-only router, schema 3)
 // Writes:
@@ -207,12 +207,30 @@ await emit('src/data/kit.json', json(kit));
 await emit('src/data/routing-table.json', json(table));
 await emit('src/data/resolve.json', json(resolveData));
 
+// The ladder the router climbs: the shipped catalog, rung by rung, with the
+// third-party index each placement came from (read-only, no network).
+const catalog = JSON.parse(await readFile(resolve(kitRoot, 'config/catalog.json'), 'utf8'));
+const ladder = {
+  catalogVersion: catalog.catalog_version,
+  tiering: catalog.tiering ?? null,
+  models: Object.entries(catalog.models)
+    .map(([id, row]) => ({
+      id,
+      tier: row.tier ?? null,
+      index: row.evidence?.index ?? null,
+      variant: row.evidence?.variant ?? null,
+      source: row.evidence ? `${row.evidence.source}:${row.evidence.date}` : 'hand',
+      price: row.price ?? null
+    }))
+    .sort((a, b) => (b.index ?? -1) - (a.index ?? -1) || a.id.localeCompare(b.id))
+};
+await emit('src/data/catalog.json', json(ladder));
+
 // ---- markdown docs ------------------------------------------------------------
 const routeFor = {
   'README.md': '/',
   'CHANGELOG.md': '/changelog',
-  'ADAPTING.md': '/docs/adapting',
-  'model-routing.md': '/docs/routing',
+  'docs/router.md': '/docs/router',
   'docs/user-configuration.md': '/docs/configuration',
   'docs/external-executors.md': '/docs/executors',
   'docs/compatibility.md': '/docs/compatibility'
@@ -256,8 +274,7 @@ async function syncDoc(sourcePath, sitePath) {
 await syncDoc('docs/user-configuration.md', 'src/pages/docs/configuration.md');
 await syncDoc('docs/external-executors.md', 'src/pages/docs/executors.md');
 await syncDoc('docs/compatibility.md', 'src/pages/docs/compatibility.md');
-await syncDoc('model-routing.md', 'src/pages/docs/routing.md');
-await syncDoc('ADAPTING.md', 'src/pages/docs/adapting.md');
+await syncDoc('docs/router.md', 'src/pages/docs/router.md');
 
 const firstVersion = changelog.match(/^## \[/m);
 if (!firstVersion) fail('CHANGELOG.md has no version headings');

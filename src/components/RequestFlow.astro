@@ -1,0 +1,380 @@
+---
+// "How a request is routed": one request, all six steps, from the client to
+// the disclosed response. Inline SVG, aria-hidden: the ordered list on the
+// home page is its text equivalent, with the same station numbers.
+//
+// The base styles are the final frame, and it never leaves the screen: the
+// 14 s loop (prefers-reduced-motion: no-preference only) adds transient
+// emphasis on top of it, the packets travelling between stations, a brief
+// amber outline on each station at its time, the empty rung's pulse and the
+// price bars re-measuring. Pausing (#flow-pause, no JS, :has()) drops every
+// animation, which leaves exactly that final frame.
+// Below 1152px a vertical drawing replaces the horizontal one.
+import { glm, opus, priceTag, cost, REQUEST_TOKENS, renameHeaders } from '../lib/example-pool';
+
+const D = 14;
+const pct = (t: number) => `${((t / D) * 100).toFixed(3)}%`;
+
+/** At `t`, switch from `base` to `hot` for `hold` seconds, then back. */
+function flash(name: string, t: number, base: string, hot: string, hold = 0.7) {
+  return `@keyframes ${name}{0%,${pct(t)}{${base}}${pct(t + 0.15)},${pct(t + 0.15 + hold)}{${hot}}${pct(t + 0.55 + hold)},100%{${base}}}`;
+}
+const ring = (name: string, t: number, stroke = 'var(--color-ink)', w = 1) =>
+  flash(name, t, `stroke:${stroke};stroke-width:${w}`, 'stroke:var(--color-explicit);stroke-width:2.5');
+const glow = (name: string, t: number, fill = 'var(--color-ink)') =>
+  flash(name, t, `fill:${fill}`, 'fill:var(--color-explicit)');
+/** A packet: visible only while it travels along `pts` [t, x, y]. */
+function move(name: string, pts: [number, number, number][]) {
+  const [t0, x0, y0] = pts[0];
+  const last = pts[pts.length - 1];
+  const tr = (x: number, y: number) => `transform:translate(${x}px,${y}px)`;
+  const frames = [
+    `0%{opacity:0;${tr(x0, y0)}}`,
+    `${pct(t0)}{opacity:0;${tr(x0, y0)}}`,
+    `${pct(t0 + 0.15)}{opacity:1}`,
+    ...pts.map(([t, x, y]) => `${pct(t)}{${tr(x, y)}}`),
+    `${pct(last[0] - 0.15)}{opacity:1}`,
+    `${pct(last[0] + 0.1)}{opacity:0;${tr(last[1], last[2])}}`,
+    `100%{opacity:0;${tr(last[1], last[2])}}`
+  ];
+  return `@keyframes ${name}{${frames.join('')}}`;
+}
+
+const keyframes = [
+  ring('rf-st1', 1.0),
+  ring('rf-c1', 1.2, 'var(--color-line)'),
+  ring('rf-c2', 1.5, 'var(--color-line)'),
+  ring('rf-c3', 1.8, 'var(--color-line)'),
+  ring('rf-c4', 2.1, 'var(--color-line)'),
+  flash('rf-dec', 3.1, 'stroke-width:1.5', 'stroke-width:3', 0.9),
+  glow('rf-conf', 4.0),
+  ring('rf-rung', 4.4),
+  flash('rf-floor', 4.4, 'stroke-width:3', 'stroke-width:6', 0.5),
+  `@keyframes rf-pulse{0%,${pct(4.8)}{stroke:var(--color-line);stroke-width:1.25}${pct(5.0)}{stroke:var(--color-explicit);stroke-width:2.5}${pct(5.3)},100%{stroke:var(--color-line);stroke-width:1.25}}`,
+  glow('rf-note', 5.0),
+  ring('rf-cand', 5.3),
+  ring('rf-cheap', 5.6),
+  `@keyframes rf-bar{0%,${pct(5.6)}{transform:scaleX(1)}${pct(5.7)}{transform:scaleX(0)}${pct(6.4)},100%{transform:scaleX(1)}}`,
+  ring('rf-chosen', 6.4, 'var(--color-qualified)', 1.25),
+  glow('rf-key', 7.4),
+  ring('rf-fwd', 7.8),
+  glow('rf-h1', 9.4, 'var(--color-paper)'),
+  glow('rf-h2', 9.55, 'var(--color-paper)'),
+  glow('rf-h3', 9.7, 'var(--color-paper)'),
+  glow('rf-h4', 9.85, 'var(--color-paper)'),
+  // Desktop packets.
+  move('rf-pa-d', [[0.1, 176, 151], [1.0, 262, 151]]),
+  move('rf-pe-d', [[2.4, 378, 112], [2.7, 378, 94], [3.1, 396, 94]]),
+  move('rf-pf-d', [[7.0, 772, 227], [7.8, 840, 227]]),
+  move('rf-pr-d', [[8.4, 826, 253], [8.7, 826, 431], [9.2, 105, 431], [9.4, 105, 366]]),
+  // Vertical packets.
+  move('rf-pa-m', [[0.1, 210, 70], [1.0, 210, 146]]),
+  move('rf-pe-m', [[2.4, 168, 250], [3.1, 168, 280]]),
+  move('rf-pf-m', [[7.0, 98, 806], [7.8, 98, 840]]),
+  move('rf-pr-m', [[8.4, 108, 912], [9.4, 108, 946]])
+];
+
+const anim = (sel: string, name: string) =>
+  `.rf ${sel}{animation:${name} ${D}s linear infinite both}`;
+const rules = [
+  anim('.a-st1', 'rf-st1'),
+  anim('.a-c1 rect', 'rf-c1'),
+  anim('.a-c2 rect', 'rf-c2'),
+  anim('.a-c3 rect', 'rf-c3'),
+  anim('.a-c4 rect', 'rf-c4'),
+  anim('.a-dec', 'rf-dec'),
+  anim('.a-conf', 'rf-conf'),
+  anim('.a-rung', 'rf-rung'),
+  anim('.a-floor .floor-bar', 'rf-floor'),
+  anim('.a-pulse', 'rf-pulse'),
+  anim('.a-note', 'rf-note'),
+  anim('.a-cand', 'rf-cand'),
+  anim('.a-cheap', 'rf-cheap'),
+  anim('.a-bar', 'rf-bar'),
+  anim('.a-chosen', 'rf-chosen'),
+  anim('.a-key', 'rf-key'),
+  anim('.a-fwd', 'rf-fwd'),
+  anim('.a-h1', 'rf-h1'),
+  anim('.a-h2', 'rf-h2'),
+  anim('.a-h3', 'rf-h3'),
+  anim('.a-h4', 'rf-h4'),
+  anim('.rf-d .pk-a', 'rf-pa-d'),
+  anim('.rf-d .pk-e', 'rf-pe-d'),
+  anim('.rf-d .pk-f', 'rf-pf-d'),
+  anim('.rf-d .pk-r', 'rf-pr-d'),
+  anim('.rf-m .pk-a', 'rf-pa-m'),
+  anim('.rf-m .pk-e', 'rf-pe-m'),
+  anim('.rf-m .pk-f', 'rf-pf-m'),
+  anim('.rf-m .pk-r', 'rf-pr-m'),
+  '.rf:has(#flow-pause:checked) *{animation:none !important}'
+];
+
+const css = `
+.rf{display:flex;flex-direction:column}
+.rf .pk{opacity:0}
+.rf .dec{fill:var(--color-explicit-soft);stroke:var(--color-explicit);stroke-width:1.5}
+.rf .a-bar{transform-box:fill-box;transform-origin:left center}
+.rf .row-chosen{fill:var(--color-qualified-soft);stroke:var(--color-qualified);stroke-width:1.25}
+.rf .glmbar{fill:var(--color-qualified)}
+.rf .opusbar{fill:var(--color-line)}
+.rf .cand{fill:var(--color-paper);stroke:var(--color-ink);stroke-width:1}
+.rf .card{fill:var(--color-ink)}
+.rf .card text{fill:var(--color-paper)}
+.rf .card .k-soft{fill:var(--color-line)}
+.rf .card .v-ok{fill:var(--color-qualified-on-ink);font-weight:500}
+.rf .card .v-warn{fill:var(--color-explicit);font-weight:500}
+.rf .pk-ink{fill:var(--color-ink)}
+.rf .pk-ink-t{fill:var(--color-paper) !important;font-size:10.5px !important}
+.rf .pk-amber{fill:var(--color-paper);stroke:var(--color-explicit);stroke-width:1.5}
+.rf .floor-bar{stroke:var(--color-explicit);stroke-width:3}
+.rf .floor-tri{fill:var(--color-explicit)}
+.rf-m{display:block;max-width:26rem;margin:0 auto}
+.rf-m text{font-size:13px}
+.rf-m .sm{font-size:12px}
+.rf-m .ttl{font-size:14px}
+.rf-d{display:none}
+.rf-pause{order:-1;margin:0 0 1rem}
+@media (min-width:1152px){.rf-d{display:block}.rf-m{display:none}.rf-pause{order:0;margin:1rem 0 0}}
+.rf-pause input:focus-visible{outline:2px solid var(--color-ink);outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){
+${keyframes.join('\n')}
+${rules.join('\n')}
+}
+@media (prefers-reduced-motion:reduce){.rf *{animation:none !important}.rf-pause{display:none !important}}
+`;
+
+const glmW = Math.max(2, (cost(glm) / cost(opus)) * 120);
+const glmWm = Math.max(2, (cost(glm) / cost(opus)) * 190);
+
+const defs = (p: string) => `
+<marker id="${p}-ai" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--color-ink)"/></marker>
+<marker id="${p}-aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--color-explicit)"/></marker>
+<marker id="${p}-al" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--color-line)"/></marker>`;
+
+const num = (x: number, y: number, n: number) =>
+  `<g class="num"><circle cx="${x}" cy="${y}" r="11"/><text x="${x}" y="${y + 4}">${n}</text></g>`;
+const chips = ['310 tokens', '1 turn', 'no tools', 'no images'];
+if (REQUEST_TOKENS !== 310) throw new Error('RequestFlow: the measure chips say 310 tokens');
+const h = renameHeaders;
+const noRetry = (cx: number, cy: number) =>
+  `<g><path d="M${cx + 7} ${cy - 3} A8 8 0 1 0 ${cx + 5} ${cy + 6}" class="path"/><path d="M${cx + 3} ${cy - 7} L${cx + 8} ${cy - 3} L${cx + 3} ${cy + 1}" class="path"/><path d="M${cx - 11} ${cy + 11} L${cx + 11} ${cy - 11}" class="path" stroke-width="1.5"/></g>`;
+---
+
+<style set:html={css}></style>
+
+<div class="rf">
+  <svg class="dg rf-d" viewBox="0 0 1100 460" aria-hidden="true" focusable="false">
+    <defs set:html={defs('rfd')} />
+    <!-- your machine -->
+    <rect x="262" y="78" width="560" height="334" class="bnd"></rect>
+    <text x="296" y="96" class="sm soft">your machine</text>
+    <text x="296" y="110" class="sm soft">127.0.0.1:4141</text>
+
+    <!-- client -->
+    <rect x="14" y="40" width="226" height="150" class="box"></rect>
+    <text x="28" y="62" class="sm soft">your client</text>
+    <text x="28" y="86">POST /v1/chat/completions</text>
+    <text x="28" y="106">model: auto</text>
+    <text x="28" y="130">"Rename foo to bar</text>
+    <text x="28" y="148">in utils.py"</text>
+    <path d="M240 160 H272" class="path" marker-end="url(#rfd-ai)"></path>
+
+    <!-- 1 measure -->
+    <rect x="276" y="120" width="150" height="200" class="box a-st1"></rect>
+    <text x="292" y="150" class="ttl">measure</text>
+    {
+      chips.map((c, i) => (
+        <g class={`a-c${i + 1}`}>
+          <rect x="292" y={164 + i * 32} width="118" height="24" class="chip" />
+          <text x="302" y={180 + i * 32} class="sm">{c}</text>
+        </g>
+      ))
+    }
+    <text x="292" y="306" class="sm soft">counted, not judged</text>
+    <Fragment set:html={num(276, 120, 1)} />
+    <path d="M410 120 V104 H449" class="amber" marker-end="url(#rfd-aa)"></path>
+    <text x="446" y="98" class="end sm soft">excerpt</text>
+
+    <!-- 2 decider, on the boundary -->
+    <rect x="452" y="16" width="300" height="124" class="dec a-dec"></rect>
+    <text x="470" y="40" class="ttl">decider: llm · glm</text>
+    <text x="470" y="58" class="sm soft">excerpt only · no keys · no model names</text>
+    <text x="470" y="92">{'{"difficulty": 1, "tags": ["code"]}'}</text>
+    <text x="470" y="118" class="sm a-conf">confidence 0.8, fixed for llm · ≥ 0.55 ✓</text>
+    <Fragment set:html={num(452, 16, 2)} />
+    <path d="M600 141 V164" class="amber" marker-end="url(#rfd-aa)"></path>
+
+    <!-- doubt: the branch to the default, never travelled in this loop -->
+    <path d="M752 44 H1066 V334" class="idle dash" marker-end="url(#rfd-al)"></path>
+    <text x="772" y="34" class="sm soft">confidence &lt; 0.55, error or timeout</text>
+
+    <!-- 3 the rung -->
+    <rect x="452" y="168" width="176" height="200" class="box a-rung"></rect>
+    <text x="468" y="194" class="ttl">rung</text>
+    <path d="M468 226 H614 M468 280 H614 M468 334 H614" class="path" stroke-width="1"></path>
+    <text x="468" y="220" class="sm soft">frontier</text>
+    <text x="468" y="274" class="sm soft">mid</text>
+    <text x="468" y="328" class="sm soft">small</text>
+    <rect x="540" y="202" width="70" height="22" class="cand a-cand"></rect>
+    <text x="575" y="217" class="mid">opus</text>
+    <rect x="540" y="256" width="70" height="22" class="cand a-cand"></rect>
+    <text x="575" y="271" class="mid">glm</text>
+    <rect x="540" y="310" width="70" height="22" class="idle dash a-pulse"></rect>
+    <text x="575" y="325" class="mid sm soft">empty</text>
+    <g class="a-floor">
+      <path d="M468 334 H614" class="floor-bar"></path>
+      <path d="M457 328 L466 334 L457 340 Z" class="floor-tri"></path>
+    </g>
+    <text x="452" y="394" class="sm a-note">code: code-capable, small and up</text>
+    <Fragment set:html={num(452, 168, 3)} />
+    <path d="M628 268 H645" class="path" marker-end="url(#rfd-ai)"></path>
+
+    <!-- 4 the cheapest -->
+    <rect x="648" y="168" width="154" height="200" class="box a-cheap"></rect>
+    <text x="664" y="194" class="ttl">cheapest</text>
+    <rect x="656" y="208" width="138" height="58" class="row-chosen a-chosen"></rect>
+    <text x="666" y="228">glm {priceTag(glm)}</text>
+    <rect x="666" y="236" width={glmW} height="10" class="glmbar a-bar"></rect>
+    <text x="666" y="259" class="sm ok">chosen</text>
+    <text x="666" y="296">opus {priceTag(opus)}</text>
+    <rect x="666" y="304" width="120" height="10" class="opusbar a-bar"></rect>
+    <text x="666" y="336" class="sm soft">one linear scale</text>
+    <Fragment set:html={num(648, 168, 4)} />
+
+    <!-- 5 forward once -->
+    <path d="M802 236 H866" class="path" marker-end="url(#rfd-ai)"></path>
+    <rect x="870" y="196" width="170" height="80" class="box a-fwd"></rect>
+    <text x="886" y="186" class="sm a-key">glm’s own key · once</text>
+    <text x="886" y="230" class="ttl">{glm.id}</text>
+    <text x="886" y="252" class="sm soft">answers, once</text>
+    <Fragment set:html={num(870, 196, 5)} />
+    <Fragment set:html={noRetry(896, 306)} />
+    <text x="914" y="310" class="sm soft">no retry</text>
+
+    <rect x="870" y="338" width="212" height="48" class="idle dash"></rect>
+    <text x="884" y="367" class="soft">your default (disclosed)</text>
+
+    <!-- 6 disclose: back to the client -->
+    <path d="M870 262 H848 V440 H127 V374" class="path" marker-end="url(#rfd-ai)"></path>
+    <g class="card">
+      <rect x="14" y="212" width="226" height="158"></rect>
+      <text x="30" y="242" class="sm k-soft">HTTP/1.1 200 OK</text>
+      <text x="30" y="268" class="a-h1">X-Router-Profile: <tspan class="v-ok">{h.profile}</tspan></text>
+      <text x="30" y="292" class="a-h2">X-Router-Tier: {h.tier}</text>
+      <text x="30" y="316" class="a-h3">X-Router-Difficulty: <tspan class="v-warn">{h.difficulty}</tspan></text>
+      <text x="30" y="340" class="a-h4">X-Router-Undecidable: 0</text>
+    </g>
+    <Fragment set:html={num(14, 212, 6)} />
+
+    <!-- packets -->
+    <g class="pk pk-a"><rect width="44" height="18" class="pk-ink"></rect><text x="22" y="13" class="mid pk-ink-t">auto</text></g>
+    <g class="pk pk-e"><rect width="64" height="20" class="pk-amber"></rect><text x="32" y="14" class="mid sm">excerpt</text></g>
+    <g class="pk pk-f"><rect width="64" height="18" class="pk-ink"></rect><text x="32" y="13" class="mid pk-ink-t">request</text></g>
+    <g class="pk pk-r"><rect width="44" height="18" class="pk-ink"></rect><text x="22" y="13" class="mid pk-ink-t">200</text></g>
+  </svg>
+
+  <svg class="dg rf-m" viewBox="0 0 360 1090" aria-hidden="true" focusable="false">
+    <defs set:html={defs('rfm')} />
+    <rect x="6" y="124" width="252" height="688" class="bnd"></rect>
+    <text x="20" y="144" class="sm soft">127.0.0.1:4141 · your machine</text>
+
+    <rect x="12" y="10" width="336" height="94" class="box"></rect>
+    <text x="26" y="30" class="sm soft">your client</text>
+    <text x="26" y="52">POST /v1/chat/completions</text>
+    <text x="26" y="72">model: auto</text>
+    <text x="26" y="92">"Rename foo to bar in utils.py"</text>
+    <path d="M232 104 V152" class="path" marker-end="url(#rfm-ai)"></path>
+
+    <rect x="18" y="156" width="228" height="114" class="box a-st1"></rect>
+    <text x="34" y="182" class="ttl">measure</text>
+    <g class="a-c1"><rect x="34" y="194" width="100" height="24" class="chip"></rect><text x="44" y="210" class="sm">{chips[0]}</text></g>
+    <g class="a-c2"><rect x="140" y="194" width="94" height="24" class="chip"></rect><text x="150" y="210" class="sm">{chips[1]}</text></g>
+    <g class="a-c3"><rect x="34" y="224" width="100" height="24" class="chip"></rect><text x="44" y="240" class="sm">{chips[2]}</text></g>
+    <g class="a-c4"><rect x="140" y="224" width="94" height="24" class="chip"></rect><text x="150" y="240" class="sm">{chips[3]}</text></g>
+    <text x="34" y="263" class="sm soft">counted, not judged</text>
+    <Fragment set:html={num(18, 156, 1)} />
+    <path d="M200 271 V284" class="amber" marker-end="url(#rfm-aa)"></path>
+    <text x="210" y="283" class="sm soft">excerpt</text>
+
+    <rect x="150" y="288" width="204" height="144" class="dec a-dec"></rect>
+    <text x="164" y="312" class="ttl">decider: llm · glm</text>
+    <text x="164" y="330" class="sm soft">excerpt only</text>
+    <text x="164" y="346" class="sm soft">no keys · no model names</text>
+    <text x="164" y="372">{'{"difficulty": 1,'}</text>
+    <text x="164" y="390">{'"tags": ["code"]}'}</text>
+    <text x="164" y="410" class="sm a-conf">confidence 0.8 · ≥ 0.55 ✓</text>
+    <text x="164" y="425" class="sm soft">fixed for an llm decider</text>
+    <Fragment set:html={num(150, 288, 2)} />
+    <path d="M200 433 V445" class="amber" marker-end="url(#rfm-aa)"></path>
+
+    <path d="M342 433 V840" class="idle dash" marker-end="url(#rfm-al)"></path>
+    <text x="266" y="452" class="sm soft">confidence</text>
+    <text x="266" y="466" class="sm soft">&lt; 0.55,</text>
+    <text x="266" y="480" class="sm soft">error or</text>
+    <text x="266" y="494" class="sm soft">timeout</text>
+
+    <rect x="18" y="448" width="228" height="180" class="box a-rung"></rect>
+    <text x="34" y="474" class="ttl">rung</text>
+    <path d="M34 504 H232 M34 554 H232 M34 604 H232" class="path" stroke-width="1"></path>
+    <text x="34" y="498" class="sm soft">frontier</text>
+    <text x="34" y="548" class="sm soft">mid</text>
+    <text x="34" y="598" class="sm soft">small</text>
+    <rect x="150" y="480" width="74" height="22" class="cand a-cand"></rect>
+    <text x="187" y="495" class="mid">opus</text>
+    <rect x="150" y="530" width="74" height="22" class="cand a-cand"></rect>
+    <text x="187" y="545" class="mid">glm</text>
+    <rect x="150" y="580" width="74" height="22" class="idle dash a-pulse"></rect>
+    <text x="187" y="595" class="mid sm soft">empty</text>
+    <g class="a-floor">
+      <path d="M34 604 H232" class="floor-bar"></path>
+      <path d="M23 598 L32 604 L23 610 Z" class="floor-tri"></path>
+    </g>
+    <text x="24" y="648" class="sm a-note">code: code-capable, ≥ small</text>
+    <Fragment set:html={num(18, 448, 3)} />
+    <path d="M236 629 V660" class="path" marker-end="url(#rfm-ai)"></path>
+
+    <rect x="18" y="664" width="228" height="134" class="box a-cheap"></rect>
+    <text x="34" y="690" class="ttl">cheapest</text>
+    <rect x="26" y="700" width="212" height="46" class="row-chosen a-chosen"></rect>
+    <text x="36" y="718">glm {priceTag(glm)}</text>
+    <rect x="36" y="726" width={glmWm} height="10" class="glmbar a-bar"></rect>
+    <text x="190" y="718" class="sm ok">chosen</text>
+    <text x="36" y="768">opus {priceTag(opus)}</text>
+    <rect x="36" y="776" width="190" height="10" class="opusbar a-bar"></rect>
+    <Fragment set:html={num(18, 664, 4)} />
+
+    <path d="M130 798 V842" class="path" marker-end="url(#rfm-ai)"></path>
+    <text x="140" y="830" class="sm a-key">glm’s own key · once</text>
+    <rect x="18" y="846" width="228" height="62" class="box a-fwd"></rect>
+    <text x="34" y="872" class="ttl">{glm.id}</text>
+    <text x="34" y="894" class="sm soft">answers, once</text>
+    <Fragment set:html={noRetry(212, 870)} />
+    <text x="152" y="898" class="sm soft">no retry</text>
+    <Fragment set:html={num(18, 846, 5)} />
+
+    <rect x="258" y="844" width="96" height="64" class="idle dash"></rect>
+    <text x="264" y="870" class="sm soft">your default</text>
+    <text x="264" y="888" class="sm soft">(disclosed)</text>
+
+    <path d="M130 908 V944" class="path" marker-end="url(#rfm-ai)"></path>
+    <g class="card">
+      <rect x="12" y="950" width="336" height="128"></rect>
+      <text x="28" y="976" class="sm k-soft">HTTP/1.1 200 OK · back to your client</text>
+      <text x="28" y="1000" class="a-h1">X-Router-Profile: <tspan class="v-ok">{h.profile}</tspan></text>
+      <text x="28" y="1022" class="a-h2">X-Router-Tier: {h.tier}</text>
+      <text x="28" y="1044" class="a-h3">X-Router-Difficulty: <tspan class="v-warn">{h.difficulty}</tspan></text>
+      <text x="28" y="1066" class="a-h4">X-Router-Undecidable: 0</text>
+    </g>
+    <Fragment set:html={num(12, 950, 6)} />
+
+    <g class="pk pk-a"><rect width="44" height="18" class="pk-ink"></rect><text x="22" y="13" class="mid pk-ink-t">auto</text></g>
+    <g class="pk pk-e"><rect width="64" height="20" class="pk-amber"></rect><text x="32" y="14" class="mid sm">excerpt</text></g>
+    <g class="pk pk-f"><rect width="64" height="18" class="pk-ink"></rect><text x="32" y="13" class="mid pk-ink-t">request</text></g>
+    <g class="pk pk-r"><rect width="44" height="18" class="pk-ink"></rect><text x="22" y="13" class="mid pk-ink-t">200</text></g>
+  </svg>
+
+  <p class="rf-pause font-mono text-[0.75rem]">
+    <input type="checkbox" id="flow-pause" class="align-middle mr-1.5" />
+    <label for="flow-pause" class="cursor-pointer">Pause animation</label>
+  </p>
+</div>
