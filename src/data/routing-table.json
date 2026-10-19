@@ -176,7 +176,7 @@
     },
     {
       "profile": "opus-builder",
-      "model": "claude-opus-5",
+      "model": "claude-opus-5-5",
       "family": "anthropic",
       "adapter": "claude-code",
       "lane": "builder",
@@ -190,7 +190,7 @@
     },
     {
       "profile": "opus-reviewer",
-      "model": "claude-opus-5",
+      "model": "claude-opus-5-5",
       "family": "anthropic",
       "adapter": "claude-code",
       "lane": "routine-review",
@@ -204,7 +204,7 @@
     },
     {
       "profile": "opus-reviewer",
-      "model": "claude-opus-5",
+      "model": "claude-opus-5-5",
       "family": "anthropic",
       "adapter": "claude-code",
       "lane": "material-review",
@@ -218,7 +218,7 @@
     },
     {
       "profile": "opus-reviewer",
-      "model": "claude-opus-5",
+      "model": "claude-opus-5-5",
       "family": "anthropic",
       "adapter": "claude-code",
       "lane": "security",
@@ -232,7 +232,7 @@
     },
     {
       "profile": "opus-policy-annotator",
-      "model": "claude-opus-5",
+      "model": "claude-opus-5-5",
       "family": "anthropic",
       "adapter": "claude-code",
       "lane": "policy-annotation",
