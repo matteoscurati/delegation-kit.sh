@@ -7,10 +7,11 @@ path: '/changelog'
 
 # Changelog
 
-Every release, newest first. Synced from
-[`CHANGELOG.md`](https://github.com/matteoscurati/delegation-kit/blob/main/CHANGELOG.md)
-in the kit repository by `npm run sync-kit` — edit there, not here. Tags follow
-`delegation-kit--v<version>` and each one has a GitHub Release.
+<!-- Synced from CHANGELOG.md in the kit repository by `npm run sync-kit`: edit
+there, not here. Tags follow delegation-kit--v<version> and each one has a
+GitHub Release. -->
+
+Every release, newest first.
 
 <!-- BEGIN AUTOGEN -->
 

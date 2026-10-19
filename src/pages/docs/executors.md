@@ -5,7 +5,7 @@ description: 'The external runners as adapters: what each can do, the three perm
 path: '/docs/executors'
 ---
 
-> Synced from [`docs/external-executors.md`](https://github.com/matteoscurati/delegation-kit/blob/main/docs/external-executors.md) in the kit repository. Edit there, not here.
+<!-- Synced from docs/external-executors.md in the kit repository: edit there, not here. -->
 
 <!-- BEGIN AUTOGEN -->
 

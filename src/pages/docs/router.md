@@ -1,11 +1,13 @@
 ---
 layout: ../../layouts/DocLayout.astro
-title: 'The router — delegation-kit'
-description: 'delegation-router: you choose the decision model, it governs the models you already pay for. Commands, configuration, how a request is routed, where the rungs come from, deciders, disclosure, errors, eval.'
+title: 'Router reference — delegation-kit'
+description: 'How the router picks a model for each request: the decider, the tiers, the price rule, what each response says, errors and eval.'
 path: '/docs/router'
 ---
 
-> Synced from [`docs/router.md`](https://github.com/matteoscurati/delegation-kit/blob/main/docs/router.md) in the kit repository. Edit there, not here.
+<!-- Synced from docs/router.md in the kit repository: edit there, not here. -->
+
+> The full reference. New here? Start with [Getting started](/docs/).
 
 <!-- BEGIN AUTOGEN -->
 

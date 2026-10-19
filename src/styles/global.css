@@ -20,6 +20,9 @@
 
   --color-qualified: #1f8a5b;
   --color-explicit: #d98e04;
+  /* The same amber, dark enough (3.5:1) for lines and text on paper. Fills
+   * and amber on ink keep --color-explicit. */
+  --color-explicit-strong: #b07200;
   --color-blocked: #b9382a;
   --color-qualified-soft: #dff1e7;
   --color-explicit-soft: #fbeed2;

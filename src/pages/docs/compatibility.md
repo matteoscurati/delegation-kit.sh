@@ -5,7 +5,7 @@ description: 'Supported-agent matrix, verified release snapshots, and host-speci
 path: '/docs/compatibility'
 ---
 
-> Synced from [`docs/compatibility.md`](https://github.com/matteoscurati/delegation-kit/blob/main/docs/compatibility.md) in the kit repository. Edit there, not here.
+<!-- Synced from docs/compatibility.md in the kit repository: edit there, not here. -->
 
 <!-- BEGIN AUTOGEN -->
 

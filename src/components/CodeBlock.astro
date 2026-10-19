@@ -9,19 +9,33 @@ const { code, lang = 'sh', label } = Astro.props;
 // `cb-wrap` is the layout hook prose.css uses for vertical rhythm.
 ---
 
-<div class="cb-wrap relative group min-w-0">
-  {label && <p class="eyebrow mb-2">{label}</p>}
-  <pre
-    class="bg-[var(--color-ink)] text-[var(--color-paper)] px-4 py-3 overflow-x-auto text-[0.85rem] leading-relaxed w-full"><code data-lang={lang}>{code}</code></pre>
-  <button
-    type="button"
-    class="absolute top-2 right-2 text-xs px-2 py-1 bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-line)] font-mono opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-    data-copy={code}
-    aria-label="Copy code to clipboard"
-  >
-    Copy
-  </button>
+<div class="cb-wrap min-w-0">
+  {
+    /* Mono like an eyebrow, but not uppercased: labels can hold a file path. */
+    label && <p class="mb-2 font-mono text-[0.75rem] text-[var(--color-ink-soft)]">{label}</p>
+  }
+  <div class="relative group">
+    <pre
+      class="bg-[var(--color-ink)] text-[var(--color-paper)] px-4 py-3 overflow-x-auto text-[0.85rem] leading-relaxed w-full"><code data-lang={lang}>{code}</code></pre>
+    <button
+      type="button"
+      class="absolute top-2 right-2 text-xs px-2 py-1 bg-[var(--color-paper)] text-[var(--color-ink)] border border-[var(--color-line)] font-mono opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+      data-copy={code}
+      aria-label="Copy code to clipboard"
+    >
+      Copy
+    </button>
+  </div>
 </div>
+
+<style>
+  /* Touch screens have no hover: keep the button in sight. */
+  @media (hover: none) {
+    [data-copy] {
+      opacity: 0.75;
+    }
+  }
+</style>
 
 <script>
   // One delegated listener for every CodeBlock on the page. The only runtime

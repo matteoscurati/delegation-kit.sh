@@ -90,7 +90,7 @@ const command = (lane: string, family?: string, strictPolicy = false) =>
       </div>
     </fieldset>
     <fieldset class="min-w-0">
-      <legend class="eyebrow mb-2">review_policy</legend>
+      <legend class="eyebrow mb-2">Review policy</legend>
       <div class="flex flex-wrap gap-1.5">
         <span class="relative">
           <input type="radio" name="policy" id="policy-optional" value="optional" checked />
@@ -101,9 +101,12 @@ const command = (lane: string, family?: string, strictPolicy = false) =>
           <label for="policy-strict" class="lane-option inline-block">cross-family</label>
         </span>
       </div>
+      <p class="mt-2 text-[0.8rem] text-[var(--color-ink-soft)]">
+        cross-family: the reviewer must come from a different vendor than the model that wrote the code.
+      </p>
     </fieldset>
     <fieldset class="producer min-w-0">
-      <legend class="eyebrow mb-2">Producer family (excluded)</legend>
+      <legend class="eyebrow mb-2">Who wrote the code (same vendor excluded)</legend>
       <div class="flex flex-wrap gap-1.5">
         {
           families.map((family) => (
@@ -165,8 +168,7 @@ const command = (lane: string, family?: string, strictPolicy = false) =>
     <p
       class="font-mono text-[0.75rem] text-[var(--color-ink-soft)] mt-6 border-t border-[var(--color-line)] pt-3"
     >
-      schema_version: 3 · requires_user_direction: true · automatic_dispatch: false ·
-      authorization_granted: false
+      Nothing runs until you ask.
     </p>
   </div>
 </div>

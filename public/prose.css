@@ -1,6 +1,7 @@
 /* MDX prose typography (.doc) — imported only by DocLayout, so it ships only
  * with long-form pages (/docs/*, /changelog, /privacy). Non-doc pages (/)
- * never load these rules.
+ * never load these rules. Element rules that would restyle a component
+ * (lists, paragraphs, tables) skip anything inside `.not-prose`.
  *
  * `.doc pre` rules are wrapped in :where() so Tailwind utilities applied
  * directly on <CodeBlock>'s <pre> still win the cascade. Inline-code rules
@@ -11,11 +12,11 @@
 .doc h2,
 .doc h3,
 .doc h4,
-.doc p,
-.doc ul,
-.doc ol,
+.doc p:not(.not-prose *),
+.doc ul:not(.not-prose *),
+.doc ol:not(.not-prose *),
 .doc blockquote {
-  max-width: 70ch;
+  max-width: 62ch;
 }
 
 .doc h1 {
@@ -56,8 +57,8 @@
   margin: 1.5rem 0 0.25rem;
 }
 
-.doc p {
-  margin: 0 0 1rem;
+.doc p:not(.not-prose *) {
+  margin: 0 0 1.1rem;
   line-height: 1.7;
 }
 
@@ -82,21 +83,21 @@
   text-decoration-color: var(--color-explicit);
 }
 
-.doc ul,
-.doc ol {
+.doc ul:not(.not-prose *),
+.doc ol:not(.not-prose *) {
   margin: 0 0 1.25rem;
   padding-left: 1.5rem;
 }
 
-.doc ul {
+.doc ul:not(.not-prose *) {
   list-style: disc;
 }
 
-.doc ol {
+.doc ol:not(.not-prose *) {
   list-style: decimal;
 }
 
-.doc li {
+.doc li:not(.not-prose *) {
   margin: 0.4rem 0;
   padding-left: 0.25rem;
   line-height: 1.65;
@@ -114,11 +115,11 @@
 .doc :not(pre) > code {
   font-family: var(--font-mono);
   font-size: 0.85em;
-  background: var(--color-panel);
-  border: 1px solid var(--color-line);
-  border-radius: 4px;
-  padding: 0.1em 0.4em;
+  background: rgb(16 25 43 / 0.06);
+  border-radius: 3px;
+  padding: 0.05em 0.3em;
   color: var(--color-ink);
+  overflow-wrap: anywhere;
 }
 
 :where(.doc pre) {
@@ -133,6 +134,18 @@
   margin: 0 0 1.25rem;
 }
 
+/* Shiki's blocks in Markdown look like the home page's: ink, square. */
+.doc pre.astro-code {
+  background: var(--color-ink) !important;
+  border: 0;
+  border-radius: 0;
+}
+
+/* github-dark comments (#6A737D) are 3.4:1 on ink; this grey is 5.7:1. */
+.doc .astro-code span[style*='#6A737D' i] {
+  color: #8b949e !important;
+}
+
 :where(.doc pre code) {
   background: transparent;
   border: 0;
@@ -140,26 +153,29 @@
   font-size: inherit;
 }
 
-.doc table {
+.doc table:not(.not-prose *) {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0 2rem;
   font-size: 0.9rem;
 }
 
-.doc thead {
+.doc thead:not(.not-prose *) {
   border-bottom: 1px solid var(--color-line);
 }
 
-.doc th,
-.doc td {
+.doc th:not(.not-prose *),
+.doc td:not(.not-prose *) {
   text-align: left;
   padding: 0.6rem 0.75rem;
   border-bottom: 1px solid var(--color-line);
   vertical-align: top;
 }
 
-.doc th {
+.doc th:not(.not-prose *) {
   font-weight: 600;
   color: var(--color-ink-soft);
   text-transform: uppercase;
@@ -167,7 +183,7 @@
   letter-spacing: 0.05em;
 }
 
-.doc tbody tr:hover {
+.doc tbody tr:not(.not-prose *):hover {
   background: var(--color-panel);
 }
 
@@ -185,7 +201,24 @@
   font-style: italic;
 }
 
-/* Component grids escape the 70ch text constraint (e.g. AgentLogo matrix). */
+/* The docs sidebar is a plain list of links, without bullets. */
+.doc aside ul:not(.not-prose *) {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  max-width: none;
+}
+
+.doc aside li:not(.not-prose *) {
+  margin: 0;
+  padding-left: 0;
+}
+
+.doc aside p:not(.not-prose *) {
+  margin: 0 0 0.5rem;
+}
+
+/* Component grids escape the 62ch text constraint (e.g. AgentLogo matrix). */
 .doc .not-prose {
   max-width: none;
   margin: 1.5rem 0 2rem;

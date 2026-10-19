@@ -5,7 +5,7 @@ description: 'How delegation-kit profiles, adapters, keys and review policies wo
 path: '/docs/configuration'
 ---
 
-> Synced from [`docs/user-configuration.md`](https://github.com/matteoscurati/delegation-kit/blob/main/docs/user-configuration.md) in the kit repository. Edit there, not here.
+<!-- Synced from docs/user-configuration.md in the kit repository: edit there, not here. -->
 
 <!-- BEGIN AUTOGEN -->
 

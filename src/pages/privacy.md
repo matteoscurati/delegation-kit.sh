@@ -1,7 +1,7 @@
 ---
 layout: ../layouts/DocLayout.astro
-title: 'Privacy — delegation-kit.sh'
-description: 'Privacy policy for delegation-kit.sh. Cookieless, privacy-first analytics via Cloudflare Web Analytics. No tracking, no advertising, no third parties.'
+title: 'Privacy — delegation-kit'
+description: 'Privacy policy for delegation-kit.sh: cookieless Cloudflare Web Analytics, no ads, no cross-site tracking.'
 path: '/privacy'
 ---
 

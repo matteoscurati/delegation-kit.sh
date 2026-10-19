@@ -10,11 +10,11 @@
     <text x="80" y="316" font-size="64" fill="#10192b">Hard ones to your strong ones.</text>
   </g>
   <g font-family="'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif" fill="#4a5568">
-    <text x="80" y="394" font-size="34">You choose the judge. Your rules pick the model.</text>
+    <text x="80" y="394" font-size="34">Every response says which model answered, and why.</text>
   </g>
   <g font-family="'IBM Plex Mono', ui-monospace, Menlo, monospace" font-size="22" fill="#10192b">
     <rect x="80" y="486" width="620" height="48" fill="none" stroke="#10192b" stroke-width="2"/>
-    <text x="390" y="516" text-anchor="middle" font-size="19">measure → decide → rung → cheapest → forward → disclose</text>
+    <text x="390" y="516" text-anchor="middle" font-size="19">tier → rating → the cheapest model that fits</text>
     <rect x="720" y="486" width="400" height="48" fill="none" stroke="#10192b" stroke-width="2"/>
     <text x="920" y="517" text-anchor="middle">127.0.0.1:4141 · model: auto</text>
   </g>

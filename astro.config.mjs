@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://delegation-kit.sh',
   integrations: [mdx(), sitemap()],
+  redirects: { '/dispatch': '/docs/dispatch/' },
   vite: {
     plugins: [tailwindcss()]
   }
