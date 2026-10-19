@@ -1,12 +1,12 @@
 // The worked example that runs through the home page: three models from three
 // vendors, one per tier, each one a profile the default install ships —
 // GPT-5.6 Luna (small, luna-clerk, through Codex), DeepSeek Flash (mid,
-// deepseek-flash, an API key) and Claude Opus 5 (frontier, opus-reviewer,
-// through Claude Code). Every number comes from src/data/catalog.json at build
+// deepseek-flash, an API key) and Claude Opus 5.5 (frontier, opus-reviewer,
+// through Claude Code; kit 0.27.2 and later). Every number comes from src/data/catalog.json at build
 // time, and `route()` mirrors tiered-v1's `choose()` in the kit
 // (bin/lib/delegation_router_policy.py) for the requests the page shows. The
 // same pool was checked with the kit's own `delegation-router check` and
-// `choose()` on 2026-10-19. If the catalog moves a model to another tier, or
+// `choose()` on 2026-10-19, with opus-reviewer on claude-opus-5-5. If the catalog moves a model to another tier, or
 // a request would land elsewhere, the build fails here instead of publishing
 // copy that no longer matches the router.
 import catalog from '../data/catalog.json';
@@ -69,7 +69,7 @@ function profile(id: string, model: string, name: string, via: string, expected:
 
 export const luna = profile('luna-clerk', 'gpt-5.6-luna', 'GPT-5.6 Luna', 'through Codex', 'small');
 export const flash = profile('deepseek-flash', 'deepseek-flash', 'DeepSeek Flash', 'an API key', 'mid');
-export const opus = profile('opus-reviewer', 'claude-opus-5', 'Claude Opus 5', 'through Claude Code', 'frontier');
+export const opus = profile('opus-reviewer', 'claude-opus-5-5', 'Claude Opus 5.5', 'through Claude Code', 'frontier');
 /** The pool in the order the config lists it; flash is the default and the decider. */
 export const pool = [luna, flash, opus];
 export const fallback = flash;

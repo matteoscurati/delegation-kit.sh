@@ -20,7 +20,7 @@ the home page.
   through a CLI (Claude, Codex, GLM, Kimi, Grok).
 - The steps below use three models the install already knows, one per
   [tier](/#how): GPT-5.6 Luna through Codex, DeepSeek Flash with an API key,
-  and Claude Opus 5 through Claude Code. Use the ones you have instead.
+  and Claude Opus 5.5 through Claude Code. Use the ones you have instead.
 
 ## 1. Install
 
@@ -59,7 +59,7 @@ Open `~/.config/delegation-kit/config.json` and add a `"router"` entry next to
 - `decider`: who rates each request. Here, DeepSeek Flash on your API key.
 - `pool`: the models it may choose from, by the names `delegation-config show`
   printed. `luna-clerk` (GPT-5.6 Luna) is small, `deepseek-flash` is mid,
-  `opus-reviewer` (Claude Opus 5) is frontier, the strongest tier.
+  `opus-reviewer` (Claude Opus 5.5) is frontier, the strongest tier.
 - `default`: the model that answers when the decider can't.
 
 Other deciders: a hosted service (Levanto Sage, TypeSafe Jev), your own

@@ -11,9 +11,10 @@ type M = { id: string; tier: string | null; index: number | null };
 const dots = (catalog.models as M[])
   .filter((m): m is M & { index: number } => typeof m.index === 'number')
   .sort((a, b) => b.index - a.index);
+// The frontier example is also the best model of the day: one label for both.
 const best = dots[0];
-if (best.id !== 'claude-opus-5-5' || best.index !== cuts.top)
-  throw new Error('LadderChart: the copy says Opus 5.5 is the best of the day');
+if (best.id !== opus.model || best.index !== cuts.top)
+  throw new Error('LadderChart: the copy says the frontier example, Opus 5.5, is the best of the day');
 
 const under = (cuts.mid - luna.index).toFixed(1);
 const R = 5.5;
@@ -38,9 +39,9 @@ const hd = swarm(X).map((d) => ({ ...d, cx: d.p, cy: AX - 12 - d.level * 12 }));
 const Yv = (i: number) => 490 - i * 7.6;
 const vd = swarm(Yv).map((d) => ({ ...d, cx: 70 + d.level * 12, cy: d.p }));
 
-// The three example models are ringed and named; so is the best of the day.
+// The three example models are ringed and named.
 const pool = new Set([luna.model, flash.model, opus.model]);
-const named = new Set([best.id, luna.model, flash.model, opus.model]);
+const named = pool;
 const at = (list: typeof hd, id: string) => list.find((d) => d.m.id === id)!;
 
 const f = cuts.frontier;
@@ -69,7 +70,7 @@ const css = `
 .lc-d{display:none}
 @media (min-width:1024px){.lc-d{display:block}.lc-m{display:none}}
 `;
-const desc = `Artificial Analysis Intelligence Index scores from 0 to 60 on ${catalog.catalogVersion}, one dot per model. The best score of the day is Opus 5.5 at ${cuts.top}. Within ${tiering.frontier_within} points of it (${f} and up): frontier, the strongest tier. Within ${tiering.mid_within} points (${md} and up): mid. Below: small. The three models in the examples: ${opus.name} (${opus.index}) is frontier, ${flash.name} (${flash.index}) is mid, ${luna.name} (${luna.index}) is small, ${under} below mid.`;
+const desc = `Artificial Analysis Intelligence Index scores from 0 to 60 on ${catalog.catalogVersion}, one dot per model. The best score of the day is ${opus.name} at ${cuts.top}. Within ${tiering.frontier_within} points of it (${f} and up): frontier, the strongest tier. Within ${tiering.mid_within} points (${md} and up): mid. Below: small. The three models in the examples: ${opus.name} is frontier, ${flash.name} (${flash.index}) is mid, ${luna.name} (${luna.index}) is small, ${under} below mid.`;
 const title = (d: (typeof hd)[number]) => `${d.m.id} · ${d.m.index.toFixed(1)} · ${d.m.tier}`;
 ---
 
@@ -100,7 +101,7 @@ const title = (d: (typeof hd)[number]) => `${d.m.id} · ${d.m.index.toFixed(1)} 
         </g>
       ))
     }
-    <path d={`M${X(cuts.top)} ${AX} V84`} class="best"></path>
+    <path d={`M${X(cuts.top)} ${AX} V100`} class="best"></path>
     <g>
       <path d={`M${X(cuts.top)} 226 H${X(f)}`} class="cut"></path>
       <text x={(X(cuts.top) + X(f)) / 2} y="230" class="mid sm halo">{tiering.frontier_within} points</text>
@@ -119,11 +120,9 @@ const title = (d: (typeof hd)[number]) => `${d.m.id} · ${d.m.index.toFixed(1)} 
       ))
     }
     <g>
-      <text x="916" y="60" class="end">Opus 5.5 {best.index.toFixed(1)}</text>
-      <text x="916" y="76" class="end sm">best of the day</text>
-      <path d={`M${at(hd, opus.model).cx} ${at(hd, opus.model).cy - 10} V120`} class="leader"></path>
-      <text x={X(f) + 8} y="100" class="b">{opus.name}</text>
-      <text x={X(f) + 8} y="114" class="sm">{opus.index.toFixed(1)}</text>
+      <text x="916" y="60" class="end b">{opus.name}</text>
+      <text x="916" y="76" class="end sm">{opus.index.toFixed(1)}</text>
+      <text x="916" y="92" class="end sm">best of the day</text>
       <path d={`M${at(hd, flash.model).cx} ${at(hd, flash.model).cy - 10} V80`} class="leader"></path>
       <text x={at(hd, flash.model).cx - 6} y="58" class="b">{flash.name}</text>
       <text x={at(hd, flash.model).cx - 6} y="74" class="sm">{flash.index.toFixed(1)}</text>
@@ -176,9 +175,8 @@ const title = (d: (typeof hd)[number]) => `${d.m.id} · ${d.m.index.toFixed(1)} 
             )
           )
       }
-      <text x="130" y={at(vd, best.id).cy + 4} class="sm">Opus 5.5 {best.index.toFixed(1)}</text>
-      <text x="130" y={at(vd, best.id).cy + 18} class="sm soft">best of the day</text>
       <text x="130" y={at(vd, opus.model).cy + 4} class="b">{opus.name} {opus.index.toFixed(1)}</text>
+      <text x="130" y={at(vd, opus.model).cy + 18} class="sm soft">best of the day</text>
       <text x="130" y={at(vd, flash.model).cy + 4} class="b">{flash.name} {flash.index.toFixed(1)}</text>
       <text x="130" y={at(vd, luna.model).cy + 18} class="b">{luna.name} {luna.index.toFixed(1)}</text>
       <text x="130" y={at(vd, luna.model).cy + 32} class="sm soft">small: {under} below mid</text>
