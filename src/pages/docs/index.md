@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocLayout.astro
 title: 'Getting started — delegation-kit'
-description: 'Install delegation-kit, choose a decider and two of your models, start the router and send your first request.'
+description: 'Install delegation-kit, choose a decider and your models, start the router and send your first request from curl or the OpenAI SDK.'
 path: '/docs'
 ---
 
@@ -18,7 +18,9 @@ the home page.
 - Two or more models you can call. Each is either an API key (DeepSeek, Qwen,
   or any OpenAI-compatible endpoint, local ones included) or a plan you use
   through a CLI (Claude, Codex, GLM, Kimi, Grok).
-- The steps below use a DeepSeek API key and Claude Code signed in to Claude.
+- The steps below use three models the install already knows, one per
+  [tier](/#how): GPT-5.6 Luna through Codex, DeepSeek Flash with an API key,
+  and Claude Opus 5 through Claude Code. Use the ones you have instead.
 
 ## 1. Install
 
@@ -48,22 +50,16 @@ Open `~/.config/delegation-kit/config.json` and add a `"router"` entry next to
 
 ```json
 "router": {
-  "decider": {
-    "kind": "llm",
-    "profile": "deepseek-flash"
-  },
-  "pool": [
-    "deepseek-flash",
-    "opus-reviewer"
-  ],
+  "decider": { "kind": "llm", "profile": "deepseek-flash" },
+  "pool": ["luna-clerk", "deepseek-flash", "opus-reviewer"],
   "default": "deepseek-flash"
 }
 ```
 
 - `decider`: who rates each request. Here, DeepSeek Flash on your API key.
-- `pool`: the models it may choose from. `deepseek-flash` is mid and
-  `opus-reviewer` (Opus 5 on your Claude subscription) is frontier, the
-  strongest [tier](/#how).
+- `pool`: the models it may choose from, by the names `delegation-config show`
+  printed. `luna-clerk` (GPT-5.6 Luna) is small, `deepseek-flash` is mid,
+  `opus-reviewer` (Claude Opus 5) is frontier, the strongest tier.
 - `default`: the model that answers when the decider can't.
 
 Other deciders: a hosted service (Levanto Sage, TypeSafe Jev), your own
@@ -92,24 +88,37 @@ curl -si 127.0.0.1:4141/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'
 ```
 
-From code, point any OpenAI SDK at `http://127.0.0.1:4141/v1` with
-`model="auto"`. The API key you pass is ignored; each model uses its own.
+From your app, any OpenAI SDK works. Point it at the router and ask for
+`"auto"`; the API key you pass is ignored, because each model uses its own:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="http://127.0.0.1:4141/v1", api_key="unused")
+reply = client.chat.completions.create(
+    model="auto",
+    messages=[{"role": "user", "content": "Rename foo to bar in utils.py"}],
+)
+```
 
 ## 6. Read why
 
 The response headers name the choice:
 
 ```
-X-Router-Model: deepseek-flash
-X-Router-Tier: mid
+X-Router-Model: gpt-5.6-luna
+X-Router-Tier: small
 X-Router-Difficulty: 1.0
 ```
 
 `X-Router-Difficulty` is the decider's rating, 0 to 4. The `router` field in
 the body lists the reasons and what each model would cost.
-Here, a request rated 3 or 4, or a very long one, goes to opus-reviewer
-unless it carries tools, images or JSON mode; everything else goes to
-deepseek-flash.
+
+With these three models, an easy request goes to `luna-clerk`, a medium one
+or one with math to `deepseek-flash`, and a hard or very long one to
+`opus-reviewer`. A request with tools, images or JSON mode always goes to
+`deepseek-flash`: the other two answer through their CLIs, which can't take
+them.
 
 ## Next
 

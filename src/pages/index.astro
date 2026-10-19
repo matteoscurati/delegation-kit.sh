@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
-import HeroResponse from '../components/HeroResponse.astro';
-import LadderStepper from '../components/LadderStepper.astro';
+import ExampleTable from '../components/ExampleTable.astro';
 import LadderChart from '../components/LadderChart.astro';
-import { glm, opus, priceTag, catalogVersion } from '../lib/example-pool';
+import { luna, flash, opus, pool, fallback, catalogVersion } from '../lib/example-pool';
 
 const promises = [
   'Runs on your machine, picks only from your models, sends each request once: no retry.',
@@ -12,43 +11,108 @@ const promises = [
   'No request log; the optional decision log never stores prompts.'
 ];
 
+const models = `${luna.name} (${luna.via}), ${flash.name} (${flash.via}) and ${opus.name} (${opus.via})`;
+
+const config = `"router": {
+  "decider": { "kind": "llm", "profile": "${flash.id}" },
+  "pool": [${pool.map((p) => `"${p.id}"`).join(', ')}],
+  "default": "${fallback.id}"
+}`;
+
+const app = `from openai import OpenAI
+
+client = OpenAI(base_url="http://127.0.0.1:4141/v1", api_key="unused")
+reply = client.chat.completions.create(
+    model="auto",
+    messages=[{"role": "user", "content": "Rename foo to bar in utils.py"}],
+)`;
+
 const link = 'underline underline-offset-4 text-[var(--color-ink)]';
 const step = 'border-t border-[var(--color-line)] pt-4';
 const stepNum = 'font-mono text-[var(--color-ink-soft)] text-sm';
 const stepTitle = 'text-xl mt-2 mb-2 leading-tight';
+const useRow = 'border-t border-[var(--color-line)] pt-5 grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-10';
 ---
 
 <BaseLayout path="/">
   <!-- Hero -->
-  <section class="pt-10 pb-14 md:pt-16 md:pb-20">
+  <section class="pt-10 pb-14 md:pt-16 md:pb-16">
     <p class="eyebrow mb-6">A model router on your own machine</p>
     <h1 class="text-[2.6rem] md:text-[3.4rem] xl:text-[3.9rem] [text-wrap:balance]">
       <span class="lg:block">Easy requests go to your cheap models.</span>
       <span class="lg:block">Hard ones go to your strong ones.</span>
     </h1>
-    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
-      <div class="min-w-0">
-        <p class="max-w-xl text-lg md:text-xl text-[var(--color-ink-soft)]">
-          A decider you pick, usually one of your cheap models, rates how hard each request is. The
-          cheapest of your models strong enough for it answers, and the response says which one, and why.
-        </p>
-        <div class="mt-8 max-w-md">
-          <CodeBlock
-            label="The only change in your client"
-            code={`base_url = "http://127.0.0.1:4141/v1"
-model    = "auto"`}
-          />
-          <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
-            Works with any OpenAI chat client.
+    <p class="mt-8 max-w-2xl text-lg md:text-xl text-[var(--color-ink-soft)]">
+      Your app sends its requests to delegation-kit instead of to one provider. A decider you pick rates
+      how hard each request is, and the cheapest of your models that can handle it answers. Every answer
+      says which model wrote it, and why.
+    </p>
+    <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <a href="/docs/" class="btn px-4 py-2">Get started →</a>
+      <a href="#use" class={link}>How you use it ↓</a>
+    </p>
+    <div class="mt-12">
+      <ExampleTable
+        count={3}
+        caption={`Three requests sent with "model": "auto", and three of your models: ${models}. Use the ones you have.`}
+      />
+    </div>
+  </section>
+
+  <!-- How you use it -->
+  <section id="use" class="rule py-14 scroll-mt-4">
+    <h2 class="text-3xl md:text-4xl mb-3">How you use it</h2>
+    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
+      Three steps. In your app, only the address and the model name change.
+    </p>
+    <ol role="list" class="grid gap-10">
+      <li class={useRow}>
+        <div>
+          <span class={stepNum} aria-hidden="true">1</span>
+          <h3 class={stepTitle}>Install it</h3>
+          <p class="text-[var(--color-ink-soft)]">
+            On macOS, with Node.js, jq, git and python3. It sets up the models it knows (Claude and GPT
+            through Claude Code and Codex, DeepSeek, Qwen, GLM, Kimi, Grok) and asks for the API keys you
+            have. <a href="/docs/configuration/#adding-a-model" class={link}>Any other model</a> with an
+            OpenAI-compatible API can be added, a local one too.
           </p>
         </div>
-        <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-          <a href="/docs/" class="btn px-4 py-2">Get started →</a>
-          <a href="#how" class={link}>How it picks ↓</a>
-        </p>
-      </div>
-      <HeroResponse />
-    </div>
+        <CodeBlock
+          label="Terminal"
+          code={`npx delegation-kit
+delegation-config show  # your models`}
+        />
+      </li>
+      <li class={useRow}>
+        <div>
+          <span class={stepNum} aria-hidden="true">2</span>
+          <h3 class={stepTitle}>Choose your models and the decider</h3>
+          <p class="text-[var(--color-ink-soft)]">
+            Name the models the router may pick from, the decider that rates each request, and the model
+            that answers when the decider can't. Here: the three from the table above.
+          </p>
+        </div>
+        <CodeBlock lang="json" label="~/.config/delegation-kit/config.json, next to “profiles”" code={config} />
+      </li>
+      <li class={useRow}>
+        <div>
+          <span class={stepNum} aria-hidden="true">3</span>
+          <h3 class={stepTitle}>Start it and point your app at it</h3>
+          <p class="text-[var(--color-ink-soft)]">
+            Anything that talks to the OpenAI API works: set the base URL to the router and the model to
+            <code class="font-mono text-[0.9em]">"auto"</code>. The answer comes back as usual; its
+            <code class="font-mono text-[0.9em]">X-Router-Model</code> header names the model.
+          </p>
+        </div>
+        <div class="grid gap-4 min-w-0">
+          <CodeBlock label="Terminal" code="delegation-router serve" />
+          <CodeBlock lang="python" label="Your app (Python, OpenAI SDK)" code={app} />
+        </div>
+      </li>
+    </ol>
+    <p class="mt-10">
+      <a href="/docs/" class="btn px-4 py-2">Get started, step by step →</a>
+    </p>
   </section>
 
   <!-- How it picks a model -->
@@ -66,11 +130,6 @@ model    = "auto"`}
       <li class={step}>
         <span class={stepNum} aria-hidden="true">2</span>
         <h3 class={stepTitle}>Your decider rates the request</h3>
-        <p
-          class="inline-block mb-3 bg-white border border-[var(--color-line)] border-l-4 border-l-[var(--color-explicit)] px-3 py-1 font-mono text-sm"
-        >
-          1 of 4 · code
-        </p>
         <p class="text-[var(--color-ink-soft)]">
           It reads an excerpt, never your keys or your list of models, and answers: how hard is this, 0
           to 4? Code, math, rare knowledge?
@@ -81,8 +140,7 @@ model    = "auto"`}
         <h3 class={stepTitle}>The cheapest model on that tier answers</h3>
         <p class="text-[var(--color-ink-soft)]">
           0–1 needs small, 2 mid, 3–4 frontier; math or rare knowledge, mid at least. None of yours on
-          that tier? The next one up. Code: the cheapest model good at code, on that tier or above. No
-          rating? Your default model answers.
+          that tier? The next one up. No rating? Your default model answers.
         </p>
       </li>
     </ol>
@@ -91,20 +149,18 @@ model    = "auto"`}
       <p class="eyebrow mb-4">Scores on {catalogVersion}</p>
       <LadderChart />
       <p class="mt-4 max-w-2xl text-[var(--color-ink-soft)]">
-        Ringed: the models in the examples. Refresh the scores with your own Artificial Analysis key, or
-        set any model's tier yourself.
+        Ringed: the three models in the examples. Refresh the scores with your own Artificial Analysis
+        key, or set any model's tier yourself.
       </p>
     </div>
-  </section>
 
-  <!-- Which model answers? -->
-  <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-3">Which model answers?</h2>
-    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
-      Your two models: glm ({glm.name}, {glm.tier}, ~{priceTag(glm)} a request) and opus ({opus.name},
-      {opus.tier}, ~{priceTag(opus)}).
-    </p>
-    <LadderStepper />
+    <div class="mt-14">
+      <h3 class="text-2xl mb-6">With your three models</h3>
+      <ExampleTable
+        why
+        caption="Costs are the router's estimates at API prices, used to compare models; a model you reach through a subscription is billed by your plan."
+      />
+    </div>
   </section>
 
   <!-- What it promises · What it costs -->
@@ -123,49 +179,7 @@ model    = "auto"`}
         </p>
       </div>
     </div>
-  </section>
-
-  <!-- Set it up -->
-  <section id="install" class="rule py-14 scroll-mt-4">
-    <h2 class="text-3xl md:text-4xl mb-8">Set it up</h2>
-    <div class="grid gap-8 lg:grid-cols-2">
-      <CodeBlock
-        label="1 · Install, then list your models"
-        code={`# macOS, with Node.js, jq, git and python3
-npx delegation-kit
-delegation-config show`}
-      />
-      <div class="min-w-0">
-        <CodeBlock
-          lang="json"
-          label="2 · Add to ~/.config/delegation-kit/config.json"
-          code={`"router": {
-  "decider": {
-    "kind": "llm",
-    "profile": "deepseek-flash"
-  },
-  "pool": [
-    "deepseek-flash",
-    "opus-reviewer"
-  ],
-  "default": "deepseek-flash"
-}`}
-        />
-        <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
-          Your models can be API keys, local endpoints or Claude, Codex, GLM, Kimi, Grok plans. Both ship with the install.
-        </p>
-      </div>
-      <div class="min-w-0 lg:col-span-2">
-        <CodeBlock
-          label="3 · Start it; send a request from another terminal"
-          code={`delegation-router serve
-curl -si 127.0.0.1:4141/v1/chat/completions \\
-  -H 'Content-Type: application/json' \\
-  -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'`}
-        />
-      </div>
-    </div>
-    <p class="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+    <p class="mt-12 flex flex-wrap gap-x-6 gap-y-2">
       <a href="/docs/" class={link}>Get started →</a>
       <a href="/docs/router/" class={link}>Router reference →</a>
     </p>
