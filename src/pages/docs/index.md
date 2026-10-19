@@ -1,149 +1,118 @@
 ---
 layout: ../../layouts/DocLayout.astro
 title: 'Getting started — delegation-kit'
-description: 'Install delegation-kit, name the decision model and the profiles it governs, check and serve the router, and send it your first request.'
+description: 'Install delegation-kit, choose a decider and two of your models, start the router and send your first request.'
 path: '/docs'
 ---
 
 # Getting started
 
-Easy requests go to your cheap models; hard ones go to your strong ones.
-delegation-kit installs `delegation-router`, an OpenAI-compatible endpoint on
-your own machine: send it `"model": "auto"`, and a decision model you choose
-rates how much capability the request needs, from 0 to 4. It sees an excerpt,
-never your keys or your model names, and it cannot name a model. A public
-index places each of your models on a rung, the rating sets the lowest rung
-the request may use, and a published policy picks one model from your pool on
-price. You choose the judge; your rules pick the model; every response says
-why.
+delegation-kit is a model router that runs on your own machine: each request
+goes to the cheapest of your models that is strong enough for it, and the
+response says which model answered and why. [How it picks a model](/#how) is on
+the home page.
 
-The kit also installs what the same profiles are dispatched through by hand:
-a personal configuration that describes each model once, one dispatcher for
-every adapter, the six provider runners with their own sandboxes, Claude Code
-and Codex profiles, skills, and the always-loaded user-direction guard. Hand
-dispatch never starts on its own; the router routes only what you send it
-after you start `serve`.
+## What you need
 
-## Requirements
+- macOS with `jq`, `git` and `python3`.
+- Two or more models you can call. Each is either an API key (DeepSeek, Qwen,
+  or any OpenAI-compatible endpoint, local ones included) or a plan you use
+  through its own CLI (Claude, Codex, GLM, Kimi, Grok).
+- The steps below use a DeepSeek API key and Claude Code signed in to Claude.
 
-macOS, `jq`, `git`, `python3`. Claude Code and/or Codex for the native
-adapters. Provider runners need their own credentials: the installer asks
-once, stores keys mode 600, and never copies them silently from another tool.
-
-## Install
-
-The shortest path is the npm installer. It clones the tagged release, verifies
-it, and runs the same `install.sh` a clone would; nothing is copied into
-`node_modules`:
+## 1. Install
 
 ```sh
-npx delegation-kit           # interactive: asks for external keys once
-npx delegation-kit --claude-only
-npx delegation-kit --codex-only
-npx delegation-kit --skip-doctor
+npx delegation-kit
 ```
 
-From a clone, which is also where `doctor.sh` compares the installed kit with
-the sources:
+It fetches the release, installs the commands in `~/.local/bin`, asks for
+the API keys it knows (Z.AI, DeepSeek, Qwen; press Enter to skip one) and then
+checks the install. Keys are saved in files only you can read.
+
+## 2. See your models
 
 ```sh
-git clone https://github.com/matteoscurati/delegation-kit
-cd delegation-kit
-./install.sh        # or --claude-only / --codex-only
-./doctor.sh         # verify everything is wired (add --ping for a live round-trip)
-```
-
-Claude-only, from the plugin marketplace:
-
-```
-/plugin marketplace add matteoscurati/delegation-kit
-/plugin install delegation-kit
-```
-
-`./uninstall.sh` (or `npx delegation-kit --uninstall`) removes every installed
-file, link and guarded block, and keeps your keys, your refreshed catalog and
-the router's receipts beside the data home; the next install restores them.
-
-## What the installer sets up
-
-- **A personal configuration** at
-  `${XDG_CONFIG_HOME:-$HOME/.config}/delegation-kit/config.json` (override with
-  `DELEGATION_CONFIG_FILE`). A fresh install gets the default preset: one
-  profile per model the kit knows, review `optional`. An existing file is never
-  overwritten.
-- **Commands** on `~/.local/bin`: `delegation-router`, `delegation-config`,
-  `delegation-route`, `delegation-run`, `delegation-openai-compatible`, the six
-  provider runners and `delegation-patch-verify`.
-- **The catalog** and the decider prompt under the data home, beside the key
-  files.
-
-`./doctor.sh` answers "is this machine wired": configuration valid, commands
-on PATH, runtimes reachable, and — first in its router section — which
-decider governs which pool and which catalog is in effect.
-
-## Your first routed request
-
-```sh
-# 1. The profiles you can call — one per model, keys by variable name only
 delegation-config show
+```
 
-# 2. Add a router block: the decider first, then the profiles it governs
-#    "router": {"decider": {"kind": "llm", "profile": "glm"},
-#               "pool": ["glm", "opus"],
-#               "default": "glm"}
+Each entry is a *profile*: a short name for one model and how to reach it.
+The install creates a set of them, some models more than once. You use these
+names in the next step.
 
-# 3. Check — no network: the decider, the pool with its rungs and prices
+## 3. Choose the decider and the models
+
+Open `~/.config/delegation-kit/config.json` and add a `"router"` entry next to
+`"profiles"`:
+
+```json
+"router": {
+  "decider": {"kind": "llm", "profile": "deepseek-flash"},
+  "pool": ["deepseek-flash", "opus-reviewer"],
+  "default": "deepseek-flash"
+}
+```
+
+- `decider`: who rates each request. Here, DeepSeek Flash on your API key.
+- `pool`: the models it may choose from. `deepseek-flash` is mid;
+  `opus-reviewer` is Opus 5 on your Claude subscription, frontier.
+- `default`: the model that answers when the decider can't.
+
+Other deciders: a hosted service (Levanto Sage, TypeSafe Jev), your own
+Dipylon service, a local classifier, or `none`, which always uses the default.
+See [Deciders](/docs/router#deciders).
+
+## 4. Check it
+
+```sh
 delegation-router check
+```
 
-# 4. Ask for a recommendation on one prompt — one call to the decider, no dispatch
-delegation-router decide --prompt-file /tmp/task.txt --json
+It prints the decider and each model with its tier, without calling anything.
 
-# 5. Serve, then send "auto" from any OpenAI SDK with base_url http://127.0.0.1:4141/v1
+## 5. Start the router and send a request
+
+```sh
 delegation-router serve
+```
+
+In another terminal:
+
+```sh
 curl -si 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' \
   -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'
 ```
 
-`glm` stands for an HTTP profile, GLM 5.3 Flash (mid rung) on an API key;
-`opus` for a `claude-code` profile, Opus 5.5 (frontier rung) on your Claude
-subscription, which answers through its CLI. The names are yours. With them,
-the rename above goes to glm: the decider rates it 1 with code, the floor is
-small, and glm is the cheapest code-capable model at small or above. A race
-condition rated 3 goes to opus, the only model on frontier. The
-[home page](/#how) walks through both.
+From code, point any OpenAI SDK at `http://127.0.0.1:4141/v1` with
+`model="auto"`. The API key you pass is ignored; each model uses its own.
 
-The response carries `X-Router-*` headers and a `router` object: the signals,
-the reasons, the candidates with their estimated cost, usage, what the
-provider reported. The decider can be one of your cheap profiles, Levanto
-Sage, TypeSafe Jev, your own Dipylon, a local classifier, or `none` (rules
-only: every request goes to the default, the baseline `eval` measures the
-others against). The ladder the policy climbs comes from the Artificial
-Analysis index, and `delegation-router catalog refresh` rewrites it with your
-own key. The [router page](/docs/router) has every field, the policy, the
-error codes and the evaluation harness.
+## 6. Read why
 
-## Picking by hand
+The response headers name the choice:
 
-The same profiles can be dispatched one at a time, explicitly, from Claude
-Code or Codex:
-
-```sh
-delegation-route resolve --lane builder --json                      # read-only: choices, blocked
-delegation-route resolve --lane builder --selected-profile terra-builder --json
-delegation-run --profile terra-builder --lane builder \
-  --prompt-file /tmp/task.txt --output /tmp/result.txt --workdir /path/to/repo
+```
+X-Router-Model: deepseek-flash
+X-Router-Tier: mid
+X-Router-Difficulty: 1.0
 ```
 
-`delegation-run` writes the output, a metrics file and a receipt with the
-requested versus provider-reported model and the review status. Text adapters
-return a patch the lead applies and tests; retries and reviews are dispatches
-too, each with its own approval. The [dispatch page](/dispatch) resolves every
-role against the default preset.
+`X-Router-Difficulty` is the decider's rating, 0 to 4. The `router` field in
+the body lists the reasons and the estimated cost of each model it considered.
+Here, a request rated 3 or 4 (or a very long one) goes to opus-reviewer;
+everything else goes to deepseek-flash.
 
-## Where next
+## Next
 
-- [The router](/docs/router) — decider, pool, policy, catalog, disclosure, eval.
-- [Personal configuration](/docs/configuration) — profiles, adapters, keys and environment, adding a model, review, upgrading.
-- [External executors](/docs/executors) — adapters, permission classes, the patch verifier.
-- [Compatibility](/docs/compatibility) — the verified snapshot of the current release.
-- [Changelog](/changelog).
+- [Router reference](/docs/router): every field, the deciders, the errors, `eval`.
+- [Add a model](/docs/configuration#adding-a-model): your own key or endpoint.
+- [Run a model by hand](/docs/dispatch): one task to one model you name, from
+  Claude Code or Codex.
+
+## Other ways to install
+
+- `npx delegation-kit --claude-only` skips the Codex setup; `--codex-only`
+  skips the Claude Code setup.
+- From a clone: `git clone https://github.com/matteoscurati/delegation-kit`,
+  then `./install.sh`; `./doctor.sh` checks the install.
+- To remove it, run `./uninstall.sh` from a clone. Your keys are kept for the
+  next install.
