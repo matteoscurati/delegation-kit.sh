@@ -5,11 +5,11 @@
 // table, so a screen reader reads it as one; below md each row stacks and
 // every cell carries its own label.
 //
-// With `rotate`, the three rows cycle together through four sets of three
-// models from different vendors (example-pool.ts checks that the rule sends
-// each request to the model shown): CSS only, one keyframe set shared by the
-// rows, so every frame is one consistent set. Reduced motion shows the first
-// set, still; a screen reader gets each row's models as text.
+// With `rotate`, the three rows cycle together through four sets of models
+// from different vendors (example-pool.ts checks that the rule sends each
+// request to the model shown, tier included): CSS only, one keyframe set
+// shared by the rows, so every frame is one consistent set. Reduced motion
+// shows the first set, still; a screen reader gets each row's models as text.
 import { examples, rating, priceTag, heroOptions } from '../lib/example-pool';
 
 interface Props {
@@ -63,11 +63,11 @@ const css = `
 .xt .tier-mid{border-color:var(--color-ink-soft);color:var(--color-ink)}
 .xt .tier-frontier{background:var(--color-ink);border-color:var(--color-ink);color:var(--color-paper)}
 .xt .lbl{display:none}
-.xt .rot{--h:2.75rem;display:inline-block;height:var(--h);overflow:hidden;vertical-align:top;margin-left:.5rem}
-.xt .tier-fixed{margin-left:0;min-width:4.9rem;text-align:center}
+.xt .rot{--h:2.75rem;display:inline-block;height:var(--h);overflow:hidden;vertical-align:top}
+.xt .tier-fixed{margin:0 .5rem 0 0;min-width:4.9rem;text-align:center}
 .xt .rot-list{display:flex;flex-direction:column}
 .xt .rot-item{height:var(--h);display:flex;flex-direction:column;justify-content:flex-start;white-space:nowrap}
-.xt .rot .cost{margin:.1rem 0 0}
+.xt .rot .cost{margin:.1rem 0 0 5.4rem}
 ${motion}
 @media (prefers-reduced-motion:reduce){.xt .rot-list{animation:none!important}}
 @media (max-width:767px){
@@ -77,8 +77,8 @@ ${motion}
 .xt td,.xt tr:last-child td{display:block;border:0;padding:.15rem 0}
 .xt .lbl{display:inline-block;min-width:6.5rem;font-family:var(--font-mono);font-size:.72rem;color:var(--color-ink-soft)}
 .xt .cost{margin:.1rem 0 0 6.5rem}
-.xt .rot .cost{margin:.1rem 0 0}
-.xt .rot{display:block;margin:.3rem 0 0 6.5rem}
+.xt .rot .cost{margin:.1rem 0 0 5.4rem}
+.xt .rot{display:block;margin:.35rem 0 0}
 }
 `;
 ---
@@ -107,12 +107,14 @@ ${motion}
             {rotate ? (
               <td>
                 <span class="lbl">Answered by</span>
-                <span class={`tier tier-fixed tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
                 <span class="rot" aria-hidden="true">
                   <span class="rot-list">
                     {[...x.options, x.options[0]].map((o) => (
                       <span class="rot-item">
-                        <span class="who">{o.name}</span>
+                        <span>
+                          <span class={`tier tier-fixed tier-${o.tier}`}>{o.tier}</span>
+                          <span class="who">{o.name}</span>
+                        </span>
                         <span class="cost">~{o.cost} a request</span>
                       </span>
                     ))}
