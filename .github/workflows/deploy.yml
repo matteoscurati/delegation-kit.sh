@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
       # Fail first, and say why, when the repository cannot deploy at all.
       - name: Check the Cloudflare secrets
