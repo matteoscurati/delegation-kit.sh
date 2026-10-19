@@ -15,6 +15,7 @@ export type Tier = 'small' | 'mid' | 'frontier';
 
 type CatalogModel = {
   id: string;
+  name: string | null;
   tier: string | null;
   index: number | null;
   source: string;
@@ -125,13 +126,19 @@ function example(request: string, v: Verdict, expect: Profile, why: string): Exa
   return { request, v, expect, why, r };
 }
 
-/** The requests the page follows, easiest first; the hero shows the first three. */
+/**
+ * The requests the page follows. The first three need one tier each and no
+ * tag that looks across tiers (`code` picks the cheapest code-capable model
+ * on the tier or above), so with one model per tier each goes to that
+ * tier's model whichever it is: the hero cycles through the catalog's models
+ * on each tier for them.
+ */
 export const examples: Example[] = [
   example(
-    'Rename foo to bar in utils.py',
-    { difficulty: 1, tags: ['code'], confidence: 0.8 },
+    'Translate this paragraph into French',
+    { difficulty: 1, tags: [], confidence: 0.8 },
     luna,
-    'Easy: small is enough, and Luna is your cheapest model.'
+    'Easy: small is enough, and Luna is your small model.'
   ),
   example(
     'Summarise this contract',
@@ -144,6 +151,12 @@ export const examples: Example[] = [
     { difficulty: 3, tags: ['code'], confidence: 0.8 },
     opus,
     'Hard: only frontier will do.'
+  ),
+  example(
+    'Rename foo to bar in utils.py',
+    { difficulty: 1, tags: ['code'], confidence: 0.8 },
+    luna,
+    'Easy, and code: the cheapest model good at code, on small or above.'
   ),
   example(
     'What is 17% of 2,340?',
@@ -162,3 +175,34 @@ export const examples: Example[] = [
 /** "1 of 4 · code", or "no rating". */
 export const rating = (v: Verdict) =>
   v.failed ? 'no rating' : [`${v.difficulty} of 4`, ...v.tags].join(' · ');
+
+/**
+ * Older models the catalog still scores, left out of the rotation so it shows
+ * the current one of each family.
+ */
+const SUPERSEDED = new Set(['claude-opus-5', 'claude-fable-5', 'claude-sonnet-5', 'gpt-5.5', 'grok-4.6']);
+/** The site's spelling where the board's differs. */
+const DISPLAY: Record<string, string> = {
+  'deepseek-flash': 'DeepSeek Flash',
+  'glm-5.3-flash': 'GLM 5.3 Flash',
+  'glm-5.2': 'GLM 5.2',
+  'minimax-m3': 'MiniMax M3'
+};
+
+export type Option = { name: string; cost: string };
+
+/**
+ * Every model the catalog scores on `tier`, as a price tag for the page's
+ * request, the example's own model first, then by score.
+ */
+export function tierOptions(first: Profile): Option[] {
+  const rows = (catalog.models as CatalogModel[])
+    .filter((m) => m.tier === first.tier && m.index !== null && m.price && m.id !== first.model && !SUPERSEDED.has(m.id))
+    .sort((a, b) => (b.index ?? 0) - (a.index ?? 0));
+  const tag = (price: { in: number; out: number }) =>
+    usd((price.in * REQUEST_TOKENS + price.out * ANSWER_TOKENS) / 1e6);
+  return [
+    { name: first.name, cost: priceTag(first) },
+    ...rows.map((m) => ({ name: DISPLAY[m.id] ?? m.name ?? m.id, cost: tag(m.price!) }))
+  ];
+}

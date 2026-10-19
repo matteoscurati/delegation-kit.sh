@@ -4,17 +4,56 @@
 // example-pool.ts) and checked there against the kit's own policy. A real
 // table, so a screen reader reads it as one; below md each row stacks and
 // every cell carries its own label.
-import { examples, rating, priceTag } from '../lib/example-pool';
+//
+// With `rotate`, the answering model cycles through every model the catalog
+// scores on that tier, the example's own first: CSS only, one keyframe set
+// per row (each tier has its own count), rows staggered so they never switch
+// together. Reduced motion shows the first model, still; a screen reader
+// gets the whole list as text.
+import { examples, rating, priceTag, tierOptions } from '../lib/example-pool';
 
 interface Props {
-  /** How many of the examples, easiest first. */
+  /** How many of the examples, in their order. */
   count?: number;
   /** Add the one-line reason for each choice. */
   why?: boolean;
+  /** Cycle the answering model through the catalog's models on its tier. */
+  rotate?: boolean;
   caption: string;
 }
-const { count = examples.length, why = false, caption } = Astro.props;
-const rows = examples.slice(0, count);
+const { count = examples.length, why = false, rotate = false, caption } = Astro.props;
+const rows = examples.slice(0, count).map((x, i) => ({
+  ...x,
+  options: rotate ? tierOptions(x.r.chosen) : [],
+  anim: `xr-${i}`
+}));
+
+/** Seconds each model stays, of which the slide to the next takes SLIDE. */
+const STEP = 2.6;
+const SLIDE = 0.45;
+const STAGGER = 0.9;
+const pct = (n: number) => `${n.toFixed(3)}%`;
+/** Hold each model, slide to the next; the list repeats the first at the end, so the loop is seamless. */
+function keyframes(name: string, n: number) {
+  const total = n * STEP;
+  const at = (k: number) => `transform:translateY(calc(var(--h) * -${k}))`;
+  const frames = [`0%{${at(0)}}`];
+  for (let k = 0; k < n; k++) {
+    frames.push(`${pct(((k * STEP + STEP - SLIDE) / total) * 100)}{${at(k)}}`);
+    frames.push(`${pct((((k + 1) * STEP) / total) * 100)}{${at(k + 1)}}`);
+  }
+  return `@keyframes ${name}{${frames.join('')}}`;
+}
+
+const motion = rotate
+  ? rows
+      .filter((x) => x.options.length > 1)
+      .map(
+        (x, i) =>
+          `${keyframes(x.anim, x.options.length)}.xt .${x.anim}{animation:${x.anim} ${(x.options.length * STEP).toFixed(2)}s cubic-bezier(.65,0,.35,1) ${(i * STAGGER).toFixed(2)}s infinite}`
+      )
+      .join('')
+  : '';
 
 const css = `
 .xt{width:100%;border-collapse:collapse}
@@ -30,6 +69,13 @@ const css = `
 .xt .tier-mid{border-color:var(--color-ink-soft);color:var(--color-ink)}
 .xt .tier-frontier{background:var(--color-ink);border-color:var(--color-ink);color:var(--color-paper)}
 .xt .lbl{display:none}
+.xt .rot{--h:2.75rem;display:inline-block;height:var(--h);overflow:hidden;vertical-align:top;margin-left:.5rem}
+.xt .tier-fixed{margin-left:0;min-width:4.9rem;text-align:center}
+.xt .rot-list{display:flex;flex-direction:column}
+.xt .rot-item{height:var(--h);display:flex;flex-direction:column;justify-content:flex-start;white-space:nowrap}
+.xt .rot .cost{margin:.1rem 0 0}
+${motion}
+@media (prefers-reduced-motion:reduce){.xt .rot-list{animation:none!important}}
 @media (max-width:767px){
 .xt thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .xt tr{display:block;border-top:1px solid var(--color-line);padding:.75rem 0}
@@ -37,6 +83,8 @@ const css = `
 .xt td,.xt tr:last-child td{display:block;border:0;padding:.15rem 0}
 .xt .lbl{display:inline-block;min-width:6.5rem;font-family:var(--font-mono);font-size:.72rem;color:var(--color-ink-soft)}
 .xt .cost{margin:.1rem 0 0 6.5rem}
+.xt .rot .cost{margin:.1rem 0 0}
+.xt .rot{display:block;margin:.3rem 0 0 6.5rem}
 }
 `;
 ---
@@ -62,12 +110,32 @@ const css = `
               <span class="lbl">Rated</span>
               {rating(x.v)}
             </td>
-            <td>
-              <span class="lbl">Answered by</span>
-              <span class="who">{x.r.chosen.name}</span>
-              <span class={`tier tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
-              <span class="cost">~{priceTag(x.r.chosen)} a request</span>
-            </td>
+            {rotate ? (
+              <td>
+                <span class="lbl">Answered by</span>
+                <span class={`tier tier-fixed tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
+                <span class="rot" aria-hidden="true">
+                  <span class={`rot-list ${x.anim}`}>
+                    {[...x.options, x.options[0]].map((o) => (
+                      <span class="rot-item">
+                        <span class="who">{o.name}</span>
+                        <span class="cost">~{o.cost} a request</span>
+                      </span>
+                    ))}
+                  </span>
+                </span>
+                <span class="sr-only">
+                  your {x.r.chosen.tier} model, for example {x.options.map((o) => o.name).join(', ')}
+                </span>
+              </td>
+            ) : (
+              <td>
+                <span class="lbl">Answered by</span>
+                <span class="who">{x.r.chosen.name}</span>
+                <span class={`tier tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
+                <span class="cost">~{priceTag(x.r.chosen)} a request</span>
+              </td>
+            )}
             {why && (
               <td class="why">
                 <span class="lbl">Why</span>
