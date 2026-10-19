@@ -184,7 +184,7 @@ const DISPLAY: Record<string, string> = {
   'deepseek-flash': 'DeepSeek Flash',
   'glm-5.3-flash': 'GLM 5.3 Flash',
   'glm-5.2': 'GLM 5.2',
-  'minimax-m3': 'MiniMax M3'
+  'minimax-m3.1-flash': 'MiniMax M3.1 Flash'
 };
 
 /** A catalog model as a profile of the page's, for the hero's other sets. */
@@ -205,31 +205,46 @@ function catalogProfile(model: string): Profile {
 }
 
 /**
- * The hero shows its three requests against four sets of three models from
- * different vendors, the example's own first. Each set is chosen so that the
- * rule sends the easy request to its cheapest model, the medium one to its
- * mid model and the hard one to its frontier model; the build checks it.
+ * The hero shows its three requests against four sets of your models from
+ * different vendors, the example's own first. Each set lists, for each row,
+ * the model the rule sends that request to; the build checks it. A model can
+ * answer more than one row: MiniMax M3.1 Flash is mid, yet cheaper than any
+ * small model, so it takes the easy request too.
  */
-const SETS: [string, string, string][] = [
-  ['gpt-5.6-luna', 'deepseek-flash', 'claude-opus-5-5'],
-  ['minimax-m3', 'kimi-k3', 'claude-sonnet-5-5'],
-  ['glm-5.2', 'gemini-3.8-flash', 'gpt-6.1-sol'],
-  ['gemini-3.1-pro-preview', 'qwen3.8-max', 'gpt-6-astra']
+const SETS: { models: string[]; answers: [string, string, string] }[] = [
+  {
+    models: ['gpt-5.6-luna', 'deepseek-flash', 'claude-opus-5-5'],
+    answers: ['gpt-5.6-luna', 'deepseek-flash', 'claude-opus-5-5']
+  },
+  {
+    models: ['minimax-m3.1-flash', 'claude-sonnet-5-5'],
+    answers: ['minimax-m3.1-flash', 'minimax-m3.1-flash', 'claude-sonnet-5-5']
+  },
+  {
+    models: ['glm-5.2', 'gemini-3.8-flash', 'gpt-6.1-sol'],
+    answers: ['glm-5.2', 'gemini-3.8-flash', 'gpt-6.1-sol']
+  },
+  {
+    models: ['gemini-3.1-pro-preview', 'qwen3.8-max', 'gpt-6-astra'],
+    answers: ['gemini-3.1-pro-preview', 'qwen3.8-max', 'gpt-6-astra']
+  }
 ];
-const TIERS: Tier[] = ['small', 'mid', 'frontier'];
 
-export type Option = { name: string; cost: string };
+export type Option = { name: string; cost: string; tier: Tier };
 
 /** For each of the hero's rows, the model that answers in each set. */
 export const heroOptions: Option[][] = (() => {
-  const sets = SETS.map((ids, k) => (k === 0 ? [luna, flash, opus] : ids.map(catalogProfile)));
-  sets.forEach((set, k) => {
-    set.forEach((p, i) => {
-      if (p.tier !== TIERS[i]) throw new Error(`example pool: set ${k + 1}: ${p.name} is ${p.tier}, not ${TIERS[i]}`);
-      const r = route(examples[i].v, set, set[1]);
-      if (r.chosen !== p)
-        throw new Error(`example pool: set ${k + 1}: "${examples[i].request}" goes to ${r.chosen.name}, not ${p.name}`);
+  const own = new Map([luna, flash, opus].map((p) => [p.model, p]));
+  const sets = SETS.map(({ models, answers }, k) => {
+    const pool = models.map((id) => own.get(id) ?? catalogProfile(id));
+    return answers.map((id, i) => {
+      const r = route(examples[i].v, pool, pool[0]);
+      if (r.chosen.model !== id)
+        throw new Error(`example pool: set ${k + 1}: "${examples[i].request}" goes to ${r.chosen.name}, not ${id}`);
+      return r.chosen;
     });
   });
-  return [0, 1, 2].map((i) => sets.map((set) => ({ name: set[i].name, cost: priceTag(set[i]) })));
+  return [0, 1, 2].map((i) =>
+    sets.map((answers) => ({ name: answers[i].name, cost: priceTag(answers[i]), tier: answers[i].tier }))
+  );
 })();
