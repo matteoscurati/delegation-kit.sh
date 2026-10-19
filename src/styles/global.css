@@ -23,6 +23,8 @@
   /* The same amber, dark enough (3.5:1) for lines and text on paper. Fills
    * and amber on ink keep --color-explicit. */
   --color-explicit-strong: #b07200;
+  /* Darker again (4.9:1 on paper), for amber text at body sizes. */
+  --color-explicit-text: #8f5d00;
   --color-blocked: #b9382a;
   --color-qualified-soft: #dff1e7;
   --color-explicit-soft: #fbeed2;
@@ -72,9 +74,12 @@ kbd,
   font-size: 0.9em;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* In the base layer, so Tailwind's colour utilities on a link still apply. */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 a:focus-visible,
@@ -111,7 +116,7 @@ summary:focus-visible {
 .status {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -139,7 +144,7 @@ summary:focus-visible {
   background: currentColor;
 }
 .status-compatible {
-  color: var(--color-qualified);
+  color: var(--color-qualified-text);
 }
 .status-unsupported {
   color: var(--color-blocked);

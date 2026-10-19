@@ -102,11 +102,11 @@ const command = (lane: string, family?: string, strictPolicy = false) =>
         </span>
       </div>
       <p class="mt-2 text-[0.8rem] text-[var(--color-ink-soft)]">
-        cross-family: the reviewer must come from a different vendor than the model that wrote the code.
+        cross-family: the reviewer must come from a different model family than the model that wrote the code.
       </p>
     </fieldset>
     <fieldset class="producer min-w-0">
-      <legend class="eyebrow mb-2">Who wrote the code (same vendor excluded)</legend>
+      <legend class="eyebrow mb-2">Who wrote the code (same family excluded)</legend>
       <div class="flex flex-wrap gap-1.5">
         {
           families.map((family) => (

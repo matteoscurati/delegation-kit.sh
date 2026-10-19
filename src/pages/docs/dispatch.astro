@@ -5,6 +5,10 @@ import DocLayout from '../../layouts/DocLayout.astro';
 import LaneResolver from '../../components/LaneResolver.astro';
 import RoutingTable from '../../components/RoutingTable.astro';
 import kit from '../../data/kit.json';
+import table from '../../data/routing-table.json';
+
+// The legend only earns its place when some role is unsupported.
+const anyUnsupported = table.profiles.some((row) => !row.technical_compatibility);
 ---
 
 <DocLayout
@@ -32,18 +36,22 @@ import kit from '../../data/kit.json';
   </div>
 
   <h2>Every role, every model</h2>
-  <p>{kit.profiles} profiles from the default install. The router ignores roles.</p>
+  <p>{kit.profiles} profiles from the default install. The router does not pick by role.</p>
   <div class="not-prose">
-    <p class="flex flex-wrap gap-x-5 gap-y-2 text-[0.75rem] mb-4">
-      <span><span class="status status-compatible">compatible</span> the adapter supports this role</span>
-      <span><span class="status status-unsupported">unsupported</span> it does not; never selectable</span>
-    </p>
+    {
+      anyUnsupported && (
+        <p class="text-[0.75rem] mb-4">
+          <span class="status status-unsupported">unsupported</span> the adapter does not support this role;
+          never selectable
+        </p>
+      )
+    }
     <RoutingTable />
   </div>
 
   <p>
     Each CLI runs in its own sandbox with an identity check, and <code>delegation-patch-verify</code> checks
-    a text model's patch before you apply it. Details: <a href="/docs/executors">Executors</a>,
-    <a href="/docs/configuration">Configuration</a>.
+    a text model's patch before you apply it. Details: <a href="/docs/executors/">Executors</a>,
+    <a href="/docs/configuration/">Configuration</a>.
   </p>
 </DocLayout>

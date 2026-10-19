@@ -1,10 +1,10 @@
 ---
 // The routing table, as `delegation-route table --json` (schema 3) returns it
-// for a fresh default preset. One row per (profile, role): what the adapter
-// supports today is the only thing that decides.
+// for a fresh default preset, grouped one row per profile with the roles it
+// can take. What the adapter supports today is the only thing that decides;
+// a role it does not support is marked in red.
 import table from '../data/routing-table.json';
 import kit from '../data/kit.json';
-import StatusPill from './StatusPill.astro';
 
 type Row = {
   profile: string;
@@ -16,53 +16,58 @@ type Row = {
   capabilities: string[];
   selection: string;
 };
+type Group = {
+  profile: string;
+  model: string;
+  adapter: string;
+  capabilities: string[];
+  lanes: { lane: string; ok: boolean }[];
+};
 const rows = table.profiles as Row[];
 const profileConfig = kit.profileConfig as Record<string, { parameters?: { effort?: string } }>;
-let previous = '';
+const groups = rows.reduce<Group[]>((acc, row) => {
+  let g = acc.find((x) => x.profile === row.profile);
+  if (!g) {
+    g = { profile: row.profile, model: row.model, adapter: row.adapter, capabilities: row.capabilities, lanes: [] };
+    acc.push(g);
+  }
+  g.lanes.push({ lane: row.lane, ok: row.technical_compatibility });
+  return acc;
+}, []);
 ---
 
-<div class="overflow-x-auto -mx-6 px-6">
-  <table class="w-full text-[0.76rem] leading-snug border-collapse">
-    <thead>
-      <tr class="eyebrow text-left border-b border-[var(--color-line-strong)]">
-        <th class="py-2 pr-4 font-normal whitespace-nowrap"
-          >Profile · model / adapter / effort · capabilities</th
-        >
-        <th class="py-2 pr-4 font-normal whitespace-nowrap">Role</th>
-        <th class="py-2 font-normal whitespace-nowrap">Adapter today</th>
-      </tr>
-    </thead>
-    <tbody>
-      {
-        rows.map((row) => {
-          const first = row.profile !== previous;
-          previous = row.profile;
-          const effort = profileConfig[row.profile]?.parameters?.effort ?? '—';
-          return (
-            <tr
-              class:list={[
-                'border-b border-[var(--color-line)] hover:bg-[var(--color-panel)] align-top',
-                first && 'border-t border-t-[var(--color-line-strong)]'
-              ]}
-            >
-              <td class="py-1.5 pr-4 whitespace-nowrap">
-                {first && (
-                  <>
-                    <span class="font-mono font-medium">{row.profile}</span>
-                    <span class="block font-mono text-[0.7rem] text-[var(--color-ink-soft)]">
-                      {row.model} / {row.adapter} / {effort} · {row.capabilities.join(', ')}
-                    </span>
-                  </>
+<table class="w-full text-[0.8rem] leading-snug border-collapse">
+  <thead>
+    <tr class="eyebrow text-left border-b border-[var(--color-line-strong)]">
+      <th class="py-2 pr-4 font-normal">Profile · model / adapter / effort · capabilities</th>
+      <th class="py-2 font-normal">Roles</th>
+    </tr>
+  </thead>
+  <tbody>
+    {
+      groups.map((g) => (
+        <tr class="border-b border-[var(--color-line)] align-top">
+          <td class="py-2 pr-4">
+            <span class="font-mono font-medium">{g.profile}</span>
+            <span class="block font-mono text-[0.72rem] text-[var(--color-ink-soft)] break-words">
+              {g.model} / {g.adapter} / {profileConfig[g.profile]?.parameters?.effort ?? '—'} ·{' '}
+              {g.capabilities.join(', ')}
+            </span>
+          </td>
+          <td class="py-2 font-mono">
+            {g.lanes.map((l, i) => (
+              <>
+                {i > 0 && ' · '}
+                {l.ok ? (
+                  <span>{l.lane}</span>
+                ) : (
+                  <span class="text-[var(--color-blocked)]">{l.lane} (unsupported)</span>
                 )}
-              </td>
-              <td class="py-1.5 pr-4 whitespace-nowrap">{row.lane}</td>
-              <td class="py-1.5 whitespace-nowrap">
-                <StatusPill kind="compat" value={row.technical_compatibility} />
-              </td>
-            </tr>
-          );
-        })
-      }
-    </tbody>
-  </table>
-</div>
+              </>
+            ))}
+          </td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>

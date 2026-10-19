@@ -67,7 +67,7 @@ const requests: Req[] = [
     v: { difficulty: 1, tags: [], confidence: 0.8, failed: 'timeout' },
     says: 'no answer (timeout)',
     expect: glm,
-    text: () => 'No answer: your default model, glm, replies, and the response says so. No retry.'
+    text: () => 'No answer: your default model, glm, replies; the response says so.'
   }
 ];
 
@@ -99,12 +99,9 @@ function svg({ req, r }: State): string {
   );
   if (r.undecidable) {
     out.push(
-      `<rect x="272" y="20" width="128" height="28" class="defok a-defok"/><text x="336" y="39" class="mid">default: glm</text>`
+      `<rect x="270" y="20" width="126" height="28" class="defok a-defok"/><text x="333" y="39" class="mid">default: glm</text>`
     );
-    out.push(`<path d="M${ansW + 4} 34 H268" pathLength="1" class="idle a-draw"/>`);
-    out.push(
-      `<g class="a-tag"><rect x="176" y="58" width="224" height="24" class="tagwarn"/><text x="288" y="75" class="mid sm">X-Router-Undecidable: 1</text></g>`
-    );
+    out.push(`<path d="M${ansW + 4} 34 H266" pathLength="1" class="idle a-draw"/>`);
   }
 
   // tiers
@@ -121,7 +118,8 @@ function svg({ req, r }: State): string {
         `<rect x="${chipX}" y="${y - 34}" width="${chipW}" height="26" class="idle dash${pulse}"/><text x="${chipX + chipW / 2}" y="${y - 16}" class="mid soft">empty</text>`
       );
     } else {
-      const chosen = r.chosen === occupant && !r.undecidable;
+      // With no rating the default answers: drawn chosen, like every other answer.
+      const chosen = r.chosen === occupant;
       const cand = isCand(occupant);
       let cls = 'chip';
       if (chosen) cls = `chosen ${late ? 'a-chosen-late' : 'a-chosen'}`;
@@ -130,7 +128,7 @@ function svg({ req, r }: State): string {
       parts.push(
         `<rect x="${chipX}" y="${y - 34}" width="${chipW}" height="26" class="${cls}"/><text x="${chipX + chipW / 2}" y="${y - 16}" class="${textCls}">${occupant.key} · ${occupant.index.toFixed(1)}</text>`
       );
-      if (cand)
+      if (cand || chosen)
         parts.push(
           `<text x="${chipX + chipW + 8}" y="${y - 16}" class="sm ${late ? 'a-price-late' : 'a-price'}">${priceTag(occupant)}</text>`
         );
@@ -175,11 +173,10 @@ ${rules.join('\n')}
 .ls .amberfill{fill:var(--color-explicit)}
 .ls .floorbar{stroke:var(--color-explicit-strong);stroke-width:3}
 .ls .amber{stroke:var(--color-explicit-strong)}
-.ls .needed{fill:var(--color-explicit-strong);font-weight:500}
+.ls .needed{fill:var(--color-explicit-text);font-weight:500}
 .ls .chosen{fill:var(--color-qualified-soft);stroke:var(--color-qualified);stroke-width:1.5}
 .ls .settled{fill:var(--color-paper);stroke:var(--color-ink-soft);stroke-width:1.25}
 .ls .defok{fill:var(--color-qualified-soft);stroke:var(--color-qualified);stroke-width:1.5}
-.ls .tagwarn{fill:var(--color-explicit-soft);stroke:var(--color-explicit-strong);stroke-width:1.25}
 .ls .dim .chip{stroke:var(--color-line)}
 .ls .dim text{fill:var(--color-ink-soft)}
 @media (prefers-reduced-motion:no-preference){
@@ -194,7 +191,6 @@ ${rules.join('\n')}
 @keyframes ls-chosen-late{0%,62%{fill:var(--color-paper);stroke:var(--color-line)}69%{fill:var(--color-paper);stroke:var(--color-ink)}85%,100%{fill:var(--color-qualified-soft);stroke:var(--color-qualified)}}
 @keyframes ls-draw{0%,15%{stroke-dasharray:1 1;stroke-dashoffset:1}40%{stroke-dasharray:1 1;stroke-dashoffset:0}100%{stroke-dasharray:1 1;stroke-dashoffset:0}}
 @keyframes ls-defok{0%,40%{fill:var(--color-paper);stroke:var(--color-line)}60%,100%{fill:var(--color-qualified-soft);stroke:var(--color-qualified)}}
-@keyframes ls-tag{0%,60%{opacity:0}80%,100%{opacity:1}}
 .ls .a-ans{animation:ls-ans ${T} ease-out both}
 .ls .a-floor{animation:ls-floor ${T} ease-out both}
 .ls .a-arrow-late{animation:ls-arrow-late ${T} linear both}
@@ -206,7 +202,6 @@ ${rules.join('\n')}
 .ls .a-chosen-late{animation:ls-chosen-late ${T} linear both}
 .ls .a-draw{animation:ls-draw ${T} ease-out both}
 .ls .a-defok{animation:ls-defok ${T} linear both}
-.ls .a-tag{animation:ls-tag ${T} linear both}
 }
 `;
 ---
@@ -221,7 +216,14 @@ ${rules.join('\n')}
         {
           requests.map((req, i) => (
             <span class="relative">
-              <input type="radio" name="ladder-request" id={rid(req.id)} value={req.id} checked={i === 0} />
+              <input
+                type="radio"
+                name="ladder-request"
+                id={rid(req.id)}
+                value={req.id}
+                checked={i === 0}
+                aria-describedby={`ls-s-${req.id}`}
+              />
               <label for={rid(req.id)} class="lane-option">
                 {req.label}
               </label>
@@ -236,7 +238,9 @@ ${rules.join('\n')}
     {
       states.map((s) => (
         <div class="lpanel" data-req={s.req.id}>
-          <p class="mb-5 text-xl text-[var(--color-ink)] max-w-[30rem]">{s.req.text(s.r)}</p>
+          <p id={`ls-s-${s.req.id}`} class="mb-5 text-xl text-[var(--color-ink)] max-w-[30rem]">
+            {s.req.text(s.r)}
+          </p>
           <Fragment set:html={svg(s)} />
         </div>
       ))

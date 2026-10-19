@@ -29,10 +29,14 @@ const { code, lang = 'sh', label } = Astro.props;
 </div>
 
 <style>
-  /* Touch screens have no hover: keep the button in sight. */
+  /* Touch screens have no hover: keep the button in sight, in its own strip
+   * above the first line so it never covers code. */
   @media (hover: none) {
     [data-copy] {
       opacity: 0.75;
+    }
+    pre {
+      padding-top: 2.5rem;
     }
   }
 </style>

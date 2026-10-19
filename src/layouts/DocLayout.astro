@@ -18,52 +18,53 @@ const merged = { ...Astro.props, ...Astro.props.frontmatter };
 const baseFrontmatter = { ...merged, doc: true };
 
 const docNav = [
-  { group: 'Start', items: [{ href: '/docs', label: 'Getting started' }] },
+  { group: 'Start', items: [{ href: '/docs/', label: 'Getting started' }] },
   {
     group: 'Router',
     items: [
-      { href: '/docs/router', label: 'Router reference' },
-      { href: '/docs/configuration', label: 'Configuration' }
+      { href: '/docs/router/', label: 'Router reference' },
+      { href: '/docs/configuration/', label: 'Configuration' }
     ]
   },
   {
     group: 'Under the hood',
     items: [
-      { href: '/docs/dispatch', label: 'Run a model by hand' },
-      { href: '/docs/executors', label: 'Executors' }
+      { href: '/docs/dispatch/', label: 'Run a model by hand' },
+      { href: '/docs/executors/', label: 'Executors' }
     ]
   },
   {
     group: 'Project',
     items: [
-      { href: '/docs/compatibility', label: 'Compatibility' },
-      { href: '/changelog', label: 'Changelog' }
+      { href: '/docs/compatibility/', label: 'Compatibility' },
+      { href: '/changelog/', label: 'Changelog' }
     ]
   }
 ];
 const current = merged.path ?? '';
+const isCurrent = (href: string) => href.replace(/\/$/, '') === current.replace(/\/$/, '');
 ---
 
 <BaseLayout frontmatter={baseFrontmatter}>
   <div class="lg:grid lg:grid-cols-[14rem_1fr] lg:gap-12">
-    <aside class="mb-10 lg:mb-0">
+    <aside class="mb-6 lg:mb-0">
       <nav
         aria-label="Documentation"
-        class="text-sm flex flex-wrap gap-x-8 gap-y-5 lg:flex-col lg:sticky lg:top-6"
+        class="text-sm flex flex-wrap gap-x-4 gap-y-1.5 lg:gap-y-5 lg:flex-col lg:sticky lg:top-6"
       >
         {
           docNav.map((g) => (
-            <div>
-              <p class="eyebrow mb-2">{g.group}</p>
+            <div class="contents lg:block">
+              <p class="eyebrow mb-2 hidden lg:block">{g.group}</p>
               <ul class="flex flex-wrap lg:flex-col gap-x-4 gap-y-1.5">
                 {g.items.map((item) => (
                   <li>
                     <a
                       href={item.href}
-                      aria-current={item.href === current ? 'page' : undefined}
+                      aria-current={isCurrent(item.href) ? 'page' : undefined}
                       class:list={[
                         'hover:text-[var(--color-ink)]',
-                        item.href === current
+                        isCurrent(item.href)
                           ? 'text-[var(--color-ink)] font-medium'
                           : 'text-[var(--color-ink-soft)]'
                       ]}

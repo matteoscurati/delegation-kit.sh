@@ -7,9 +7,9 @@ import LadderChart from '../components/LadderChart.astro';
 import { glm, opus, priceTag, catalogVersion } from '../lib/example-pool';
 
 const promises = [
-  'Runs on your machine, picks only from your models, sends each request once: no retry, no fallback.',
+  'Runs on your machine, picks only from your models, sends each request once: no retry.',
   'By default your decider sees an excerpt; only the chosen model sees the full request.',
-  'No request log. An optional decision log never stores prompt text.'
+  'No request log; the optional decision log never stores prompts.'
 ];
 
 const link = 'underline underline-offset-4 text-[var(--color-ink)]';
@@ -39,7 +39,7 @@ const stepTitle = 'text-xl mt-2 mb-2 leading-tight';
 model    = "auto"`}
           />
           <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
-            Any client that speaks the OpenAI chat API works.
+            Works with any OpenAI chat client.
           </p>
         </div>
         <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -81,7 +81,8 @@ model    = "auto"`}
         <h3 class={stepTitle}>The cheapest model on that tier answers</h3>
         <p class="text-[var(--color-ink-soft)]">
           0–1 needs small, 2 mid, 3–4 frontier; math or rare knowledge, mid at least. None of yours on
-          that tier? The next one up. Code: the cheapest model good at code, on that tier or above.
+          that tier? The next one up. Code: the cheapest model good at code, on that tier or above. No
+          rating? Your default model answers.
         </p>
       </li>
     </ol>
@@ -118,7 +119,7 @@ model    = "auto"`}
       <div>
         <h2 class="text-2xl mb-5">What it costs</h2>
         <p class="border-t border-[var(--color-line)] pt-2.5">
-          Free (MIT). At most one decider call per request, priced in the response.
+          Free (MIT). At most one decider call per request.
         </p>
       </div>
     </div>
@@ -130,7 +131,7 @@ model    = "auto"`}
     <div class="grid gap-8 lg:grid-cols-2">
       <CodeBlock
         label="1 · Install, then list your models"
-        code={`# macOS, with jq, git and python3
+        code={`# macOS, with Node.js, jq, git and python3
 npx delegation-kit
 delegation-config show`}
       />
@@ -139,20 +140,27 @@ delegation-config show`}
           lang="json"
           label="2 · Add to ~/.config/delegation-kit/config.json"
           code={`"router": {
-  "decider": {"kind": "llm", "profile": "deepseek-flash"},
-  "pool": ["deepseek-flash", "opus-reviewer"],
+  "decider": {
+    "kind": "llm",
+    "profile": "deepseek-flash"
+  },
+  "pool": [
+    "deepseek-flash",
+    "opus-reviewer"
+  ],
   "default": "deepseek-flash"
 }`}
         />
         <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
-          Both come with the install: DeepSeek Flash on your API key, Opus 5 on your Claude subscription.
+          Your models can be API keys, local endpoints or Claude, Codex, GLM, Kimi, Grok plans. Both ship with the install.
         </p>
       </div>
       <div class="min-w-0 lg:col-span-2">
         <CodeBlock
           label="3 · Start it; send a request from another terminal"
           code={`delegation-router serve
-curl -si 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' \\
+curl -si 127.0.0.1:4141/v1/chat/completions \\
+  -H 'Content-Type: application/json' \\
   -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'`}
         />
       </div>
@@ -165,7 +173,7 @@ curl -si 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' 
 </BaseLayout>
 
 <style>
-  /* Unlayered, like the global `a { color: inherit }` it has to beat. */
+  /* An ink button: paper text on ink. */
   .btn {
     background: var(--color-ink);
     color: var(--color-paper);

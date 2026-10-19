@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/DocLayout.astro
-title: 'External executors — delegation-kit'
+title: 'Executors — delegation-kit'
 description: 'The external runners as adapters: what each can do, the three permission classes, model identity, exit codes, and the read-only patch verifier.'
 path: '/docs/executors'
 ---

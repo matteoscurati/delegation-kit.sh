@@ -1,6 +1,6 @@
 ---
 layout: ../../layouts/DocLayout.astro
-title: 'Personal configuration — delegation-kit'
+title: 'Configuration — delegation-kit'
 description: 'How delegation-kit profiles, adapters, keys and review policies work: the personal configuration file, delegation-config, and delegation-run.'
 path: '/docs/configuration'
 ---

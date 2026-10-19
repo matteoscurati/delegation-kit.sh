@@ -29,7 +29,7 @@ const {
 } = merged;
 
 const siteOrigin = Astro.site ?? new URL('https://delegation-kit.sh');
-const canonical = new URL(path, siteOrigin).toString();
+const canonical = new URL(path === '/' || path.endsWith('/') ? path : path + '/', siteOrigin).toString();
 const ogImage = new URL('/og-image.png', siteOrigin).toString();
 const ogAlt =
   'delegation-kit. Easy requests go to your cheap models, hard ones to your strong ones. Every response says which model answered, and why.';
@@ -152,7 +152,7 @@ const nav = [
           Code: <a href="https://opensource.org/licenses/MIT" class="hover:text-[var(--color-ink)]"
             >MIT</a
           >
-          · <a href="/privacy" class="hover:text-[var(--color-ink)]">Privacy</a>
+          · <a href="/privacy/" class="hover:text-[var(--color-ink)]">Privacy</a>
           · <a
             href="https://www.npmjs.com/package/delegation-kit"
             class="hover:text-[var(--color-ink)]"
