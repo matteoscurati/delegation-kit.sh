@@ -1,19 +1,15 @@
 ---
-// "Why this model and not that one": six requests into the same pool, with
-// and without GPT-5.6 Luna. No JavaScript: visually hidden radios and one
-// checkbox, and generated `:has()` rules that reveal one of twelve panels
-// precomputed at build time by `route()` (tiered-v1, see example-pool.ts).
-// A panel goes from display:none to block when it is selected, so its
-// one-shot animation replays with no script. Each SVG is aria-hidden; the
-// panel text under it says the same thing.
+// "Which model answers?": five requests into the same two models. No
+// JavaScript: visually hidden radios and generated `:has()` rules that reveal
+// one of five panels precomputed at build time by `route()` (tiered-v1, see
+// example-pool.ts). A panel goes from display:none to block when it is
+// selected, so its one-shot animation replays with no script. The sentence
+// comes first and never animates; each SVG is aria-hidden and says the same.
 import {
   glm,
   opus,
-  luna,
   route,
-  cost,
   priceTag,
-  cuts,
   catalogVersion,
   type Profile,
   type Route,
@@ -26,8 +22,8 @@ type Req = {
   label: string;
   v: Verdict;
   says: string;
-  expect: [Profile, Profile];
-  text: (r: Route, withLuna: boolean) => string;
+  expect: Profile;
+  text: (r: Route) => string;
 };
 
 const list = (r: Route) => r.candidates.map((p) => `${p.key} ${priceTag(p)}`).join(', ');
@@ -37,110 +33,88 @@ const requests: Req[] = [
     id: 'rename',
     label: 'Rename foo to bar in utils.py',
     v: { difficulty: 1, tags: ['code'], confidence: 0.8 },
-    says: '1 · code',
-    expect: [glm, glm],
-    text: (r) => `Code: the cheapest code-capable model wins (${list(r)}).`
+    says: '1 of 4 · code',
+    expect: glm,
+    text: (r) => `Easy, and code: the cheapest model good at code answers (${list(r)}).`
   },
   {
     id: 'race',
     label: 'Find the race condition in this scheduler',
     v: { difficulty: 3, tags: ['code'], confidence: 0.8 },
-    says: '3 · code',
-    expect: [opus, opus],
-    text: () => 'Hard: only frontier counts, and only opus is there.'
+    says: '3 of 4 · code',
+    expect: opus,
+    text: () => 'Hard: only frontier will do, and opus is your only frontier model.'
   },
   {
     id: 'summarise',
     label: 'Summarise this contract',
     v: { difficulty: 2, tags: [], confidence: 0.8 },
-    says: '2',
-    expect: [glm, glm],
-    text: () => 'Mid is enough. opus is never a candidate.'
-  },
-  {
-    id: 'percent',
-    label: 'What is 17 % of 2,340 €?',
-    v: { difficulty: 1, tags: ['math'], confidence: 0.8 },
-    says: '1 · math',
-    expect: [glm, glm],
-    text: () => 'Math lifts an easy request to mid.'
+    says: '2 of 4',
+    expect: glm,
+    text: () => 'Medium: mid is enough, so opus is not considered.'
   },
   {
     id: 'translate',
     label: 'Translate this paragraph into French',
     v: { difficulty: 1, tags: [], confidence: 0.8 },
-    says: '1 · no tags',
-    expect: [glm, luna],
-    text: (_r, l) =>
-      l ? 'Small has a model now: rung first, price second.' : 'Small is empty: climb one rung, never down.'
+    says: '1 of 4',
+    expect: glm,
+    text: () => 'Easy: small would do, but you have no small model. Next tier up: glm.'
   },
   {
     id: 'unanswered',
-    label: 'A request the decider cannot answer',
+    label: 'A request the decider can’t answer',
     v: { difficulty: 1, tags: [], confidence: 0.8, failed: 'timeout' },
-    says: 'no answer · timeout',
-    expect: [glm, glm],
-    text: () => 'No answer: your default replies, and says so. No retry.'
+    says: 'no answer (timeout)',
+    expect: glm,
+    text: () => 'No answer: your default model, glm, replies, and the response says so. No retry.'
   }
 ];
 
-type State = { req: Req; withLuna: boolean; r: Route };
-const states: State[] = [];
-for (const req of requests)
-  for (const withLuna of [false, true]) {
-    const r = route(req.v, withLuna ? [glm, opus, luna] : [glm, opus]);
-    const want = req.expect[withLuna ? 1 : 0];
-    if (r.chosen !== want)
-      throw new Error(`LadderStepper: ${req.id}${withLuna ? ' + luna' : ''} goes to ${r.chosen.key}, the copy says ${want.key}`);
-    states.push({ req, withLuna, r });
-  }
-// The Translate-with-Luna copy: glm is cheaper, and still not a candidate.
-if (!(cost(glm) < cost(luna)))
-  throw new Error('LadderStepper: the Translate panel says glm’s estimate is lower than Luna’s');
+type State = { req: Req; r: Route };
+const states: State[] = requests.map((req) => {
+  const r = route(req.v, [glm, opus]);
+  if (r.chosen !== req.expect)
+    throw new Error(`LadderStepper: ${req.id} goes to ${r.chosen.key}, the copy says ${req.expect.key}`);
+  return { req, r };
+});
 
-// --- the ladder drawing -------------------------------------------------
+// --- the tier drawing ---------------------------------------------------
 const Y: Record<Tier, number> = { frontier: 124, mid: 194, small: 264 };
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const chipX = 200;
 const chipW = 116;
 
-function svg({ req, withLuna, r }: State): string {
+function svg({ req, r }: State): string {
   const out: string[] = [];
   const isCand = (p: Profile) => r.candidates.includes(p);
-  const late = req.id === 'translate' && !withLuna;
-  const cheaperAside = req.id === 'translate' && withLuna;
+  const late = r.climbed;
   const ansW = 26 + req.says.length * 10.5;
-  const mid = `ls-aa-${req.id}-${withLuna ? 1 : 0}`;
+  const mid = `ls-aa-${req.id}`;
 
-  // the decider's answer and the default
-  out.push(`<text x="0" y="12" class="soft">the decider says</text>`);
+  // the decider's rating, and the default model when it can't answer
+  out.push(`<text x="0" y="12" class="soft">decider's rating</text>`);
   out.push(
     `<g class="a-ans"><rect x="0" y="20" width="${ansW}" height="28" class="box"/><rect x="0" y="20" width="4" height="28" class="amberfill"/><text x="14" y="39" class="lg">${esc(req.says)}</text></g>`
   );
-  const defCls = r.undecidable ? 'defok a-defok' : 'chip';
-  out.push(
-    `<rect x="272" y="20" width="128" height="28" class="${defCls}"/><text x="336" y="39" class="mid">default: glm</text>`
-  );
   if (r.undecidable) {
+    out.push(
+      `<rect x="272" y="20" width="128" height="28" class="defok a-defok"/><text x="336" y="39" class="mid">default: glm</text>`
+    );
     out.push(`<path d="M${ansW + 4} 34 H268" pathLength="1" class="idle a-draw"/>`);
     out.push(
       `<g class="a-tag"><rect x="176" y="58" width="224" height="24" class="tagwarn"/><text x="288" y="75" class="mid sm">X-Router-Undecidable: 1</text></g>`
     );
   }
 
-  // rungs
-  const labels: Record<Tier, string> = {
-    frontier: `frontier · ${cuts.frontier.toFixed(1)}+`,
-    mid: `mid · ${cuts.mid.toFixed(1)}–${(cuts.frontier - 0.1).toFixed(1)}`,
-    small: `small · below ${cuts.mid.toFixed(1)}`
-  };
-  const dimmed = (t: Tier) => req.id === 'race' && t !== 'frontier';
+  // tiers
+  const dimmed = (t: Tier) => r.floor === 'frontier' && t !== 'frontier';
   for (const t of ['frontier', 'mid', 'small'] as Tier[]) {
     const y = Y[t];
     const parts: string[] = [];
-    parts.push(`<path d="M0 ${y} H400" class="rungline"/>`);
-    parts.push(`<text x="16" y="${y - 10}" class="soft sm">${labels[t]}</text>`);
-    const occupant = t === 'frontier' ? opus : t === 'mid' ? glm : withLuna ? luna : null;
+    parts.push(`<path d="M0 ${y} H400" class="tierline"/>`);
+    parts.push(`<text x="16" y="${y - 10}" class="soft sm">${t}</text>`);
+    const occupant = t === 'frontier' ? opus : t === 'mid' ? glm : null;
     if (!occupant) {
       const pulse = late ? ' a-pulse' : '';
       parts.push(
@@ -152,49 +126,38 @@ function svg({ req, withLuna, r }: State): string {
       let cls = 'chip';
       if (chosen) cls = `chosen ${late ? 'a-chosen-late' : 'a-chosen'}`;
       else if (cand) cls = 'settled a-settle';
-      const unused = occupant === luna && !cand;
+      const textCls = chosen || cand ? 'mid' : 'mid soft';
       parts.push(
-        `<g${unused ? ' class="unused"' : ''}><rect x="${chipX}" y="${y - 34}" width="${chipW}" height="26" class="${cls}"/><text x="${chipX + chipW / 2}" y="${y - 16}" class="mid">${occupant.key} · ${occupant.index.toFixed(1)}</text></g>`
+        `<rect x="${chipX}" y="${y - 34}" width="${chipW}" height="26" class="${cls}"/><text x="${chipX + chipW / 2}" y="${y - 16}" class="${textCls}">${occupant.key} · ${occupant.index.toFixed(1)}</text>`
       );
       if (cand)
         parts.push(
           `<text x="${chipX + chipW + 8}" y="${y - 16}" class="sm ${late ? 'a-price-late' : 'a-price'}">${priceTag(occupant)}</text>`
         );
-      else if (cheaperAside && occupant === glm)
-        parts.push(`<text x="${chipX + chipW + 8}" y="${y - 16}" class="sm soft a-note">${priceTag(occupant)}</text>`);
     }
-    out.push(dimmed(t) ? `<g class="dim a-dim">${parts.join('')}</g>` : parts.join(''));
+    out.push(dimmed(t) ? `<g class="dim">${parts.join('')}</g>` : parts.join(''));
   }
 
-  // the floor, and how it moved
+  // the needed tier, and the climb when it is empty
   if (r.floor) {
-    const lifted = r.raw === 'small' && r.floor === 'mid';
-    const at = lifted ? Y.mid : Y[r.floor];
+    const at = Y[r.floor];
     out.push(
-      `<g class="${lifted ? 'a-lift' : 'a-floor'}"><path d="M0 ${at} H400" class="floorbar"/><path d="M0 ${at - 7} L9 ${at} L0 ${at + 7} Z" class="amberfill"/></g>`
+      `<g class="a-floor"><path d="M0 ${at} H400" class="floorbar"/><path d="M0 ${at - 7} L9 ${at} L0 ${at + 7} Z" class="amberfill"/><text x="400" y="${at + 17}" class="end sm needed">needed tier</text></g>`
     );
-    const arrow = (cls: string, label: string) =>
-      `<g class="${cls}"><path d="M176 ${Y.small - 6} V${Y.mid + 10}" class="amber" marker-end="url(#${mid})"/><text x="184" y="${Y.mid + 24}" class="sm">${label}</text></g>`;
-    if (lifted) out.push(arrow('a-arrow', 'math lifts to mid'));
-    if (r.climbed) out.push(arrow('a-arrow-late', 'empty: one rung up'));
+    if (r.climbed)
+      out.push(
+        `<g class="a-arrow-late"><path d="M176 ${Y.small - 6} V${Y.mid + 10}" class="amber" marker-end="url(#${mid})"/><text x="184" y="${Y.mid + 24}" class="sm">none here: next tier up</text></g>`
+      );
   }
-  if (cheaperAside)
-    out.push(
-      `<g class="a-note"><text x="0" y="288" class="sm">glm is cheaper, but not a candidate:</text><text x="0" y="305" class="sm">rung first, then price</text></g>`
-    );
 
-  return `<svg class="dg ls" viewBox="0 0 400 312" aria-hidden="true" focusable="false"><defs><marker id="${mid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--color-explicit)"/></marker></defs>${out.join('')}</svg>`;
+  return `<svg class="dg ls" viewBox="0 0 400 296" aria-hidden="true" focusable="false"><defs><marker id="${mid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--color-explicit-strong)"/></marker></defs>${out.join('')}</svg>`;
 }
 
 // --- the selection rules ------------------------------------------------
 const rid = (id: string) => `req-${id}`;
 const rules: string[] = ['.stepper .lpanel{display:none}'];
-for (const req of requests) {
-  rules.push(
-    `.stepper:has(#${rid(req.id)}:checked):not(:has(#luna:checked)) .lpanel[data-req="${req.id}"][data-luna="0"]{display:block}`,
-    `.stepper:has(#${rid(req.id)}:checked):has(#luna:checked) .lpanel[data-req="${req.id}"][data-luna="1"]{display:block}`
-  );
-}
+for (const req of requests)
+  rules.push(`.stepper:has(#${rid(req.id)}:checked) .lpanel[data-req="${req.id}"]{display:block}`);
 const T = '2.6s';
 const css = `
 ${rules.join('\n')}
@@ -203,44 +166,37 @@ ${rules.join('\n')}
 .stepper input:checked + .lane-option{background:var(--color-ink);color:var(--color-paper);border-color:var(--color-ink)}
 .stepper input:focus-visible + .lane-option{outline:2px solid var(--color-ink);outline-offset:2px}
 .stepper input{position:absolute;opacity:0;width:1px;height:1px;overflow:hidden}
-.stepper .luna-option::before{content:'+ '}
-.stepper input:checked + .luna-option::before{content:'✓ '}
 .ls{max-width:30rem}
 .ls text{font-size:14px}
 .ls .sm{font-size:13px}
 .ls .lg{font-size:15px;font-weight:500}
 @media (max-width:639.98px){.ls text{font-size:16px}.ls .sm{font-size:15px}.ls .lg{font-size:17px}}
-.ls .rungline{stroke:var(--color-ink);stroke-width:1}
+.ls .tierline{stroke:var(--color-ink);stroke-width:1}
 .ls .amberfill{fill:var(--color-explicit)}
-.ls .floorbar{stroke:var(--color-explicit);stroke-width:3}
+.ls .floorbar{stroke:var(--color-explicit-strong);stroke-width:3}
+.ls .amber{stroke:var(--color-explicit-strong)}
+.ls .needed{fill:var(--color-explicit-strong);font-weight:500}
 .ls .chosen{fill:var(--color-qualified-soft);stroke:var(--color-qualified);stroke-width:1.5}
 .ls .settled{fill:var(--color-paper);stroke:var(--color-ink-soft);stroke-width:1.25}
 .ls .defok{fill:var(--color-qualified-soft);stroke:var(--color-qualified);stroke-width:1.5}
-.ls .tagwarn{fill:var(--color-explicit-soft);stroke:var(--color-explicit);stroke-width:1.25}
-.ls .dim,.ls .unused{opacity:.7}
-.ls .dim .unused{opacity:1}
+.ls .tagwarn{fill:var(--color-explicit-soft);stroke:var(--color-explicit-strong);stroke-width:1.25}
+.ls .dim .chip{stroke:var(--color-line)}
+.ls .dim text{fill:var(--color-ink-soft)}
 @media (prefers-reduced-motion:no-preference){
 @keyframes ls-ans{0%{opacity:0;transform:translateX(-16px)}15%,100%{opacity:1;transform:none}}
 @keyframes ls-floor{0%,15%{opacity:0;transform:translateY(-24px)}38%,100%{opacity:1;transform:none}}
-@keyframes ls-lift{0%,15%{opacity:0;transform:translateY(${Y.small - Y.mid - 24}px)}27%,30%{opacity:1;transform:translateY(${Y.small - Y.mid}px)}38%,100%{opacity:1;transform:none}}
-@keyframes ls-arrow{0%,30%{opacity:0}38%,100%{opacity:1}}
 @keyframes ls-arrow-late{0%,55%{opacity:0}64%,100%{opacity:1}}
-@keyframes ls-pulse{0%,38%{stroke:var(--color-line);stroke-width:1.25}43%{stroke:var(--color-explicit);stroke-width:2.5}47%{stroke:var(--color-line);stroke-width:1.25}51%{stroke:var(--color-explicit);stroke-width:2.5}55%,100%{stroke:var(--color-line);stroke-width:1.25}}
+@keyframes ls-pulse{0%,38%{stroke:var(--color-line);stroke-width:1.25}43%{stroke:var(--color-explicit-strong);stroke-width:2.5}47%{stroke:var(--color-line);stroke-width:1.25}51%{stroke:var(--color-explicit-strong);stroke-width:2.5}55%,100%{stroke:var(--color-line);stroke-width:1.25}}
 @keyframes ls-price{0%,38%{opacity:0}50%,100%{opacity:1}}
 @keyframes ls-price-late{0%,62%{opacity:0}69%,100%{opacity:1}}
 @keyframes ls-settle{0%,38%{stroke:var(--color-line)}50%,69%{stroke:var(--color-ink)}85%,100%{stroke:var(--color-ink-soft)}}
 @keyframes ls-chosen{0%,38%{fill:var(--color-paper);stroke:var(--color-line)}50%,69%{fill:var(--color-paper);stroke:var(--color-ink)}85%,100%{fill:var(--color-qualified-soft);stroke:var(--color-qualified)}}
 @keyframes ls-chosen-late{0%,62%{fill:var(--color-paper);stroke:var(--color-line)}69%{fill:var(--color-paper);stroke:var(--color-ink)}85%,100%{fill:var(--color-qualified-soft);stroke:var(--color-qualified)}}
-@keyframes ls-dim{0%,15%{opacity:1}38%,100%{opacity:.7}}
 @keyframes ls-draw{0%,15%{stroke-dasharray:1 1;stroke-dashoffset:1}40%{stroke-dasharray:1 1;stroke-dashoffset:0}100%{stroke-dasharray:1 1;stroke-dashoffset:0}}
 @keyframes ls-defok{0%,40%{fill:var(--color-paper);stroke:var(--color-line)}60%,100%{fill:var(--color-qualified-soft);stroke:var(--color-qualified)}}
 @keyframes ls-tag{0%,60%{opacity:0}80%,100%{opacity:1}}
-@keyframes ls-late{0%,75%{opacity:0}100%{opacity:1}}
-@keyframes ls-reason{0%,69%{opacity:0}100%{opacity:1}}
 .ls .a-ans{animation:ls-ans ${T} ease-out both}
 .ls .a-floor{animation:ls-floor ${T} ease-out both}
-.ls .a-lift{animation:ls-lift ${T} ease-in-out both}
-.ls .a-arrow{animation:ls-arrow ${T} linear both}
 .ls .a-arrow-late{animation:ls-arrow-late ${T} linear both}
 .ls .a-pulse{animation:ls-pulse ${T} linear both}
 .ls .a-price{animation:ls-price ${T} linear both}
@@ -248,15 +204,11 @@ ${rules.join('\n')}
 .ls .a-settle{animation:ls-settle ${T} linear both}
 .ls .a-chosen{animation:ls-chosen ${T} linear both}
 .ls .a-chosen-late{animation:ls-chosen-late ${T} linear both}
-.ls .a-dim{animation:ls-dim ${T} linear both}
 .ls .a-draw{animation:ls-draw ${T} ease-out both}
 .ls .a-defok{animation:ls-defok ${T} linear both}
 .ls .a-tag{animation:ls-tag ${T} linear both}
-.ls .a-note{animation:ls-late ${T} linear both}
-.stepper .a-reason{animation:ls-reason ${T} linear both}
 }
 `;
-
 ---
 
 <style set:html={css}></style>
@@ -265,7 +217,7 @@ ${rules.join('\n')}
   <div class="min-w-0">
     <fieldset>
       <legend class="eyebrow mb-3">Pick a request</legend>
-      <div class="flex flex-wrap gap-1.5">
+      <div class="flex flex-wrap gap-1.5 md:flex-col md:items-start">
         {
           requests.map((req, i) => (
             <span class="relative">
@@ -278,24 +230,14 @@ ${rules.join('\n')}
         }
       </div>
     </fieldset>
-    <p class="mt-5">
-      <span class="relative">
-        <input type="checkbox" id="luna" />
-        <label for="luna" class="lane-option luna-option">Add GPT-5.6 Luna to the pool (small, {luna.index.toFixed(1)})</label>
-      </span>
-    </p>
   </div>
 
   <div class="min-w-0" aria-live="polite">
     {
       states.map((s) => (
-        <div class="lpanel" data-req={s.req.id} data-luna={s.withLuna ? '1' : '0'}>
-          <p class="eyebrow mb-3">
-            {s.req.label}
-            {s.withLuna ? ' · with Luna' : ''}
-          </p>
+        <div class="lpanel" data-req={s.req.id}>
+          <p class="mb-5 text-xl text-[var(--color-ink)] max-w-[30rem]">{s.req.text(s.r)}</p>
           <Fragment set:html={svg(s)} />
-          <p class="a-reason mt-4 text-[var(--color-ink)] max-w-[30rem]">{s.req.text(s.r, s.withLuna)}</p>
         </div>
       ))
     }
@@ -303,5 +245,5 @@ ${rules.join('\n')}
 </div>
 
 <p class="mt-6 font-mono text-[0.75rem] text-[var(--color-ink-soft)]">
-  Prices from the {catalogVersion} catalog; the decider's answers are illustrative.
+  Estimated costs for a short request at {catalogVersion} prices; example ratings.
 </p>

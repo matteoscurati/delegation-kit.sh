@@ -1,24 +1,31 @@
 ---
-// The hero's proof: the headers a served response carries for the rename,
-// from the example pool. Plain text on the page; on load the header lines
-// rise in one after another (motion off: the full card, at once).
-import { renameHeaders as h } from '../lib/example-pool';
+// The hero's result card: two requests, the decider's rating of each, and the
+// model that answers, computed at build time by `route()` (tiered-v1, see
+// example-pool.ts). Plain text in a div, so it wraps at any width. On load the
+// lines rise in one after another (motion off: the full card, at once).
+import {
+  renameRoute,
+  renameVerdict,
+  raceRoute,
+  raceVerdict,
+  priceTag,
+  type Route,
+  type Verdict
+} from '../lib/example-pool';
 
-type Line = { name: string; value: string; tone?: 'ok' | 'warn' };
-const lines: Line[] = [
-  { name: 'X-Router-Profile', value: h.profile, tone: 'ok' },
-  { name: 'X-Router-Model', value: h.model },
-  { name: 'X-Router-Tier', value: h.tier, tone: 'ok' },
-  { name: 'X-Router-Difficulty', value: h.difficulty, tone: 'warn' },
-  { name: 'X-Router-Confidence', value: h.confidence, tone: 'warn' },
-  { name: 'X-Router-Undecidable', value: '0' }
+type Row = { request: string; v: Verdict; r: Route };
+const rows: Row[] = [
+  { request: 'Rename foo to bar in utils.py', v: renameVerdict, r: renameRoute },
+  { request: 'Find the race condition in this scheduler', v: raceVerdict, r: raceRoute }
 ];
+const rating = (v: Verdict) => [`rated ${v.difficulty} of 4`, ...v.tags].join(' · ');
+
 const css = `
-.hr .k{color:var(--color-paper)}
-.hr .v{color:var(--color-line)}
-.hr .v-ok{color:var(--color-qualified-on-ink);font-weight:500}
-.hr .v-warn{color:var(--color-explicit);font-weight:500}
-.hr .l{display:block}
+.hr .q{color:var(--color-paper)}
+.hr .rt{color:var(--color-explicit)}
+.hr .to{color:var(--color-qualified-on-ink);font-weight:500}
+.hr .l{display:block;padding-left:1.25rem}
+.hr .l.q{padding-left:0}
 @media (prefers-reduced-motion:no-preference){
 @keyframes hr-rise{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .hr .l-a{animation:hr-rise .32s ease-out both}
@@ -29,11 +36,26 @@ const css = `
 <style set:html={css}></style>
 
 <figure class="hr min-w-0">
-  <pre
-    class="bg-[var(--color-ink)] text-[var(--color-line)] px-4 py-3 overflow-x-auto text-[0.85rem] leading-relaxed w-full"><code><span class="l">HTTP/1.1 200 OK</span>{lines.map((l, i) => (
-      <span class="l l-a" style={`animation-delay:${(0.2 + i * 0.12).toFixed(2)}s`}><span class="k">{l.name}:</span> <span class={l.tone ? `v-${l.tone}` : 'v'}>{l.value}</span></span>
-    ))}</code></pre>
+  <div
+    class="bg-[var(--color-ink)] px-4 py-4 font-mono text-[0.85rem] leading-relaxed w-full whitespace-normal [overflow-wrap:anywhere]"
+  >
+    {
+      rows.map((row, i) => (
+        <p class:list={['m-0', i > 0 && 'mt-4']}>
+          <span class="l q l-a" style={`animation-delay:${(0.2 + i * 0.45).toFixed(2)}s`}>
+            {row.request}
+          </span>
+          <span class="l rt l-a" style={`animation-delay:${(0.35 + i * 0.45).toFixed(2)}s`}>
+            {rating(row.v)}
+          </span>
+          <span class="l to l-a" style={`animation-delay:${(0.5 + i * 0.45).toFixed(2)}s`}>
+            → {row.r.chosen.name} · ~{priceTag(row.r.chosen)}
+          </span>
+        </p>
+      ))
+    }
+  </div>
   <figcaption class="mt-2 font-mono text-[0.75rem] text-[var(--color-ink-soft)]">
-    The response to "Rename foo to bar in utils.py" from a pool of GLM 5.3 Flash and Opus 5.5.
+    With GLM 5.3 Flash and Opus 5.5 as your models.
   </figcaption>
 </figure>

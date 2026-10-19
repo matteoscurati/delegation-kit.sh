@@ -2,48 +2,26 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
 import HeroResponse from '../components/HeroResponse.astro';
-import RequestFlow from '../components/RequestFlow.astro';
 import LadderStepper from '../components/LadderStepper.astro';
 import LadderChart from '../components/LadderChart.astro';
-import kit from '../data/kit.json';
-import { glm, opus } from '../lib/example-pool';
-
-// The text equivalent of the flow diagram, which is aria-hidden.
-const steps = [
-  ['Measure', 'tokens, tools, images, JSON — counted, not judged'],
-  ['Ask the decider', 'how hard is this, 0–4? code, math, rare?'],
-  ['Find the rung', 'the answer sets the lowest rung: small, mid, frontier'],
-  ['Take the cheapest', 'the cheapest model of yours on that rung'],
-  ['Forward once', 'with that model’s own key; no retry'],
-  ['Disclose', 'headers and reasons in every response']
-];
-
-const deciders = [
-  ['llm', 'one of your own cheap models'],
-  ['sage', 'Levanto Sage, with your key'],
-  ['jev', 'TypeSafe Jev, with your key'],
-  ['dipylon', 'your own decision service'],
-  ['classifier', 'any local classifier'],
-  ['none', 'always your default — the baseline']
-];
+import { glm, opus, priceTag, catalogVersion } from '../lib/example-pool';
 
 const promises = [
-  'Runs on your machine, loopback only.',
-  'Chooses only from the models you list.',
-  'One forward per request. No retry, no fallback.',
-  'Never sends your keys or model names to the decider.',
-  'Logs nothing. Receipts only if you turn them on.',
-  'A cost ceiling refuses rather than overspends.'
+  'Runs on your machine, picks only from your models, sends each request once: no retry, no fallback.',
+  'By default your decider sees an excerpt; only the chosen model sees the full request.',
+  'No request log. An optional decision log never stores prompt text.'
 ];
 
 const link = 'underline underline-offset-4 text-[var(--color-ink)]';
-const mono = 'font-mono text-[0.9em]';
+const step = 'border-t border-[var(--color-line)] pt-4';
+const stepNum = 'font-mono text-[var(--color-ink-soft)] text-sm';
+const stepTitle = 'text-xl mt-2 mb-2 leading-tight';
 ---
 
 <BaseLayout path="/">
   <!-- Hero -->
   <section class="pt-10 pb-14 md:pt-16 md:pb-20">
-    <p class="eyebrow mb-6">delegation-kit · v{kit.version} · a model router on your machine</p>
+    <p class="eyebrow mb-6">A model router on your own machine</p>
     <h1 class="text-[2.6rem] md:text-[3.4rem] xl:text-[3.9rem] [text-wrap:balance]">
       <span class="lg:block">Easy requests go to your cheap models.</span>
       <span class="lg:block">Hard ones go to your strong ones.</span>
@@ -51,8 +29,8 @@ const mono = 'font-mono text-[0.9em]';
     <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-start">
       <div class="min-w-0">
         <p class="max-w-xl text-lg md:text-xl text-[var(--color-ink-soft)]">
-          You pick a decision model. It rates how hard each request is. Your rules turn that into the
-          cheapest model that can handle it — and every response says which one, and why.
+          A decider you pick, usually one of your cheap models, rates how hard each request is. The
+          cheapest of your models strong enough for it answers, and the response says which one, and why.
         </p>
         <div class="mt-8 max-w-md">
           <CodeBlock
@@ -60,83 +38,88 @@ const mono = 'font-mono text-[0.9em]';
             code={`base_url = "http://127.0.0.1:4141/v1"
 model    = "auto"`}
           />
+          <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
+            Any client that speaks the OpenAI chat API works.
+          </p>
         </div>
-        <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-          <a href="#how" class={link}>How it works ↓</a>
-          <a href="#install" class={link}>Install ↓</a>
+        <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <a href="/docs/" class="btn px-4 py-2">Get started →</a>
+          <a href="#how" class={link}>How it picks ↓</a>
         </p>
       </div>
       <HeroResponse />
     </div>
   </section>
 
-  <!-- How a request is routed -->
+  <!-- How it picks a model -->
   <section id="how" class="rule py-14 scroll-mt-4">
-    <h2 class="text-3xl md:text-4xl mb-3">One request, six steps</h2>
-    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
-      Only one step is a model's judgement — and it judges the task, never your models.
-    </p>
-    <RequestFlow />
-    <ol role="list" class="mt-10 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3 text-sm">
-      {
-        steps.map(([name, text], i) => (
-          <li class="flex gap-3 border-t border-[var(--color-line)] pt-3">
-            <span class="font-mono text-[var(--color-ink-soft)]" aria-hidden="true">{i + 1}</span>
-            <span>
-              <span class="font-medium">{name}</span>
-              <span class="text-[var(--color-ink-soft)]"> — {text}</span>
-            </span>
-          </li>
-        ))
-      }
+    <h2 class="text-3xl md:text-4xl mb-10">How it picks a model</h2>
+    <ol role="list" class="grid gap-x-8 gap-y-8 md:grid-cols-3">
+      <li class={step}>
+        <span class={stepNum} aria-hidden="true">1</span>
+        <h3 class={stepTitle}>Every model gets a tier</h3>
+        <p class="text-[var(--color-ink-soft)]">
+          Artificial Analysis, an independent lab, gives every model the same tests and a score. Within 8
+          points of the day's best score: frontier, the strongest tier. Within 20: mid. The rest: small.
+        </p>
+      </li>
+      <li class={step}>
+        <span class={stepNum} aria-hidden="true">2</span>
+        <h3 class={stepTitle}>Your decider rates the request</h3>
+        <p
+          class="inline-block mb-3 bg-white border border-[var(--color-line)] border-l-4 border-l-[var(--color-explicit)] px-3 py-1 font-mono text-sm"
+        >
+          1 of 4 · code
+        </p>
+        <p class="text-[var(--color-ink-soft)]">
+          It reads an excerpt, never your keys or your list of models, and answers: how hard is this, 0
+          to 4? Code, math, rare knowledge?
+        </p>
+      </li>
+      <li class={step}>
+        <span class={stepNum} aria-hidden="true">3</span>
+        <h3 class={stepTitle}>The cheapest model on that tier answers</h3>
+        <p class="text-[var(--color-ink-soft)]">
+          0–1 needs small, 2 mid, 3–4 frontier; math or rare knowledge, mid at least. None of yours on
+          that tier? The next one up. Code: the cheapest model good at code, on that tier or above.
+        </p>
+      </li>
     </ol>
+
+    <div class="mt-14">
+      <p class="eyebrow mb-4">Scores on {catalogVersion}</p>
+      <LadderChart />
+      <p class="mt-4 max-w-2xl text-[var(--color-ink-soft)]">
+        Ringed: the models in the examples. Refresh the scores with your own Artificial Analysis key, or
+        set any model's tier yourself.
+      </p>
+    </div>
   </section>
 
-  <!-- Why this model -->
+  <!-- Which model answers? -->
   <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-3">Why this model and not that one</h2>
+    <h2 class="text-3xl md:text-4xl mb-3">Which model answers?</h2>
     <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
-      glm is cheap ({glm.tier}), opus is strong ({opus.tier}). Pick a request.
+      Your two models: glm ({glm.name}, {glm.tier}, ~{priceTag(glm)} a request) and opus ({opus.name},
+      {opus.tier}, ~{priceTag(opus)}).
     </p>
     <LadderStepper />
   </section>
 
-  <!-- Where the rungs come from -->
-  <section class="rule py-14">
-    <h2 class="text-3xl md:text-4xl mb-3">Who decides which model is strong?</h2>
-    <p class="text-[var(--color-ink-soft)] max-w-xl mb-10">
-      Not the decider, and not us. Artificial Analysis, an independent lab, gives every model the same
-      public tests and a score. The best score of the day sets the bar: up to 8 points below it is
-      frontier, up to 20 is mid, the rest is small. The kit ships today's scores. Refresh them with
-      your own key, or place any model yourself.
-    </p>
-    <LadderChart />
-  </section>
-
-  <!-- Deciders + promises -->
+  <!-- What it promises · What it costs -->
   <section class="rule py-14">
     <div class="grid gap-12 md:grid-cols-2">
       <div>
-        <h2 class="text-3xl md:text-4xl mb-6">Pick the decider</h2>
-        <dl class="border-b border-[var(--color-line)]">
-          {
-            deciders.map(([kind, text]) => (
-              <div class="border-t border-[var(--color-line)] py-2.5 grid grid-cols-[7rem_minmax(0,1fr)] gap-4">
-                <dt class="font-mono font-medium pl-3 border-l-2 border-[var(--color-explicit)]">{kind}</dt>
-                <dd class="text-[var(--color-ink-soft)]">{text}</dd>
-              </div>
-            ))
-          }
-        </dl>
-        <p class="mt-4 text-sm text-[var(--color-ink-soft)]">
-          <span class={mono}>delegation-router eval</span> tells you which one is right on your own prompts.
-        </p>
-      </div>
-      <div>
-        <h2 class="text-3xl md:text-4xl mb-6">What it won't do</h2>
+        <h2 class="text-2xl mb-5">What it promises</h2>
         <ul class="border-b border-[var(--color-line)]">
           {promises.map((t) => <li class="border-t border-[var(--color-line)] py-2.5">{t}</li>)}
         </ul>
+      </div>
+      <div>
+        <h2 class="text-2xl mb-5">What it costs</h2>
+        <p class="border-t border-[var(--color-line)] pt-2.5">
+          Free (MIT). At most one decider call per request, priced in the response.
+        </p>
       </div>
     </div>
   </section>
@@ -146,39 +129,45 @@ model    = "auto"`}
     <h2 class="text-3xl md:text-4xl mb-8">Set it up</h2>
     <div class="grid gap-8 lg:grid-cols-2">
       <CodeBlock
-        label="1 · Install"
-        code={`npx delegation-kit         # macOS · jq · git · python3
-delegation-config show     # your models, one profile each`}
+        label="1 · Install, then list your models"
+        code={`# macOS, with jq, git and python3
+npx delegation-kit
+delegation-config show`}
       />
-      <CodeBlock
-        lang="json"
-        label="2 · Name the decider and its pool (config.json)"
-        code={`"router": {
-  "decider": {"kind": "llm", "profile": "glm"},
-  "pool": ["glm", "opus"],
-  "default": "glm"
+      <div class="min-w-0">
+        <CodeBlock
+          lang="json"
+          label="2 · Add to ~/.config/delegation-kit/config.json"
+          code={`"router": {
+  "decider": {"kind": "llm", "profile": "deepseek-flash"},
+  "pool": ["deepseek-flash", "opus-reviewer"],
+  "default": "deepseek-flash"
 }`}
-      />
-      <CodeBlock
-        label="3 · Serve"
-        code={`delegation-router check     # no network: decider, pool, rungs
-delegation-router serve     # http://127.0.0.1:4141/v1`}
-      />
-      <CodeBlock
-        label="4 · Send"
-        code={`curl -s 127.0.0.1:4141/v1/chat/completions \\
-  -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo"}]}'`}
-      />
+        />
+        <p class="mt-2 text-sm text-[var(--color-ink-soft)]">
+          Both come with the install: DeepSeek Flash on your API key, Opus 5 on your Claude subscription.
+        </p>
+      </div>
+      <div class="min-w-0 lg:col-span-2">
+        <CodeBlock
+          label="3 · Start it; send a request from another terminal"
+          code={`delegation-router serve
+curl -si 127.0.0.1:4141/v1/chat/completions -H 'Content-Type: application/json' \\
+  -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'`}
+        />
+      </div>
     </div>
-  </section>
-
-  <!-- Read further -->
-  <section class="rule py-14">
-    <div class="grid gap-8 md:grid-cols-4 text-[var(--color-ink-soft)]">
-      <p><a href="/docs/router" class={link}>Router reference →</a><br />every field, decider, error</p>
-      <p><a href="/docs/configuration" class={link}>Configuration →</a><br />models, keys, adapters</p>
-      <p><a href="/docs/compatibility" class={link}>Compatibility →</a><br />real decider answers, costs</p>
-      <p><a href="/dispatch" class={link}>Dispatch by hand →</a><br />from Claude Code or Codex</p>
-    </div>
+    <p class="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+      <a href="/docs/" class={link}>Get started →</a>
+      <a href="/docs/router/" class={link}>Router reference →</a>
+    </p>
   </section>
 </BaseLayout>
+
+<style>
+  /* Unlayered, like the global `a { color: inherit }` it has to beat. */
+  .btn {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+</style>

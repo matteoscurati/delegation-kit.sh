@@ -1,14 +1,11 @@
-// The worked example that runs through the home page: a pool of two
-// profiles, glm (GLM 5.3 Flash) and opus (Opus 5.5), with GPT-5.6 Luna as the
-// optional third. Every number comes from src/data/catalog.json at build time,
+// The worked example that runs through the home page: two models, glm
+// (GLM 5.3 Flash) and opus (Opus 5.5), with GPT-5.6 Luna named in the chart
+// as the example of a small model. Every number comes from src/data/catalog.json at build time,
 // and `route()` mirrors tiered-v1's `choose()` in the kit
 // (bin/lib/delegation_router_policy.py) for the requests the page shows.
-// If the catalog moves a model to another rung, the build fails here instead
+// If the catalog moves a model to another tier, the build fails here instead
 // of publishing copy that no longer matches the router.
 import catalog from '../data/catalog.json';
-import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 
 export type Tier = 'small' | 'mid' | 'frontier';
 
@@ -77,9 +74,9 @@ const UP: Record<Tier, Tier | null> = { small: 'mid', mid: 'frontier', frontier:
 export type Verdict = { difficulty: number; tags: ('code' | 'math')[]; confidence: number; failed?: string };
 export type Route = {
   chosen: Profile;
-  /** The rung the answer sets, after math lifts it; null when undecidable. */
+  /** The tier the rating needs, after math lifts it; null when undecidable. */
   floor: Tier | null;
-  /** The rung the answer set before a lift (only for math). */
+  /** The tier the rating set before a lift (only for math). */
   raw: Tier | null;
   candidates: Profile[];
   climbed: boolean;
@@ -134,36 +131,7 @@ export const renameVerdict: Verdict = { difficulty: 1, tags: ['code'], confidenc
 export const renameRoute = route(renameVerdict, [glm, opus]);
 if (renameRoute.chosen !== glm) throw new Error('example pool: the rename no longer goes to glm');
 
-/** The router-prompt digest and the policy version the headers quote. */
-const PROMPT_DIGEST = '46002df5';
-const POLICY_VERSION = '2026-10-13';
-
-// When the kit checkout sits next to the site (the same lookup as
-// scripts/sync-kit.mjs), the build checks both against it: the digest is the
-// first 8 hex of sha256(config/router-prompt.v1.md), the version is
-// POLICY_VERSION in bin/lib/delegation_router_policy.py. Without a checkout
-// (a CI build from the synced data alone) the check is skipped.
-{
-  const kitRoot = resolve(process.env.DELEGATION_KIT_ROOT ?? resolve(process.cwd(), '..', 'delegation-kit'));
-  const promptFile = resolve(kitRoot, 'config/router-prompt.v1.md');
-  const policyFile = resolve(kitRoot, 'bin/lib/delegation_router_policy.py');
-  if (existsSync(promptFile) && existsSync(policyFile)) {
-    const digest = createHash('sha256').update(readFileSync(promptFile)).digest('hex').slice(0, 8);
-    if (digest !== PROMPT_DIGEST)
-      throw new Error(`example pool: the decider header quotes prompt digest ${PROMPT_DIGEST}, the kit's is ${digest}`);
-    const version = /^POLICY_VERSION = "([^"]+)"/m.exec(readFileSync(policyFile, 'utf8'))?.[1];
-    if (version !== POLICY_VERSION)
-      throw new Error(`example pool: the policy header quotes ${POLICY_VERSION}, the kit's is ${version}`);
-  }
-}
-
-/** Headers a served response carries for the rename, as the server formats them. */
-export const renameHeaders = {
-  profile: renameRoute.chosen.key,
-  model: renameRoute.chosen.id,
-  tier: renameRoute.chosen.tier,
-  decider: `llm/${glm.id}+${PROMPT_DIGEST}`,
-  policy: `tiered-v1/${POLICY_VERSION}`,
-  difficulty: renameVerdict.difficulty.toFixed(1),
-  confidence: String(renameVerdict.confidence)
-};
+/** The hero's second row: "Find the race condition in this scheduler". */
+export const raceVerdict: Verdict = { difficulty: 3, tags: ['code'], confidence: 0.8 };
+export const raceRoute = route(raceVerdict, [glm, opus]);
+if (raceRoute.chosen !== opus) throw new Error('example pool: the race condition no longer goes to opus');
