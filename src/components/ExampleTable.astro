@@ -5,33 +5,31 @@
 // table, so a screen reader reads it as one; below md each row stacks and
 // every cell carries its own label.
 //
-// With `rotate`, the answering model cycles through every model the catalog
-// scores on that tier, the example's own first: CSS only, one keyframe set
-// per row (each tier has its own count), rows staggered so they never switch
-// together. Reduced motion shows the first model, still; a screen reader
-// gets the whole list as text.
-import { examples, rating, priceTag, tierOptions } from '../lib/example-pool';
+// With `rotate`, the three rows cycle together through four sets of three
+// models from different vendors (example-pool.ts checks that the rule sends
+// each request to the model shown): CSS only, one keyframe set shared by the
+// rows, so every frame is one consistent set. Reduced motion shows the first
+// set, still; a screen reader gets each row's models as text.
+import { examples, rating, priceTag, heroOptions } from '../lib/example-pool';
 
 interface Props {
   /** How many of the examples, in their order. */
   count?: number;
   /** Add the one-line reason for each choice. */
   why?: boolean;
-  /** Cycle the answering model through the catalog's models on its tier. */
+  /** Cycle the three rows together through the hero's model sets. */
   rotate?: boolean;
   caption: string;
 }
 const { count = examples.length, why = false, rotate = false, caption } = Astro.props;
 const rows = examples.slice(0, count).map((x, i) => ({
   ...x,
-  options: rotate ? tierOptions(x.r.chosen) : [],
-  anim: `xr-${i}`
+  options: rotate ? heroOptions[i] : []
 }));
 
 /** Seconds each model stays, of which the slide to the next takes SLIDE. */
-const STEP = 2.6;
+const STEP = 3.2;
 const SLIDE = 0.45;
-const STAGGER = 0.9;
 const pct = (n: number) => `${n.toFixed(3)}%`;
 /** Hold each model, slide to the next; the list repeats the first at the end, so the loop is seamless. */
 function keyframes(name: string, n: number) {
@@ -45,15 +43,11 @@ function keyframes(name: string, n: number) {
   return `@keyframes ${name}{${frames.join('')}}`;
 }
 
-const motion = rotate
-  ? rows
-      .filter((x) => x.options.length > 1)
-      .map(
-        (x, i) =>
-          `${keyframes(x.anim, x.options.length)}.xt .${x.anim}{animation:${x.anim} ${(x.options.length * STEP).toFixed(2)}s cubic-bezier(.65,0,.35,1) ${(i * STAGGER).toFixed(2)}s infinite}`
-      )
-      .join('')
-  : '';
+const frames = rotate ? heroOptions[0].length : 0;
+const motion =
+  frames > 1
+    ? `${keyframes('xr', frames)}.xt .rot-list{animation:xr ${(frames * STEP).toFixed(2)}s cubic-bezier(.65,0,.35,1) 1.2s infinite}`
+    : '';
 
 const css = `
 .xt{width:100%;border-collapse:collapse}
@@ -115,7 +109,7 @@ ${motion}
                 <span class="lbl">Answered by</span>
                 <span class={`tier tier-fixed tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
                 <span class="rot" aria-hidden="true">
-                  <span class={`rot-list ${x.anim}`}>
+                  <span class="rot-list">
                     {[...x.options, x.options[0]].map((o) => (
                       <span class="rot-item">
                         <span class="who">{o.name}</span>
@@ -124,9 +118,7 @@ ${motion}
                     ))}
                   </span>
                 </span>
-                <span class="sr-only">
-                  your {x.r.chosen.tier} model, for example {x.options.map((o) => o.name).join(', ')}
-                </span>
+                <span class="sr-only">{x.options.map((o) => o.name).join(', or ')}</span>
               </td>
             ) : (
               <td>

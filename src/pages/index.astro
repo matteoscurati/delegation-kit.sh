@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
 import ExampleTable from '../components/ExampleTable.astro';
 import LadderChart from '../components/LadderChart.astro';
-import { luna, flash, opus, pool, fallback, catalogVersion } from '../lib/example-pool';
+import { luna, flash, opus, pool, fallback, catalogVersion, cuts } from '../lib/example-pool';
 
 const promises = [
   'Runs on your machine, picks only from your models, sends each request once: no retry.',
@@ -55,7 +55,7 @@ const useRow = 'border-t border-[var(--color-line)] pt-5 grid gap-5 lg:grid-cols
       <ExampleTable
         count={3}
         rotate
-        caption={`Sent with "model": "auto". Each request goes to your model on the tier it needs; the names cycle through models the catalog places on each tier. The setup below uses ${models}.`}
+        caption={`Sent with "model": "auto", shown with four sets of three models from different vendors: in each, the cheapest model whose score reaches the request's minimum answers. The setup below uses the first: ${models}.`}
       />
     </div>
   </section>
@@ -122,10 +122,10 @@ delegation-config show  # your models`}
     <ol role="list" class="grid gap-x-8 gap-y-8 md:grid-cols-3">
       <li class={step}>
         <span class={stepNum} aria-hidden="true">1</span>
-        <h3 class={stepTitle}>Every model gets a tier</h3>
+        <h3 class={stepTitle}>Every model gets a score</h3>
         <p class="text-[var(--color-ink-soft)]">
           Artificial Analysis, an independent lab, gives every model the same tests and a score. Within 8
-          points of the day's best score: frontier, the strongest tier. Within 20: mid. The rest: small.
+          points of the day's best: frontier. Within 20: mid. The rest: small.
         </p>
       </li>
       <li class={step}>
@@ -133,15 +133,16 @@ delegation-config show  # your models`}
         <h3 class={stepTitle}>Your decider rates the request</h3>
         <p class="text-[var(--color-ink-soft)]">
           It reads an excerpt, never your keys or your list of models, and answers: how hard is this, 0
-          to 4? Code, math, rare knowledge?
+          to 4, half points allowed? Code, math, rare knowledge?
         </p>
       </li>
       <li class={step}>
         <span class={stepNum} aria-hidden="true">3</span>
-        <h3 class={stepTitle}>The cheapest model on that tier answers</h3>
+        <h3 class={stepTitle}>The cheapest one strong enough answers</h3>
         <p class="text-[var(--color-ink-soft)]">
-          0–1 needs small, 2 mid, 3–4 frontier; math or rare knowledge, mid at least. None of yours on
-          that tier? The next one up. No rating? Your default model answers.
+          The rating sets a minimum score: none for 0–1, {cuts.mid} for 2, {cuts.frontier} for 3–4,
+          in between for half points. Math or rare knowledge: {cuts.mid} at least. The cheapest of your
+          models above it answers; none above? Your strongest. No rating? Your default.
         </p>
       </li>
     </ol>
