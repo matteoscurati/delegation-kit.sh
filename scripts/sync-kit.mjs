@@ -216,6 +216,8 @@ const ladder = {
   models: Object.entries(catalog.models)
     .map(([id, row]) => ({
       id,
+      // The board's name for the model, without its variant: "Qwen3.8 Max (0902)" → "Qwen3.8 Max".
+      name: row.evidence?.name?.replace(/\s*\([^)]*\)\s*$/, '') ?? null,
       tier: row.tier ?? null,
       index: row.evidence?.index ?? null,
       variant: row.evidence?.variant ?? null,

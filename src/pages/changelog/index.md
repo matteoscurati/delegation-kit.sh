@@ -7,12 +7,88 @@ path: '/changelog'
 
 # Changelog
 
-Every release, newest first. Synced from
-[`CHANGELOG.md`](https://github.com/matteoscurati/delegation-kit/blob/main/CHANGELOG.md)
-in the kit repository by `npm run sync-kit` — edit there, not here. Tags follow
-`delegation-kit--v<version>` and each one has a GitHub Release.
+<!-- Synced from CHANGELOG.md in the kit repository by `npm run sync-kit`: edit
+there, not here. Tags follow delegation-kit--v<version> and each one has a
+GitHub Release. -->
+
+Every release, newest first.
 
 <!-- BEGIN AUTOGEN -->
+
+## [0.28.0] — 2026-10-19
+
+The rating becomes a minimum score; the cheapest model that reaches it
+answers.
+
+### Changed
+
+- **Policy `floor-v1` replaces `tiered-v1`.** The decider's rating becomes a
+  minimum score on the Artificial Analysis Intelligence Index: up to 1 of 4,
+  none; at 2, the bottom of the mid band (37.6 on the 2026-10-17 catalog);
+  from 3, the bottom of the frontier band (49.6); in between, in proportion
+  (2.5 → 43.6). `math`, `rare` and `tools` raise it to the mid band, `long`
+  to the frontier band; `code` still narrows to code-capable profiles. Every
+  eligible profile at or above the minimum is a candidate, whatever its
+  tier, and the cheapest wins; when none reaches it, the strongest eligible
+  profile answers and says so (it used to fall to the default). Under
+  `tiered-v1` the rating picked one tier and the cheapest profile on it won,
+  so GPT-5.6 Luna (small, 37.3) answered an easy request ahead of a cheaper
+  GLM 5.3 Flash (mid, 41.8), and a stronger mid model such as Kimi K3 never
+  answered while a cheaper mid one was eligible. Each profile now carries a
+  `score` (the index at its reasoning setting, or the bottom of its band
+  when placed by hand); `check` prints it, and `decide` and every response
+  disclose `minimum_score` and the chosen profile's `score`.
+- **The LLM decider rates in half points** (0, 0.5 … 4), so a request
+  between two levels gets a minimum between them. An answer off that grid,
+  or not a number, is outside the schema and lands on the default. Checked
+  live with DeepSeek Flash: it uses the half points (2.5, 3.5), about 1 s
+  and $0.00014 a decision.
+
+### Added
+
+- **`delegation-router decide --lane ROLE`**: the decider's recommendation
+  for a task you are about to delegate. Only the pool profiles that take the
+  role, by the same check `delegation-run` makes, are candidates; the rest
+  are listed under `blocked`; the recommendation names the profile's
+  capabilities on that role. A decision that would land on a default
+  without the role recommends nothing, and says so. The `model-routing`
+  skill asks Claude Code and Codex to pass the lane.
+
+## [0.27.2] — 2026-10-19
+
+### Changed
+
+- **The Opus profiles run Claude Opus 5.5.** Owner decision: `opus-builder`,
+  `opus-reviewer` and `opus-policy-annotator` in `config/presets.json`, and
+  the `opus-builder` and `opus-reviewer` Claude Code agents, move from
+  `claude-opus-5` to `claude-opus-5-5` at the same efforts. Opus 5.5 is the
+  best model on the Artificial Analysis board (57.6, `frontier`) and costs
+  less per token than Opus 5 ($4/$20 against $5/$25 per million).
+  `doctor.sh` checks the new pin. A personal configuration keeps the model
+  it has; *Upgrading* in the configuration page says what to change.
+- **The docs use the words the responses use.** `tier` instead of rung and
+  ladder (the `X-Router-Tier` header, the `tier` field), "decider" instead
+  of "decision model", "the profiles it may pick from" instead of "the pool
+  it governs". The README opens with what the router does.
+
+### Fixed
+
+- **What leaves your machine.** The README and the router page said nothing
+  leaves the machine except the request to the chosen model. The decider
+  also gets an excerpt of each request (the whole request with
+  `input: full`) unless it runs on your machine; both pages now say so.
+- **The README's routing example.** It said that adding GPT-5.6 Luna would
+  send the rename to Luna, which `tiered-v1` does not do when a cheaper
+  code-capable model sits higher (GLM 5.3 Flash). The example now uses three
+  models from the default install, one per tier (`luna-clerk`,
+  `deepseek-flash`, `opus-reviewer`), each row checked against the policy's
+  `choose()`, and the Quick start pool spans the three tiers instead of
+  three `mid` models.
+- **`install.sh` warns when its bin directory is not on PATH.** macOS does
+  not put `~/.local/bin` there, and the first command then failed with
+  "command not found"; the installer prints the line to add.
+- The tagline "Your models. Your call. Your rules." is gone from the README
+  and the router page.
 
 ## [0.27.1] — 2026-10-17
 

@@ -22,7 +22,7 @@ const { choices, blocked, blockedNote } = Astro.props;
 
 <div class="grid gap-6 md:grid-cols-[1.6fr_1fr]">
   <div>
-    <p class="eyebrow mb-2">choices — you pick one, or authorize the lead to</p>
+    <p class="eyebrow mb-2">choices — pick one, or let your agent pick from these</p>
     {
       choices.length === 0 ? (
         <p class="text-sm text-[var(--color-ink-soft)]">

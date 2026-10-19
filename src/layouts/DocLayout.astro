@@ -1,5 +1,5 @@
 ---
-// Layout for long-form MDX pages (/docs/*, /changelog, /privacy).
+// Layout for long-form pages (/docs/*, /changelog, /privacy).
 // `doc: true` makes BaseLayout add the `.doc` class to <main> and load
 // /prose.css, which is served from public/ so it ships only on these pages.
 import BaseLayout from './BaseLayout.astro';
@@ -18,42 +18,66 @@ const merged = { ...Astro.props, ...Astro.props.frontmatter };
 const baseFrontmatter = { ...merged, doc: true };
 
 const docNav = [
-  { href: '/docs', label: 'Getting started' },
-  { href: '/docs/router', label: 'The router' },
-  { href: '/docs/configuration', label: 'Personal configuration' },
-  { href: '/docs/executors', label: 'External executors' },
-  { href: '/docs/compatibility', label: 'Compatibility' },
-  { href: '/changelog', label: 'Changelog' }
+  { group: 'Start', items: [{ href: '/docs/', label: 'Getting started' }] },
+  {
+    group: 'Router',
+    items: [
+      { href: '/docs/router/', label: 'Router reference' },
+      { href: '/docs/configuration/', label: 'Configuration' }
+    ]
+  },
+  {
+    group: 'Under the hood',
+    items: [
+      { href: '/docs/dispatch/', label: 'Run a model by hand' },
+      { href: '/docs/executors/', label: 'Executors' }
+    ]
+  },
+  {
+    group: 'Project',
+    items: [
+      { href: '/docs/compatibility/', label: 'Compatibility' },
+      { href: '/changelog/', label: 'Changelog' }
+    ]
+  }
 ];
 const current = merged.path ?? '';
+const isCurrent = (href: string) => href.replace(/\/$/, '') === current.replace(/\/$/, '');
 ---
 
 <BaseLayout frontmatter={baseFrontmatter}>
   <div class="lg:grid lg:grid-cols-[14rem_1fr] lg:gap-12">
-    <aside class="mb-10 lg:mb-0">
-      <p class="eyebrow mb-3">Documentation</p>
-      <ul
-        class="list-none p-0 m-0 text-sm flex flex-wrap lg:flex-col gap-x-4 gap-y-2 lg:sticky lg:top-6"
+    <aside class="mb-6 lg:mb-0">
+      <nav
+        aria-label="Documentation"
+        class="text-sm flex flex-wrap gap-x-4 gap-y-1.5 lg:gap-y-5 lg:flex-col lg:sticky lg:top-6"
       >
         {
-          docNav.map((item) => (
-            <li>
-              <a
-                href={item.href}
-                aria-current={item.href === current ? 'page' : undefined}
-                class:list={[
-                  'hover:text-[var(--color-ink)]',
-                  item.href === current
-                    ? 'text-[var(--color-ink)] font-medium'
-                    : 'text-[var(--color-ink-soft)]'
-                ]}
-              >
-                {item.label}
-              </a>
-            </li>
+          docNav.map((g) => (
+            <div class="contents lg:block">
+              <p class="eyebrow mb-2 hidden lg:block">{g.group}</p>
+              <ul class="flex flex-wrap lg:flex-col gap-x-4 gap-y-1.5">
+                {g.items.map((item) => (
+                  <li>
+                    <a
+                      href={item.href}
+                      aria-current={isCurrent(item.href) ? 'page' : undefined}
+                      class:list={[
+                        'hover:text-[var(--color-ink)]',
+                        isCurrent(item.href)
+                          ? 'text-[var(--color-ink)] font-medium'
+                          : 'text-[var(--color-ink-soft)]'
+                      ]}
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))
         }
-      </ul>
+      </nav>
     </aside>
     <article class="min-w-0">
       <slot />

@@ -5,7 +5,7 @@ import kit from '../data/kit.json';
 import catalog from '../data/catalog.json';
 
 const SITE_DESCRIPTION =
-  'An OpenAI-compatible router on your machine. A decision model you choose rates each request, a public index ranks your models, and one model from your pool answers, with the reasons in the response.';
+  'A model router on your own machine: each request goes to the cheapest of your models that is strong enough for it, and the response says which model answered and why.';
 
 interface PageMeta {
   title?: string;
@@ -22,23 +22,22 @@ interface Props extends PageMeta {
 
 const merged: PageMeta = { ...Astro.props, ...Astro.props.frontmatter };
 const {
-  title = 'delegation-kit: a model router for the models you already pay for',
+  title = 'delegation-kit — a model router on your own machine',
   description = SITE_DESCRIPTION,
   path = '/',
   doc: isDoc = false
 } = merged;
 
 const siteOrigin = Astro.site ?? new URL('https://delegation-kit.sh');
-const canonical = new URL(path, siteOrigin).toString();
+const canonical = new URL(path === '/' || path.endsWith('/') ? path : path + '/', siteOrigin).toString();
 const ogImage = new URL('/og-image.png', siteOrigin).toString();
 const ogAlt =
-  'delegation-kit. Easy requests go to your cheap models, hard ones to your strong ones. You choose the judge; your rules pick the model.';
+  'delegation-kit. Easy requests go to your cheap models, hard ones to your strong ones. Every response says which model answered, and why.';
 
 const nav = [
-  { href: '/#how', label: 'How it works' },
-  { href: '/docs', label: 'Docs' },
-  { href: '/docs/router', label: 'Router reference' },
-  { href: '/changelog', label: 'Changelog' }
+  { href: '/#how', label: 'How it picks' },
+  { href: '/docs/', label: 'Get started' },
+  { href: '/docs/router/', label: 'Router reference' }
 ];
 ---
 
@@ -100,6 +99,11 @@ const nav = [
     <CloudflareAnalytics />
   </head>
   <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-3 focus:py-2 focus:bg-[var(--color-ink)] focus:text-[var(--color-paper)]"
+      >Skip to content</a
+    >
     <header class="border-b border-[var(--color-line-strong)]">
       <nav class="max-w-6xl mx-auto px-6 min-h-14 py-2 flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
         <a
@@ -136,7 +140,7 @@ const nav = [
       </nav>
     </header>
 
-    <main class:list={['max-w-6xl mx-auto px-6', isDoc ? 'doc py-12' : 'py-8']}>
+    <main id="main" class:list={['max-w-6xl mx-auto px-6', isDoc ? 'doc py-12' : 'py-8']}>
       <slot />
     </main>
 
@@ -148,15 +152,16 @@ const nav = [
           Code: <a href="https://opensource.org/licenses/MIT" class="hover:text-[var(--color-ink)]"
             >MIT</a
           >
-          · <a href="/privacy" class="hover:text-[var(--color-ink)]">Privacy</a>
+          · <a href="/privacy/" class="hover:text-[var(--color-ink)]">Privacy</a>
           · <a
             href="https://www.npmjs.com/package/delegation-kit"
             class="hover:text-[var(--color-ink)]"
             rel="noopener">npm</a
           >
+          · <a href="/changelog/" class="hover:text-[var(--color-ink)]">Changelog</a>
         </span>
         <span class="font-mono">
-          v{kit.version} · catalog {catalog.catalogVersion}
+          v{kit.version} · scores of {catalog.catalogVersion}
         </span>
       </div>
     </footer>

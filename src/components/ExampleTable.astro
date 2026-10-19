@@ -1,0 +1,143 @@
+---
+// Requests sent with "model": "auto", the decider's rating of each, and the
+// model that answers, computed at build time by `route()` (tiered-v1, see
+// example-pool.ts) and checked there against the kit's own policy. A real
+// table, so a screen reader reads it as one; below md each row stacks and
+// every cell carries its own label.
+//
+// With `rotate`, the three rows cycle together through four sets of three
+// models from different vendors (example-pool.ts checks that the rule sends
+// each request to the model shown): CSS only, one keyframe set shared by the
+// rows, so every frame is one consistent set. Reduced motion shows the first
+// set, still; a screen reader gets each row's models as text.
+import { examples, rating, priceTag, heroOptions } from '../lib/example-pool';
+
+interface Props {
+  /** How many of the examples, in their order. */
+  count?: number;
+  /** Add the one-line reason for each choice. */
+  why?: boolean;
+  /** Cycle the three rows together through the hero's model sets. */
+  rotate?: boolean;
+  caption: string;
+}
+const { count = examples.length, why = false, rotate = false, caption } = Astro.props;
+const rows = examples.slice(0, count).map((x, i) => ({
+  ...x,
+  options: rotate ? heroOptions[i] : []
+}));
+
+/** Seconds each model stays, of which the slide to the next takes SLIDE. */
+const STEP = 3.2;
+const SLIDE = 0.45;
+const pct = (n: number) => `${n.toFixed(3)}%`;
+/** Hold each model, slide to the next; the list repeats the first at the end, so the loop is seamless. */
+function keyframes(name: string, n: number) {
+  const total = n * STEP;
+  const at = (k: number) => `transform:translateY(calc(var(--h) * -${k}))`;
+  const frames = [`0%{${at(0)}}`];
+  for (let k = 0; k < n; k++) {
+    frames.push(`${pct(((k * STEP + STEP - SLIDE) / total) * 100)}{${at(k)}}`);
+    frames.push(`${pct((((k + 1) * STEP) / total) * 100)}{${at(k + 1)}}`);
+  }
+  return `@keyframes ${name}{${frames.join('')}}`;
+}
+
+const frames = rotate ? heroOptions[0].length : 0;
+const motion =
+  frames > 1
+    ? `${keyframes('xr', frames)}.xt .rot-list{animation:xr ${(frames * STEP).toFixed(2)}s cubic-bezier(.65,0,.35,1) 1.2s infinite}`
+    : '';
+
+const css = `
+.xt{width:100%;border-collapse:collapse}
+.xt th{font-family:var(--font-mono);font-size:.72rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--color-ink-soft);text-align:left;padding:0 .9rem .6rem 0}
+.xt td{border-top:1px solid var(--color-line);padding:.8rem .9rem .8rem 0;vertical-align:top}
+.xt tr:last-child td{border-bottom:1px solid var(--color-line)}
+.xt .req{font-family:var(--font-mono);font-size:.88rem;color:var(--color-ink)}
+.xt .rate{font-family:var(--font-mono);font-size:.82rem;color:var(--color-explicit-text);white-space:nowrap}
+.xt .who{font-weight:600;color:var(--color-ink)}
+.xt .cost{display:block;font-family:var(--font-mono);font-size:.75rem;color:var(--color-ink-soft);margin-top:.15rem}
+.xt .why{color:var(--color-ink-soft)}
+.xt .tier{display:inline-block;margin-left:.4rem;padding:0 .35rem;font-family:var(--font-mono);font-size:.7rem;font-weight:500;line-height:1.35rem;border:1px solid var(--color-line);color:var(--color-ink-soft);vertical-align:1px}
+.xt .tier-mid{border-color:var(--color-ink-soft);color:var(--color-ink)}
+.xt .tier-frontier{background:var(--color-ink);border-color:var(--color-ink);color:var(--color-paper)}
+.xt .lbl{display:none}
+.xt .rot{--h:2.75rem;display:inline-block;height:var(--h);overflow:hidden;vertical-align:top;margin-left:.5rem}
+.xt .tier-fixed{margin-left:0;min-width:4.9rem;text-align:center}
+.xt .rot-list{display:flex;flex-direction:column}
+.xt .rot-item{height:var(--h);display:flex;flex-direction:column;justify-content:flex-start;white-space:nowrap}
+.xt .rot .cost{margin:.1rem 0 0}
+${motion}
+@media (prefers-reduced-motion:reduce){.xt .rot-list{animation:none!important}}
+@media (max-width:767px){
+.xt thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.xt tr{display:block;border-top:1px solid var(--color-line);padding:.75rem 0}
+.xt tr:last-child{border-bottom:1px solid var(--color-line)}
+.xt td,.xt tr:last-child td{display:block;border:0;padding:.15rem 0}
+.xt .lbl{display:inline-block;min-width:6.5rem;font-family:var(--font-mono);font-size:.72rem;color:var(--color-ink-soft)}
+.xt .cost{margin:.1rem 0 0 6.5rem}
+.xt .rot .cost{margin:.1rem 0 0}
+.xt .rot{display:block;margin:.3rem 0 0 6.5rem}
+}
+`;
+---
+
+<style set:html={css}></style>
+
+<figure class="min-w-0">
+  <table class="xt">
+    <thead>
+      <tr>
+        <th scope="col">You send</th>
+        <th scope="col">Decider’s rating</th>
+        <th scope="col">Answered by</th>
+        {why && <th scope="col">Why</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((x) => (
+          <tr>
+            <td class="req">{x.request}</td>
+            <td class="rate">
+              <span class="lbl">Rated</span>
+              {rating(x.v)}
+            </td>
+            {rotate ? (
+              <td>
+                <span class="lbl">Answered by</span>
+                <span class={`tier tier-fixed tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
+                <span class="rot" aria-hidden="true">
+                  <span class="rot-list">
+                    {[...x.options, x.options[0]].map((o) => (
+                      <span class="rot-item">
+                        <span class="who">{o.name}</span>
+                        <span class="cost">~{o.cost} a request</span>
+                      </span>
+                    ))}
+                  </span>
+                </span>
+                <span class="sr-only">{x.options.map((o) => o.name).join(', or ')}</span>
+              </td>
+            ) : (
+              <td>
+                <span class="lbl">Answered by</span>
+                <span class="who">{x.r.chosen.name}</span>
+                <span class={`tier tier-${x.r.chosen.tier}`}>{x.r.chosen.tier}</span>
+                <span class="cost">~{priceTag(x.r.chosen)} a request</span>
+              </td>
+            )}
+            {why && (
+              <td class="why">
+                <span class="lbl">Why</span>
+                {x.why}
+              </td>
+            )}
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <figcaption class="mt-3 text-sm text-[var(--color-ink-soft)]">{caption}</figcaption>
+</figure>

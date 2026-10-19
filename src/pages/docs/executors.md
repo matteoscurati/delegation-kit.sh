@@ -1,11 +1,11 @@
 ---
 layout: ../../layouts/DocLayout.astro
-title: 'External executors — delegation-kit'
+title: 'Executors — delegation-kit'
 description: 'The external runners as adapters: what each can do, the three permission classes, model identity, exit codes, and the read-only patch verifier.'
 path: '/docs/executors'
 ---
 
-> Synced from [`docs/external-executors.md`](https://github.com/matteoscurati/delegation-kit/blob/main/docs/external-executors.md) in the kit repository. Edit there, not here.
+<!-- Synced from docs/external-executors.md in the kit repository: edit there, not here. -->
 
 <!-- BEGIN AUTOGEN -->
 

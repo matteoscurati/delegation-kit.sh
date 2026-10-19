@@ -5,7 +5,7 @@ description: 'Supported-agent matrix, verified release snapshots, and host-speci
 path: '/docs/compatibility'
 ---
 
-> Synced from [`docs/compatibility.md`](https://github.com/matteoscurati/delegation-kit/blob/main/docs/compatibility.md) in the kit repository. Edit there, not here.
+<!-- Synced from docs/compatibility.md in the kit repository: edit there, not here. -->
 
 <!-- BEGIN AUTOGEN -->
 
@@ -32,6 +32,32 @@ again — three of them new, each failing on the 0.27.0 wrapper: without
 `--ref` it installs its own release tag rather than the branch tip, a
 repository missing that tag is refused naming the ref, and `--ref` without a
 value is refused.
+
+0.27.2 was checked on **2026-10-19** with Claude Code `2.1.303`: the 13
+suites (the installer's PATH warning asserted both ways), ShellCheck, ruff,
+the eleven Node tests and the version gate pass; a reinstall and static
+doctor report `53 OK, 0 WARN, 0 FAIL` with `opus-builder` and
+`opus-reviewer` pinned to `claude-opus-5-5/max`. Live, authorized, one call:
+`delegation-run --profile opus-reviewer --lane routine-review` on Claude
+Opus 5.5 at `max` answered `PONG` in 3 s. Claude Code's JSON result names no
+model, so the receipt records `requested_model: claude-opus-5-5` with
+`model_identity_source: requested-only`: the identity check cannot confirm
+which model a `claude-code` profile ran. The README's routing example was
+checked against `choose()` with the shipped presets.
+
+0.28.0 was checked on **2026-10-19**: the 13 suites (the router suite at 70
+tests, with the `floor-v1` table, a cheaper stronger model beating a pricier
+weaker one, measured scores splitting a band, half points moving the
+minimum, `decide --lane`), ShellCheck, ruff, the eleven Node tests and the
+version gate pass; a reinstall and static doctor report `54 OK, 2 WARN,
+0 FAIL`, the two warnings being the configured pool's native profiles
+(`luna-clerk`, `opus-reviewer`: no tools, images or JSON mode). Live, four
+`decide --raw` calls to the DeepSeek Flash decider, no pool profile
+dispatched: a rename rated 0 (`code`), a contract summary 1, a Go
+worker-pool deadlock 2.5 (`code`) and a four-colour proof 3.5 (`math`,
+`rare`), each in 0.8–1.1 s for about $0.00014; the half points were read as
+given and set minimums of 0, 0, 43.6 and 49.6. Every example route in the
+README was checked against `choose()` with the shipped presets.
 
 **Offline.** All 13 regression suites green in 46 seconds here and about
 80 seconds on the macOS CI runner (where every `HTTPServer` bind had
