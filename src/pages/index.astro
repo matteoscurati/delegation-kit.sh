@@ -100,9 +100,11 @@ delegation-config show  # your models`}
           <span class={stepNum} aria-hidden="true">3</span>
           <h3 class={stepTitle}>Start it and point your app at it</h3>
           <p class="text-[var(--color-ink-soft)]">
-            Anything that talks to the OpenAI API works: set the base URL to the router and the model to
-            <code class="font-mono text-[0.9em]">"auto"</code>. The answer comes back as usual; its
-            <code class="font-mono text-[0.9em]">X-Router-Model</code> header names the model.
+            Anything that uses OpenAI's Chat Completions API works: set the base URL to the router and the
+            model to <code class="font-mono text-[0.9em]">"auto"</code>. The answer comes back as usual; its
+            <code class="font-mono text-[0.9em]">X-Router-Model</code> header names the model. Claude Code
+            and Codex speak other formats: they can't send their requests here, but the router can pick
+            them to answer.
           </p>
         </div>
         <div class="grid gap-4 min-w-0">
