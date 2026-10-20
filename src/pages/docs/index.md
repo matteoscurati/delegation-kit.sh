@@ -34,6 +34,11 @@ your PATH), adds its profiles to Claude Code and Codex (`--claude-only` or
 DeepSeek, Qwen; press Enter to skip one) and then checks the install. Keys are
 saved in files only you can read.
 
+It also creates `~/.config/delegation-kit/.env`, mode 600, from the
+repository's `.env.example`: one `NAME=value` line per key. Put any other key
+there, for example `MINIMAX_API_KEY` for a model you add. A variable already
+set in your shell wins. The file stays out of every project; never commit it.
+
 ## 2. See your models
 
 ```sh
@@ -72,7 +77,9 @@ See [Deciders](/docs/router/#deciders).
 delegation-router check
 ```
 
-It prints the decider and each model's tier, calling nothing.
+It prints the decider and each model's tier and score, calling no model, and
+flags any model this machine can't reach (no key, no login, its CLI missing):
+the router sets those aside before every decision.
 
 ## 5. Start the router and send a request
 
@@ -89,7 +96,9 @@ curl -si 127.0.0.1:4141/v1/chat/completions \
 ```
 
 From your app, any OpenAI SDK works. Point it at the router and ask for
-`"auto"`; the API key you pass is ignored, because each model uses its own:
+`"auto"`; the API key you pass is ignored, because each model uses its own.
+Claude Code and Codex can't send their requests here (they speak other
+formats), but the router can pick them to answer:
 
 ```python
 from openai import OpenAI
@@ -125,7 +134,7 @@ them.
 - [Router reference](/docs/router/): every field and error.
 - [Add a model](/docs/configuration/#adding-a-model): your own key or endpoint.
 - [Run a model by hand](/docs/dispatch/): one task to one model you name, from
-  Claude Code or Codex.
+  Claude Code or Codex, or the one your decider proposes with `decide --lane`.
 
 ## Other ways to install
 

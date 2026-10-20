@@ -3,8 +3,9 @@
  * never load these rules. Element rules that would restyle a component
  * (lists, paragraphs, tables) skip anything inside `.not-prose`.
  *
- * `.doc pre` rules are wrapped in :where() so Tailwind utilities applied
- * directly on <CodeBlock>'s <pre> still win the cascade. Inline-code rules
+ * `.doc pre` rules skip `.not-prose` regions: this file is unlayered, so it
+ * beats Tailwind's layered utilities whatever the specificity, and a
+ * <CodeBlock> inside the docs keeps its own ink block only that way. Inline-code rules
  * use normal specificity because no component renders bare <code> inside MDX.
  */
 
@@ -122,7 +123,7 @@
   overflow-wrap: anywhere;
 }
 
-:where(.doc pre) {
+:where(.doc pre:not(.not-prose *)) {
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.6;
@@ -146,7 +147,7 @@
   color: #8b949e !important;
 }
 
-:where(.doc pre code) {
+:where(.doc pre:not(.not-prose *) code) {
   background: transparent;
   border: 0;
   padding: 0;
