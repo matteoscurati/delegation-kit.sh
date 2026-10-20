@@ -1,6 +1,6 @@
 {
-  "version": "0.29.1",
-  "releaseDate": "2026-10-19",
+  "version": "0.30.0",
+  "releaseDate": "2026-10-20",
   "schemaVersion": 3,
   "reviewPolicy": "optional",
   "profiles": 22,
@@ -311,5 +311,5 @@
       }
     }
   },
-  "syncedAt": "2026-10-19"
+  "syncedAt": "2026-10-20"
 }
