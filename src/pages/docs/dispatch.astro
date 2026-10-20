@@ -4,6 +4,7 @@
 import DocLayout from '../../layouts/DocLayout.astro';
 import LaneResolver from '../../components/LaneResolver.astro';
 import RoutingTable from '../../components/RoutingTable.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 import kit from '../../data/kit.json';
 import table from '../../data/routing-table.json';
 
@@ -19,14 +20,34 @@ const anyUnsupported = table.profiles.some((row) => !row.technical_compatibility
   <h1>Run a model by hand</h1>
 
   <p>
-    Without the router: you name the model and its job, and it runs once. Claude Code and Codex can
-    do this for you, but only when you ask. The router is not involved.
+    You name the model and its job, and it runs once. Claude Code and Codex can do this for you, but
+    only when you ask. Or let your decider propose the model, below.
   </p>
   <p>
     <code>delegation-route resolve --lane &lt;role&gt;</code> lists the models that can take a role (the
     kind of job, such as builder or reviewer) and never runs anything. <code>delegation-run</code> runs
     the one you choose, inside its sandbox, and writes a receipt. A retry or a review is a new run you
     ask for.
+  </p>
+
+  <h2>Let the decider propose one</h2>
+  <p>
+    With a router block in your configuration, the decider can pick the model for a task you are about
+    to delegate. It rates the task, keeps only the models in your pool that take the role and that this
+    machine can reach, and recommends the cheapest one strong enough, with its reasons. It runs
+    nothing: you run the recommendation (PROFILE below), or ask Claude Code or Codex to.
+  </p>
+  <div class="not-prose">
+    <CodeBlock
+      label="Terminal"
+      code={`delegation-router decide --prompt-file task.md --lane builder --json
+delegation-run --profile PROFILE --lane builder \\
+  --prompt-file task.md --output result.txt --workdir WORKTREE`}
+    />
+  </div>
+  <p>
+    With GLM 5.3 Flash, Kimi K3 and Opus 5.5 among the builders: a rename (rated 0) goes to GLM, the
+    cheapest; a concurrency bug rated 2.5 (minimum score 43.6) to Kimi; a task rated 3 to Opus.
   </p>
 
   <h2>Which models can take a role</h2>
@@ -36,7 +57,10 @@ const anyUnsupported = table.profiles.some((row) => !row.technical_compatibility
   </div>
 
   <h2>Every role, every model</h2>
-  <p>{kit.profiles} profiles from the default install. The router does not pick by role.</p>
+  <p>
+    {kit.profiles} profiles from the default install. <code>serve</code> does not pick by role;
+    <code>decide --lane</code> does, inside your pool.
+  </p>
   <div class="not-prose">
     {
       anyUnsupported && (
