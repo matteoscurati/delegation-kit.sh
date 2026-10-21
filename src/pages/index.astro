@@ -5,13 +5,6 @@ import ExampleTable from '../components/ExampleTable.astro';
 import LadderChart from '../components/LadderChart.astro';
 import { luna, flash, opus, pool, fallback, catalogVersion, cuts } from '../lib/example-pool';
 
-const promises = [
-  'Runs on your machine, picks only from your models, sends each request once: no retry.',
-  "Skips the models it can't reach right now (no key, no login) before deciding, and says so.",
-  'By default your decider sees an excerpt; only the chosen model sees the full request.',
-  'No request log; the optional decision log never stores prompts.'
-];
-
 const models = `${luna.name} (${luna.via}), ${flash.name} (${flash.via}) and ${opus.name} (${opus.via})`;
 
 const config = `"router": {
@@ -167,29 +160,12 @@ delegation-config show  # your models`}
         caption="Costs are the router's estimates at API prices, used to compare models; a model you reach through a subscription is billed by your plan."
       />
     </div>
-  </section>
-
-  <!-- What it promises · What it costs -->
-  <section class="rule py-14">
-    <div class="grid gap-12 md:grid-cols-2">
-      <div>
-        <h2 class="text-2xl mb-5">What it promises</h2>
-        <ul class="border-b border-[var(--color-line)]">
-          {promises.map((t) => <li class="border-t border-[var(--color-line)] py-2.5">{t}</li>)}
-        </ul>
-      </div>
-      <div>
-        <h2 class="text-2xl mb-5">What it costs</h2>
-        <p class="border-t border-[var(--color-line)] pt-2.5">
-          Free (MIT). At most one decider call per request.
-        </p>
-      </div>
-    </div>
     <p class="mt-12 flex flex-wrap gap-x-6 gap-y-2">
       <a href="/docs/" class={link}>Get started →</a>
       <a href="/docs/router/" class={link}>Router reference →</a>
     </p>
   </section>
+
 </BaseLayout>
 
 <style>

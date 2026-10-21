@@ -20,22 +20,31 @@ const anyUnsupported = table.profiles.some((row) => !row.technical_compatibility
   <h1>Run a model by hand</h1>
 
   <p>
-    You name the model and its job, and it runs once. Claude Code and Codex can do this for you, but
-    only when you ask. Or let your decider propose the model, below.
+    You pick a profile and a role (the kind of job, such as builder or reviewer; the CLI flag is
+    <code>--lane</code>). It runs once, within its adapter's limits, and writes a receipt. Claude Code
+    and Codex do this only when you ask, and a retry or a review is a new run you ask for.
   </p>
+  <div class="not-prose">
+    <CodeBlock
+      label="Terminal"
+      code={`delegation-route resolve --lane builder --json        # lists, runs nothing
+delegation-route resolve --lane builder --selected-profile ID --json   # validates only
+delegation-run --profile ID --lane builder \\
+  --prompt-file task.md --output result.txt --workdir WORKTREE`}
+    />
+  </div>
   <p>
-    <code>delegation-route resolve --lane &lt;role&gt;</code> lists the models that can take a role (the
-    kind of job, such as builder or reviewer) and never runs anything. <code>delegation-run</code> runs
-    the one you choose, inside its sandbox, and writes a receipt. A retry or a review is a new run you
-    ask for.
+    A run writes the output and a <code>.result.json</code> receipt; a failure writes
+    <code>.error.json</code> and exits with a <a href="/docs/executors/#exit-codes">code</a>. Fields and
+    flags: <a href="/docs/configuration/#selection-and-execution">Configuration</a>.
   </p>
 
   <h2>Let the decider propose one</h2>
   <p>
-    With a router block in your configuration, the decider can pick the model for a task you are about
-    to delegate. It rates the task, keeps only the models in your pool that take the role and that this
-    machine can reach, and recommends the cheapest one strong enough, with its reasons. It runs
-    nothing: you run the recommendation (PROFILE below), or ask Claude Code or Codex to.
+    With a router block, the decider rates the task, keeps the pool profiles that take the role and that
+    this machine can reach, and recommends the cheapest one strong enough, with its reasons. It runs
+    nothing: you run PROFILE, or ask Claude Code or Codex to. Rules:
+    <a href="/docs/router/">Router</a>.
   </p>
   <div class="not-prose">
     <CodeBlock
@@ -50,17 +59,14 @@ delegation-run --profile PROFILE --lane builder \\
     cheapest; a concurrency bug rated 2.5 (minimum score 43.6) to Kimi; a task rated 3 to Opus.
   </p>
 
-  <h2>Which models can take a role</h2>
+  <h2>Which profiles can take a role</h2>
   <p>Pick a role. Computed from kit {kit.version} when the site was built.</p>
   <div class="not-prose">
     <LaneResolver />
   </div>
 
-  <h2>Every role, every model</h2>
-  <p>
-    {kit.profiles} profiles from the default install. <code>serve</code> does not pick by role;
-    <code>decide --lane</code> does, inside your pool.
-  </p>
+  <h2>Every role, every profile</h2>
+  <p>{kit.profiles} profiles from the default install.</p>
   <div class="not-prose">
     {
       anyUnsupported && (
@@ -74,8 +80,7 @@ delegation-run --profile PROFILE --lane builder \\
   </div>
 
   <p>
-    Each CLI runs in its own sandbox with an identity check, and <code>delegation-patch-verify</code> checks
-    a text model's patch before you apply it. Details: <a href="/docs/executors/">Executors</a>,
-    <a href="/docs/configuration/">Configuration</a>.
+    What each adapter may touch, how its model is checked, and how <code>delegation-patch-verify</code>
+    checks a text model's patch before you apply it: <a href="/docs/executors/">Executors</a>.
   </p>
 </DocLayout>

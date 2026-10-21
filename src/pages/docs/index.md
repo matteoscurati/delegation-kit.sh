@@ -7,10 +7,10 @@ path: '/docs'
 
 # Getting started
 
-delegation-kit is a model router that runs on your own machine: each request
-goes to the cheapest of your models that is strong enough for it, and the
-response says which model answered and why. [How it picks a model](/#how) is on
-the home page.
+By the end of this page a router runs on your own machine: each request goes
+to the cheapest of your models strong enough for it, and the response says
+which answered and why.
+[How it picks](/#how) is on the home page.
 
 ## What you need
 
@@ -18,9 +18,9 @@ the home page.
 - Two or more models you can call. Each is either an API key (DeepSeek, Qwen,
   or any OpenAI-compatible endpoint, local ones included) or a plan you use
   through a CLI (Claude, Codex, GLM, Kimi, Grok).
-- The steps below use three models the install already knows, one per
-  [tier](/#how): GPT-5.6 Luna through Codex, DeepSeek Flash with an API key,
-  and Claude Opus 5.5 through Claude Code. Use the ones you have instead.
+- The example uses three models the install already knows: GPT-5.6 Luna
+  (a Codex login), DeepSeek Flash (an API key) and Claude Opus 5.5 (Claude
+  Code). Use the ones you have instead.
 
 ## 1. Install
 
@@ -28,27 +28,33 @@ the home page.
 npx delegation-kit
 ```
 
-It fetches the release, installs the commands in `~/.local/bin` (keep it on
-your PATH), adds its profiles to Claude Code and Codex (`--claude-only` or
-`--codex-only` keeps it to one), asks for the API keys it knows (Z.AI,
-DeepSeek, Qwen; press Enter to skip one) and then checks the install. Keys are
-saved in files only you can read.
+It:
 
-It also creates `~/.config/delegation-kit/.env`, mode 600, from the
-repository's `.env.example`: one `NAME=value` line per key. Put any other key
-there, for example `MINIMAX_API_KEY` for a model you add. A variable already
-set in your shell wins. The file stays out of every project; never commit it.
+- fetches the release and installs the commands in `~/.local/bin` (keep it on
+  your PATH);
+- adds its profiles to Claude Code and Codex (`--claude-only` or
+  `--codex-only` keeps it to one);
+- asks for the Z.AI, DeepSeek and Qwen keys (Enter skips one) and saves them
+  in files only you can read;
+- checks the install.
 
-## 2. See your models
+Any other key, such as `MINIMAX_API_KEY`, goes in
+`~/.config/delegation-kit/.env` (created from `.env.example`, mode 600,
+outside every project, never committed), one `NAME=value` per line. A variable
+set in your shell wins. See
+[Keys and environment](/docs/configuration/#keys-and-environment).
+
+## 2. See your profiles
 
 ```sh
 delegation-config show
 ```
 
 Each entry is a *profile*: a short name for one model and how to reach it.
-The install creates a set of them, some models more than once.
+A model can have several profiles, one per role (`opus-builder`,
+`opus-reviewer`).
 
-## 3. Choose the decider and the models
+## 3. Choose the decider and the pool
 
 Open `~/.config/delegation-kit/config.json` and add a `"router"` entry next to
 `"profiles"`:
@@ -62,14 +68,14 @@ Open `~/.config/delegation-kit/config.json` and add a `"router"` entry next to
 ```
 
 - `decider`: who rates each request. Here, DeepSeek Flash on your API key.
-- `pool`: the models it may choose from, by the names `delegation-config show`
-  printed. `luna-clerk` (GPT-5.6 Luna) is small, `deepseek-flash` is mid,
-  `opus-reviewer` (Claude Opus 5.5) is frontier, the strongest tier.
-- `default`: the model that answers when the decider can't.
+- `pool`: the profiles it may choose from, by the names `show` printed.
+  `luna-clerk` is [small](/#how), `deepseek-flash` mid, `opus-reviewer`
+  frontier, the strongest tier.
+- `default`: the profile that answers when the decider can't.
 
-Other deciders: a hosted service (Levanto Sage, TypeSafe Jev), your own
-Dipylon service, a local classifier, or `none`, which always uses the default.
-See [Deciders](/docs/router/#deciders).
+Other deciders: Levanto Sage, TypeSafe Jev, your own Dipylon, a local
+classifier, or `none` (always the default). See
+[Deciders](/docs/router/#deciders).
 
 ## 4. Check it
 
@@ -77,9 +83,10 @@ See [Deciders](/docs/router/#deciders).
 delegation-router check
 ```
 
-It prints the decider and each model's tier and score, calling no model, and
-flags any model this machine can't reach (no key, no login, its CLI missing):
-the router sets those aside before every decision.
+It prints the decider and each profile's tier and score, calling no model,
+and names any pool profile this machine can't reach (no key, its runner's
+check failing, its CLI missing). The router sets those aside, except the
+default: a request that lands on an unreachable default is refused.
 
 ## 5. Start the router and send a request
 
@@ -95,10 +102,10 @@ curl -si 127.0.0.1:4141/v1/chat/completions \
   -d '{"model":"auto","messages":[{"role":"user","content":"Rename foo to bar in utils.py"}]}'
 ```
 
-From your app, any OpenAI SDK works. Point it at the router and ask for
-`"auto"`; the API key you pass is ignored, because each model uses its own.
-Claude Code and Codex can't send their requests here (they speak other
-formats), but the router can pick them to answer:
+From your app, point any OpenAI SDK at the router and ask for `"auto"`. The
+API key is ignored: each profile uses its own. Claude Code and Codex can't
+send requests here, but the router can pick them to answer
+([why](/docs/router/)).
 
 ```python
 from openai import OpenAI
@@ -121,20 +128,19 @@ X-Router-Difficulty: 1.0
 ```
 
 `X-Router-Difficulty` is the decider's rating, 0 to 4. The `router` field in
-the body lists the reasons and what each model would cost.
+the body lists the reasons and each candidate's estimated cost.
 
-With these three models, an easy request goes to `luna-clerk`, a medium one
-or one with math to `deepseek-flash`, and a hard or very long one to
-`opus-reviewer`. A request with tools, images or JSON mode always goes to
-`deepseek-flash`: the other two answer through their CLIs, which can't take
-them.
+With this pool, an easy request goes to `luna-clerk`, a medium one or one
+with math to `deepseek-flash`, a hard or very long one to `opus-reviewer`.
+Tools, images or JSON mode always go to `deepseek-flash`: the other two answer
+through CLIs, which can't take them.
 
 ## Next
 
 - [Router reference](/docs/router/): every field and error.
 - [Add a model](/docs/configuration/#adding-a-model): your own key or endpoint.
-- [Run a model by hand](/docs/dispatch/): one task to one model you name, from
-  Claude Code or Codex, or the one your decider proposes with `decide --lane`.
+- [Run a model by hand](/docs/dispatch/): one task to one profile, named by
+  you or proposed by your decider.
 
 ## Other ways to install
 
