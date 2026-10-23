@@ -108,6 +108,21 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
+          "lane": "builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -199,6 +214,21 @@
           "model": "deepseek-flash",
           "family": "deepseek",
           "adapter": "deepseek-api",
+          "lane": "clerk",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
           "lane": "clerk",
           "configuration_valid": true,
           "technical_compatibility": true,
@@ -313,6 +343,21 @@
           "model": "deepseek-flash",
           "family": "deepseek",
           "adapter": "deepseek-api",
+          "lane": "judgement",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
           "lane": "judgement",
           "configuration_valid": true,
           "technical_compatibility": true,
@@ -492,6 +537,21 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
+          "lane": "policy-annotation",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -541,6 +601,21 @@
           "model": "deepseek-flash",
           "family": "deepseek",
           "adapter": "deepseek-api",
+          "lane": "reviewer",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
           "lane": "reviewer",
           "configuration_valid": true,
           "technical_compatibility": true,
@@ -706,6 +781,21 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
+          "lane": "scout",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -797,6 +887,21 @@
           "model": "deepseek-flash",
           "family": "deepseek",
           "adapter": "deepseek-api",
+          "lane": "senior",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "minimax-m3.1-flash",
+          "model": "MiniMax-M3.1-Flash",
+          "family": "minimax",
+          "adapter": "openai-compatible",
           "lane": "senior",
           "configuration_valid": true,
           "technical_compatibility": true,
@@ -984,6 +1089,62 @@
         "selection_validated": false,
         "blocked": []
       },
+      "minimax": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "material-review",
+        "choices": [
+          {
+            "profile": "terra-reviewer",
+            "model": "gpt-5.6-terra",
+            "family": "openai",
+            "adapter": "codex",
+            "lane": "material-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "astra-reviewer",
+            "model": "gpt-6-astra",
+            "family": "openai-gpt6",
+            "adapter": "codex",
+            "lane": "material-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "opus-reviewer",
+            "model": "claude-opus-5-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "material-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": []
+      },
       "moonshot": {
         "schema_version": 3,
         "read_only": true,
@@ -1305,6 +1466,21 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1379,6 +1555,21 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1422,6 +1613,21 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1432,6 +1638,80 @@
             "model": "deepseek-flash",
             "family": "deepseek",
             "adapter": "deepseek-api",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ]
+      },
+      "minimax": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "reviewer",
+        "choices": [
+          {
+            "profile": "glm53-flash-max-reviewer",
+            "model": "glm-5.3-flash",
+            "family": "zai",
+            "adapter": "claude-zai",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-tool-policy"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "qwen3.8-max",
+            "model": "qwen3.8-max",
+            "family": "alibaba",
+            "adapter": "token-plan-openai",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "deepseek-flash",
+            "model": "deepseek-flash",
+            "family": "deepseek",
+            "adapter": "deepseek-api",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": [
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
             "lane": "reviewer",
             "configuration_valid": true,
             "technical_compatibility": true,
@@ -1487,6 +1767,21 @@
             "model": "deepseek-flash",
             "family": "deepseek",
             "adapter": "deepseek-api",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
             "lane": "reviewer",
             "configuration_valid": true,
             "technical_compatibility": true,
@@ -1554,6 +1849,21 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1603,6 +1913,21 @@
             "model": "deepseek-flash",
             "family": "deepseek",
             "adapter": "deepseek-api",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
             "lane": "reviewer",
             "configuration_valid": true,
             "technical_compatibility": true,
@@ -1670,6 +1995,21 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1705,6 +2045,21 @@
             "model": "deepseek-flash",
             "family": "deepseek",
             "adapter": "deepseek-api",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
             "lane": "reviewer",
             "configuration_valid": true,
             "technical_compatibility": true,
@@ -1879,6 +2234,76 @@
         ]
       },
       "deepseek": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "routine-review",
+        "choices": [
+          {
+            "profile": "terra-reviewer",
+            "model": "gpt-5.6-terra",
+            "family": "openai",
+            "adapter": "codex",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "astra-reviewer",
+            "model": "gpt-6-astra",
+            "family": "openai-gpt6",
+            "adapter": "codex",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "sonnet-reviewer",
+            "model": "claude-sonnet-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "opus-reviewer",
+            "model": "claude-opus-5-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": []
+      },
+      "minimax": {
         "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
@@ -2416,6 +2841,62 @@
         ]
       },
       "deepseek": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "security",
+        "choices": [
+          {
+            "profile": "terra-reviewer",
+            "model": "gpt-5.6-terra",
+            "family": "openai",
+            "adapter": "codex",
+            "lane": "security",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "astra-reviewer",
+            "model": "gpt-6-astra",
+            "family": "openai-gpt6",
+            "adapter": "codex",
+            "lane": "security",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "opus-reviewer",
+            "model": "claude-opus-5-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "security",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": []
+      },
+      "minimax": {
         "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,

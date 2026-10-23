@@ -212,8 +212,8 @@ Nothing else in the kit has to change:
    should list it with `"reachable": true`.
 5. Dispatch once to confirm the key and the model name.
 
-MiniMax-M3.1-Flash, for example, with `MINIMAX_API_KEY=…` in
-`~/.config/delegation-kit/.env`:
+The shipped `minimax-m3.1-flash` profile is one such profile, with
+`MINIMAX_API_KEY=…` in `~/.config/delegation-kit/.env`:
 
 ```json
 "minimax-m3.1-flash": {
@@ -255,5 +255,8 @@ refresh` writes a local catalog ([the router page](/docs/router)).
   `kimi-k3.1-pro`). A file made earlier keeps `kimi-k3`, and `delegation-kimi`
   still runs it on K3. To move, rename the profile, and the pool entries and
   routes that name it, and set `model` to `kimi-k3.1-pro`.
+- 0.33.0 added the `minimax-m3.1-flash` profile to the preset. A file made
+  earlier does not get it; copy it from the example under *Adding a model*,
+  or from `config/presets.json`, and set `MINIMAX_API_KEY`.
 
 <!-- END AUTOGEN -->

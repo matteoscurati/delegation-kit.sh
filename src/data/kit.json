@@ -1,10 +1,10 @@
 {
-  "version": "0.32.0",
+  "version": "0.33.0",
   "releaseDate": "2026-10-23",
   "schemaVersion": 3,
   "reviewPolicy": "optional",
-  "profiles": 22,
-  "laneRows": 46,
+  "profiles": 23,
+  "laneRows": 53,
   "lanes": [
     "builder",
     "clerk",
@@ -28,6 +28,7 @@
     "alibaba",
     "anthropic",
     "deepseek",
+    "minimax",
     "moonshot",
     "openai",
     "openai-gpt6",
@@ -41,6 +42,7 @@
     "deepseek-api",
     "grok-build-cli",
     "kimi-code-cli",
+    "openai-compatible",
     "token-plan-openai"
   ],
   "profileConfig": {
@@ -309,6 +311,23 @@
       "parameters": {
         "effort": "max"
       }
+    },
+    "minimax-m3.1-flash": {
+      "adapter": "openai-compatible",
+      "model": "MiniMax-M3.1-Flash",
+      "family": "minimax",
+      "roles": [
+        "builder",
+        "clerk",
+        "scout",
+        "reviewer",
+        "senior",
+        "judgement",
+        "policy-annotation"
+      ],
+      "base_url": "https://api.minimax.io/v1",
+      "credential_env": "MINIMAX_API_KEY",
+      "context": 1000000
     }
   },
   "syncedAt": "2026-10-23"
