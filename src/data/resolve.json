@@ -52,8 +52,8 @@
           "review_policy": "optional"
         },
         {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
+          "profile": "kimi-k3.1-pro",
+          "model": "kimi-k3.1-pro",
           "family": "moonshot",
           "adapter": "kimi-code-cli",
           "lane": "builder",
@@ -166,8 +166,8 @@
           "review_policy": "optional"
         },
         {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
+          "profile": "kimi-k3.1-pro",
+          "model": "kimi-k3.1-pro",
           "family": "moonshot",
           "adapter": "kimi-code-cli",
           "lane": "clerk",
@@ -224,8 +224,8 @@
       "lane": "frontend-builder",
       "choices": [
         {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
+          "profile": "kimi-k3.1-pro",
+          "model": "kimi-k3.1-pro",
           "family": "moonshot",
           "adapter": "kimi-code-cli",
           "lane": "frontend-builder",
@@ -436,8 +436,8 @@
           "review_policy": "optional"
         },
         {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
+          "profile": "kimi-k3.1-pro",
+          "model": "kimi-k3.1-pro",
           "family": "moonshot",
           "adapter": "kimi-code-cli",
           "lane": "policy-annotation",
@@ -664,8 +664,8 @@
           "review_policy": "optional"
         },
         {
-          "profile": "kimi-k3",
-          "model": "kimi-k3",
+          "profile": "kimi-k3.1-pro",
+          "model": "kimi-k3.1-pro",
           "family": "moonshot",
           "adapter": "kimi-code-cli",
           "lane": "scout",

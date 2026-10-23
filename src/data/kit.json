@@ -1,5 +1,5 @@
 {
-  "version": "0.31.0",
+  "version": "0.32.0",
   "releaseDate": "2026-10-23",
   "schemaVersion": 3,
   "reviewPolicy": "optional",
@@ -248,9 +248,9 @@
         "effort": "max"
       }
     },
-    "kimi-k3": {
+    "kimi-k3.1-pro": {
       "adapter": "kimi-code-cli",
-      "model": "kimi-k3",
+      "model": "kimi-k3.1-pro",
       "family": "moonshot",
       "roles": [
         "clerk",
