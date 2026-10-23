@@ -5,8 +5,6 @@ name: Deploy
 #   CLOUDFLARE_API_TOKEN   an API token with Workers Scripts:Edit and
 #                          Workers Routes:Edit on the account and zone
 #   CLOUDFLARE_ACCOUNT_ID  the account id
-# and one optional repository variable:
-#   PUBLIC_CF_BEACON_TOKEN the Web Analytics site token (off when unset)
 
 on:
   push:
@@ -45,8 +43,6 @@ jobs:
           fi
       - run: npm ci
       - run: npm run build
-        env:
-          PUBLIC_CF_BEACON_TOKEN: ${{ vars.PUBLIC_CF_BEACON_TOKEN }}
       # The project's own wrangler (package.json), the one a local deploy
       # uses: wrangler-action installs an older one of its own, which fails
       # on an assets-only Worker with "Missing entry-point".
