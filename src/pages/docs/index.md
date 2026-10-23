@@ -135,6 +135,11 @@ with math to `deepseek-flash`, a hard or very long one to `opus-reviewer`.
 Tools, images or JSON mode always go to `deepseek-flash`: the other two answer
 through CLIs, which can't take them.
 
+An agent loop sends one request per step. Send the same
+`X-Router-Conversation: <id>` on each, and every step goes to the model the
+first one got, instead of changing model halfway through the task
+([Conversations](/docs/router/#conversations)).
+
 ## Next
 
 - [Router reference](/docs/router/): every field and error.
