@@ -16,8 +16,8 @@ which answered and why.
 
 - macOS with Node.js, `jq`, `git` and `python3`.
 - Two or more models you can call. Each is either an API key (DeepSeek, Qwen,
-  or any OpenAI-compatible endpoint, local ones included) or a plan you use
-  through a CLI (Claude, Codex, GLM, Kimi, Grok).
+  MiniMax, or any OpenAI-compatible endpoint, local ones included) or a plan
+  you use through a CLI (Claude, Codex, GLM, Kimi, Grok).
 - The example uses three models the install already knows: GPT-5.6 Luna
   (a Codex login), DeepSeek Flash (an API key) and Claude Opus 5.5 (Claude
   Code). Use the ones you have instead.
@@ -38,9 +38,10 @@ It:
   in files only you can read;
 - checks the install.
 
-Any other key, such as `MINIMAX_API_KEY`, goes in
-`~/.config/delegation-kit/.env` (created from `.env.example`, mode 600,
-outside every project, never committed), one `NAME=value` per line. A variable
+Every other key goes in `~/.config/delegation-kit/.env` (created from
+`.env.example`, mode 600, outside every project, never committed), one
+`NAME=value` per line: `MINIMAX_API_KEY` for the `minimax-m3.1-flash` profile
+the install ships, and the key of any model you add. A variable
 set in your shell wins. See
 [Keys and environment](/docs/configuration/#keys-and-environment).
 
