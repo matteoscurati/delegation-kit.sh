@@ -768,6 +768,468 @@
       ],
       "selection": "explicit-only",
       "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "clerk",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "scout",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "reviewer",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "senior",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "judgement",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-spark-1.3",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "policy-annotation",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "clerk",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "scout",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "reviewer",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "senior",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "judgement",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-wonder-1.0",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "openai-compatible",
+      "lane": "policy-annotation",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "read-only",
+        "text-patch"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "clerk",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "scout",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "reviewer",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "frontend-builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder",
+      "model": "muse-wonder-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "policy-annotation",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder-full",
+      "model": "muse-wonder-full-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "clerk",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder-full",
+      "model": "muse-wonder-full-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "scout",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder-full",
+      "model": "muse-wonder-full-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "reviewer",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder-full",
+      "model": "muse-wonder-full-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder-full",
+      "model": "muse-wonder-full-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "frontend-builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-wonder-full",
+      "model": "muse-wonder-full-1.0",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "policy-annotation",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-spark",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "clerk",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-spark",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "scout",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-spark",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "reviewer",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-spark",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-spark",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "frontend-builder",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
+    },
+    {
+      "profile": "muse-code-spark",
+      "model": "muse-spark-1.3",
+      "family": "meta",
+      "adapter": "muse-code-cli",
+      "lane": "policy-annotation",
+      "configuration_valid": true,
+      "technical_compatibility": true,
+      "capabilities": [
+        "sandboxed-worktree"
+      ],
+      "selection": "explicit-only",
+      "review_policy": "optional"
     }
   ]
 }

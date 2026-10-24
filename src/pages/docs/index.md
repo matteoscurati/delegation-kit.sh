@@ -16,8 +16,8 @@ which answered and why.
 
 - macOS with Node.js, `jq`, `git` and `python3`.
 - Two or more models you can call. Each is either an API key (DeepSeek, Qwen,
-  MiniMax, or any OpenAI-compatible endpoint, local ones included) or a plan
-  you use through a CLI (Claude, Codex, GLM, Kimi, Grok).
+  MiniMax, Meta, or any OpenAI-compatible endpoint, local ones included) or a
+  plan you use through a CLI (Claude, Codex, GLM, Kimi, Muse Code, Grok).
 - The example uses three models the install already knows: GPT-5.6 Luna
   (a Codex login), DeepSeek Flash (an API key) and Claude Opus 5.5 (Claude
   Code). Use the ones you have instead.

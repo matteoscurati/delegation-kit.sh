@@ -123,6 +123,78 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder-full",
+          "model": "muse-wonder-full-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-spark",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -238,6 +310,78 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "clerk",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "clerk",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "clerk",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder-full",
+          "model": "muse-wonder-full-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "clerk",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-spark",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "clerk",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -272,6 +416,48 @@
           "model": "grok-4.6",
           "family": "xai",
           "adapter": "grok-build-cli",
+          "lane": "frontend-builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "frontend-builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder-full",
+          "model": "muse-wonder-full-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "frontend-builder",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-spark",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "muse-code-cli",
           "lane": "frontend-builder",
           "configuration_valid": true,
           "technical_compatibility": true,
@@ -357,6 +543,36 @@
           "profile": "minimax-m3.1-flash",
           "model": "MiniMax-M3.1-Flash",
           "family": "minimax",
+          "adapter": "openai-compatible",
+          "lane": "judgement",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "judgement",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
           "adapter": "openai-compatible",
           "lane": "judgement",
           "configuration_valid": true,
@@ -552,6 +768,78 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "policy-annotation",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "policy-annotation",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "policy-annotation",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder-full",
+          "model": "muse-wonder-full-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "policy-annotation",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-spark",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "policy-annotation",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -622,6 +910,78 @@
           "capabilities": [
             "read-only",
             "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "reviewer",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "reviewer",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "reviewer",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder-full",
+          "model": "muse-wonder-full-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "reviewer",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-spark",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "reviewer",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
@@ -796,6 +1156,78 @@
           ],
           "selection": "explicit-only",
           "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "scout",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "scout",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "scout",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-wonder-full",
+          "model": "muse-wonder-full-1.0",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "scout",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-code-spark",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "muse-code-cli",
+          "lane": "scout",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "sandboxed-worktree"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
         }
       ],
       "selected": null,
@@ -901,6 +1333,36 @@
           "profile": "minimax-m3.1-flash",
           "model": "MiniMax-M3.1-Flash",
           "family": "minimax",
+          "adapter": "openai-compatible",
+          "lane": "senior",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-spark-1.3",
+          "model": "muse-spark-1.3",
+          "family": "meta",
+          "adapter": "openai-compatible",
+          "lane": "senior",
+          "configuration_valid": true,
+          "technical_compatibility": true,
+          "capabilities": [
+            "read-only",
+            "text-patch"
+          ],
+          "selection": "explicit-only",
+          "review_policy": "optional"
+        },
+        {
+          "profile": "muse-wonder-1.0",
+          "model": "muse-wonder-1.0",
+          "family": "meta",
           "adapter": "openai-compatible",
           "lane": "senior",
           "configuration_valid": true,
@@ -1089,6 +1551,62 @@
         "selection_validated": false,
         "blocked": []
       },
+      "meta": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "material-review",
+        "choices": [
+          {
+            "profile": "terra-reviewer",
+            "model": "gpt-5.6-terra",
+            "family": "openai",
+            "adapter": "codex",
+            "lane": "material-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "astra-reviewer",
+            "model": "gpt-6-astra",
+            "family": "openai-gpt6",
+            "adapter": "codex",
+            "lane": "material-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "opus-reviewer",
+            "model": "claude-opus-5-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "material-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": []
+      },
       "minimax": {
         "schema_version": 3,
         "read_only": true,
@@ -1481,6 +1999,78 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1570,6 +2160,78 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1628,6 +2290,78 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1644,6 +2378,152 @@
             "capabilities": [
               "read-only",
               "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ]
+      },
+      "meta": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "reviewer",
+        "choices": [
+          {
+            "profile": "glm53-flash-max-reviewer",
+            "model": "glm-5.3-flash",
+            "family": "zai",
+            "adapter": "claude-zai",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-tool-policy"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "qwen3.8-max",
+            "model": "qwen3.8-max",
+            "family": "alibaba",
+            "adapter": "token-plan-openai",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "deepseek-flash",
+            "model": "deepseek-flash",
+            "family": "deepseek",
+            "adapter": "deepseek-api",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "minimax-m3.1-flash",
+            "model": "MiniMax-M3.1-Flash",
+            "family": "minimax",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": [
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
@@ -1699,6 +2579,78 @@
             "capabilities": [
               "read-only",
               "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
@@ -1791,6 +2743,78 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -1861,6 +2885,78 @@
             "capabilities": [
               "read-only",
               "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
@@ -1937,6 +3033,78 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -2010,6 +3178,78 @@
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
           }
         ],
         "selected": null,
@@ -2066,6 +3306,78 @@
             "capabilities": [
               "read-only",
               "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-spark-1.3",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-wonder-1.0",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "openai-compatible",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "read-only",
+              "text-patch"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder",
+            "model": "muse-wonder-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-wonder-full",
+            "model": "muse-wonder-full-1.0",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "muse-code-spark",
+            "model": "muse-spark-1.3",
+            "family": "meta",
+            "adapter": "muse-code-cli",
+            "lane": "reviewer",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "sandboxed-worktree"
             ],
             "selection": "explicit-only",
             "review_policy": "cross-family"
@@ -2234,6 +3546,76 @@
         ]
       },
       "deepseek": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "routine-review",
+        "choices": [
+          {
+            "profile": "terra-reviewer",
+            "model": "gpt-5.6-terra",
+            "family": "openai",
+            "adapter": "codex",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "astra-reviewer",
+            "model": "gpt-6-astra",
+            "family": "openai-gpt6",
+            "adapter": "codex",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "sonnet-reviewer",
+            "model": "claude-sonnet-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "opus-reviewer",
+            "model": "claude-opus-5-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "routine-review",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": []
+      },
+      "meta": {
         "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
@@ -2841,6 +4223,62 @@
         ]
       },
       "deepseek": {
+        "schema_version": 3,
+        "read_only": true,
+        "automatic_dispatch": false,
+        "requires_user_direction": true,
+        "authorization_granted": false,
+        "review_policy": "cross-family",
+        "lane": "security",
+        "choices": [
+          {
+            "profile": "terra-reviewer",
+            "model": "gpt-5.6-terra",
+            "family": "openai",
+            "adapter": "codex",
+            "lane": "security",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "astra-reviewer",
+            "model": "gpt-6-astra",
+            "family": "openai-gpt6",
+            "adapter": "codex",
+            "lane": "security",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          },
+          {
+            "profile": "opus-reviewer",
+            "model": "claude-opus-5-5",
+            "family": "anthropic",
+            "adapter": "claude-code",
+            "lane": "security",
+            "configuration_valid": true,
+            "technical_compatibility": true,
+            "capabilities": [
+              "native-profile"
+            ],
+            "selection": "explicit-only",
+            "review_policy": "cross-family"
+          }
+        ],
+        "selected": null,
+        "selection_validated": false,
+        "blocked": []
+      },
+      "meta": {
         "schema_version": 3,
         "read_only": true,
         "automatic_dispatch": false,
