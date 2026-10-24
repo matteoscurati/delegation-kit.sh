@@ -1,6 +1,6 @@
 # delegation-kit.sh
 
-Showcase and docs site for [`delegation-kit`](https://github.com/matteoscurati/delegation-kit):
+Showcase and docs site for [`delegation-kit`](https://github.com/reasance/delegation-kit):
 a model router on your machine for the models you already pay for. Easy
 requests go to your cheap models, hard ones to your strong ones; you choose
 the judge, your rules pick the model, and every response says why.

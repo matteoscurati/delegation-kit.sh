@@ -150,6 +150,6 @@ first one got, instead of changing model halfway through the task
 
 ## Other ways to install
 
-- From a clone: `git clone https://github.com/matteoscurati/delegation-kit`,
+- From a clone: `git clone https://github.com/reasance/delegation-kit`,
   then `./install.sh`; `./doctor.sh` checks the install.
 - To remove it, run `./uninstall.sh` from a clone. Your keys are kept.

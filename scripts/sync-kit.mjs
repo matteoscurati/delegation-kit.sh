@@ -35,7 +35,7 @@ const kitRoot = resolve(
 );
 const isCheck = process.argv.includes('--check');
 const allowUnreleased = process.argv.includes('--allow-unreleased');
-const GITHUB = 'https://github.com/matteoscurati/delegation-kit';
+const GITHUB = 'https://github.com/reasance/delegation-kit';
 
 const BEGIN = '<!-- BEGIN AUTOGEN -->';
 const END = '<!-- END AUTOGEN -->';
